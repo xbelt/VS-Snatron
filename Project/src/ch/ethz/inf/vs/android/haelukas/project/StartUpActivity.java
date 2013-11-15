@@ -1,15 +1,20 @@
 package ch.ethz.inf.vs.android.haelukas.project;
 
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 
 public class StartUpActivity extends Activity {
 
+	private GLSurfaceView startUpGLView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_start_up);
+		
+		startUpGLView = new StartUpGLView(this);
+		setContentView(startUpGLView);
 	}
 
 	@Override
