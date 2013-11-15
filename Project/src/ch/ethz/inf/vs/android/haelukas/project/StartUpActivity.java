@@ -1,5 +1,6 @@
 package ch.ethz.inf.vs.android.haelukas.project;
 
+import ch.ethz.inf.vs.android.haelukas.project.startup.StartUpGLView;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
