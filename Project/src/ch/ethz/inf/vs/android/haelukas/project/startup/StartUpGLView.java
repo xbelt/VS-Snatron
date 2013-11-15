@@ -8,8 +8,8 @@ public class StartUpGLView extends GLSurfaceView {
 	public StartUpGLView(Context context) {
 		super(context);
 		setEGLContextClientVersion(2);
-		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		setRenderer(new StartUpRenderer());
+		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
 
 }
