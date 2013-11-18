@@ -4,6 +4,7 @@ import ch.ethz.inf.vs.android.haelukas.project.startup.StartUpGLView;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,7 +16,8 @@ public class StartUpActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		startUpGLView = new StartUpGLView(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(
