@@ -31,7 +31,7 @@ class Triangle implements Drawable{
             "attribute vec4 vPosition;" +
             "void main() {" +
             // the matrix must be included as a modifier of gl_Position
-            "  gl_Position = vPosition * uMVPMatrix;" +
+            "  gl_Position = uMVPMatrix * vPosition;" +
             "}";
 
     private final String fragmentShaderCode =
