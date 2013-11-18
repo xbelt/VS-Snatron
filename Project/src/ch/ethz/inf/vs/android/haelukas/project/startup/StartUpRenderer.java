@@ -24,7 +24,10 @@ public class StartUpRenderer implements Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         grid = new Grid();
-        //mRectangle = new Rectangle(0,0);
+//        mRectangle = new Rectangle(0);
+        GLES20.glEnable( GLES20.GL_DEPTH_TEST );
+        GLES20.glDepthFunc( GLES20.GL_LEQUAL );
+        GLES20.glDepthMask( true );
         //mTriangle = new Triangle();
     }
 
@@ -35,11 +38,11 @@ public class StartUpRenderer implements Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         
 		Matrix.setLookAtM(mViewMatrix, 0, 3, 1, 3, 0f, 0f, 0f, 0f, 1f, 0f);
-//        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+		Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         
         // Draw triangle
-//        mRectangle.draw(mMVPMatrix);
-        grid.draw(mViewMatrix);
+        grid.draw(mMVPMatrix);
+        mRectangle.draw(mMVPMatrix);
     }
 
     @Override
@@ -48,8 +51,9 @@ public class StartUpRenderer implements Renderer {
         // such as screen rotation
         GLES20.glViewport(0, 0, width, height);
         
+        //This does not work
         float ratio = (float) width / height;
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 5, 30);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
     }
 
     public static int loadShader(int type, String shaderCode){
