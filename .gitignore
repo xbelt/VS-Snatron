@@ -24,4 +24,5 @@ Project/proguard/
 *.iws
 .idea/
 
-Project/metadata/*/*
+Project/Library/metadata/*/*
+Project/Temp/*
