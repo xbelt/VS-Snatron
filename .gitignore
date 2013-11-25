@@ -23,3 +23,5 @@ Project/proguard/
 *.ipr
 *.iws
 .idea/
+
+Project/metadata/*/*
