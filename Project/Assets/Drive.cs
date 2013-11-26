@@ -67,10 +67,4 @@ public class Drive : MonoBehaviour {
 				//Destroy (gameObject);
 		//}
 	}
-
-	void onCollisionEnter(Collider other) {
-		print("onCollisionEnter");
-		transform.Rotate(Vector3.up, 180);
-		//Destroy (gameObject);
-		}
 }
