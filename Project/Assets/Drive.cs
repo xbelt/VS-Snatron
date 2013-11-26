@@ -8,19 +8,19 @@ public class Drive : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"),
-		metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
+		    metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
 		) {
-						using (
-			AndroidJavaObject metricsInstance = new AndroidJavaObject("android.util.DisplayMetrics"),
-			activityInstance = unityPlayerClass.GetStatic<AndroidJavaObject>("currentActivity"),
-			windowManagerInstance = activityInstance.Call<AndroidJavaObject>("getWindowManager"),
-			displayInstance = windowManagerInstance.Call<AndroidJavaObject>("getDefaultDisplay")
+            using(
+    			AndroidJavaObject metricsInstance = new AndroidJavaObject("android.util.DisplayMetrics"),
+    			activityInstance = unityPlayerClass.GetStatic<AndroidJavaObject>("currentActivity"),
+    			windowManagerInstance = activityInstance.Call<AndroidJavaObject>("getWindowManager"),
+    			displayInstance = windowManagerInstance.Call<AndroidJavaObject>("getDefaultDisplay")
 			) {
-								displayInstance.Call ("getMetrics", metricsInstance);
-								HeightPixels = metricsInstance.Get<int> ("heightPixels");
-								WidthPixels = metricsInstance.Get<int> ("widthPixels");
-						}
-				}
+				displayInstance.Call ("getMetrics", metricsInstance);
+				HeightPixels = metricsInstance.Get<int> ("heightPixels");
+				WidthPixels = metricsInstance.Get<int> ("widthPixels");
+			}
+		}
 	}
 	
 	// Update is called once per frame
