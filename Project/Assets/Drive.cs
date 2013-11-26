@@ -5,6 +5,8 @@ public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
 	WallBehaviour latestWall;
 
+	int NumberOfWallsNear = 0;
+
 	int HeightPixels;
 	int WidthPixels;
 	// Use this for initialization
@@ -72,15 +74,20 @@ public class Drive : MonoBehaviour {
         NewWall();
         transform.Rotate(Vector3.up, 90);
     }
+
+	void OnTriggerEnter(Collider other) {
+		if (other.gameObject.tag == "wall") {
+			print (other.name + " " + name);
+				NumberOfWallsNear++;
+				print ("Walls near: " + NumberOfWallsNear);
 		}
 	}
 
-	void OnTriggerEnter(Collider other) {
-		print("onTriggerEnter");
-		transform.Rotate(Vector3.up, 180);
-		//if (collider.gameObject.tag == "wall") {
-				//Destroy (gameObject);
-		//}
+	void OnTriggerExit(Collider other) {
+		if (other.gameObject.tag == "wall") {
+			NumberOfWallsNear--;
+			print ("Walls near: " + NumberOfWallsNear);
+		}
 	}
 
 	void NewWall() {
