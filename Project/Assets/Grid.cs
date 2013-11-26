@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-	public static int Resolution = 4;
+	public static int Resolution = 10;
 	GameObject player;
 	void Start ()
 	{
