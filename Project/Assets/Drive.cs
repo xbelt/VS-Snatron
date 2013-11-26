@@ -39,6 +39,13 @@ public class Drive : MonoBehaviour {
 			}
 		}
 
+
+        // Input for preview
+		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			TurnLeft();
+		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
+			TurnRight();
+		}
 	}
 
     void TurnLeft()
