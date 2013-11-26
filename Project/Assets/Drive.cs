@@ -40,7 +40,7 @@ public class Drive : MonoBehaviour {
 		}
 	}
 
-	void onTriggerEnter(Collider other) {
+	void OnTriggerEnter(Collider other) {
 		print("onTriggerEnter");
 		transform.Rotate(Vector3.up, 180);
 		//if (collider.gameObject.tag == "wall") {
