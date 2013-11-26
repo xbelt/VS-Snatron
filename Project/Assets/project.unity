@@ -228,6 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afbfaa41300753543974471e7b6324aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallTemplate: {fileID: 400000, guid: cc6c1a291c23fb341b2b331e862cdd1a, type: 2}
 --- !u!65 &143082390
 BoxCollider:
   m_ObjectHideFlags: 0

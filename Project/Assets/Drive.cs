@@ -2,11 +2,21 @@
 using System.Collections;
 
 public class Drive : MonoBehaviour {
+	public Transform wallTemplate;
+	WallBehaviour latestWall;
 
 	int HeightPixels;
 	int WidthPixels;
 	// Use this for initialization
+
+	Vector3 WallSpawn {
+		get {
+			return transform.position;
+		}
+	}
+
 	void Start () {
+		NewWall();
 		using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"),
 		    metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
 		) {
@@ -26,7 +36,10 @@ public class Drive : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		transform.Translate (Vector3.forward * Time.deltaTime * 20);
-
+		if (latestWall != null) {
+			latestWall.GetComponent<WallBehaviour> ().updateWall(WallSpawn);
+		}
+		
 		foreach(var touch in Input.touches) {
 			if (touch.phase == TouchPhase.Began) {
 				// Construct a ray from the current touch coordinates
@@ -50,11 +63,13 @@ public class Drive : MonoBehaviour {
 
     void TurnLeft()
     {
+        NewWall();
         transform.Rotate(Vector3.up, 270);
     }
 
     void TurnRight()
     {
+        NewWall();
         transform.Rotate(Vector3.up, 90);
     }
 		}
@@ -66,5 +81,13 @@ public class Drive : MonoBehaviour {
 		//if (collider.gameObject.tag == "wall") {
 				//Destroy (gameObject);
 		//}
+	}
+
+	void NewWall() {
+		latestWall = (Instantiate (wallTemplate, WallSpawn, Quaternion.identity) as Transform).GetComponent<WallBehaviour> ();
+		latestWall.GetComponent<WallBehaviour> ().start = WallSpawn;
+		latestWall.GetComponent<WallBehaviour> ().end = WallSpawn;
+		latestWall.GetComponent<WallBehaviour> ().updateWall (WallSpawn);
+
 	}
 }
