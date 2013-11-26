@@ -182,6 +182,7 @@ GameObject:
   - 95: {fileID: 143082387}
   - 54: {fileID: 143082391}
   - 114: {fileID: 143082389}
+  - 65: {fileID: 143082390}
   m_Layer: 0
   m_Name: player
   m_TagString: Untagged
@@ -227,6 +228,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afbfaa41300753543974471e7b6324aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &143082390
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 143082386}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10, y: 10, z: 30}
+  m_Center: {x: 0, y: 5, z: 0}
 --- !u!54 &143082391
 Rigidbody:
   m_ObjectHideFlags: 0
