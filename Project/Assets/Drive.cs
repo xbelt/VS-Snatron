@@ -5,6 +5,11 @@ public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
 	WallBehaviour latestWall;
 
+	static Vector3 MinSpeed = Vector3.forward * 25;
+	static Vector3 MaxSpeed = Vector3.forward * 45;
+	
+	Vector3 Speed = MinSpeed;
+
 	int NumberOfWallsNear = 0;
 
 	int HeightPixels;
@@ -14,6 +19,15 @@ public class Drive : MonoBehaviour {
 	Vector3 WallSpawn {
 		get {
 			return transform.position;
+		}
+	}
+
+	void AdjustSpeed ()
+	{
+		if (NumberOfWallsNear > 2) {
+			Speed = Vector3.MoveTowards (Speed, MaxSpeed, 30 * Time.deltaTime);
+		} else {
+			Speed = Vector3.MoveTowards(Speed, MinSpeed, 30 * Time.deltaTime);
 		}
 	}
 
@@ -37,7 +51,8 @@ public class Drive : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Translate (Vector3.forward * Time.deltaTime * 20);
+		AdjustSpeed ();
+		transform.Translate (Speed * Time.deltaTime);
 		if (latestWall != null) {
 			latestWall.GetComponent<WallBehaviour> ().updateWall(WallSpawn);
 		}
