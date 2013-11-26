@@ -435,6 +435,10 @@ Prefab:
       propertyPath: m_Name
       value: player
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: a1f6f020f0dfb0446b1c96011ee22fff, type: 3}
+      propertyPath: m_Name
+      value: playerMesh
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6400000, guid: a1f6f020f0dfb0446b1c96011ee22fff, type: 3}
   m_ParentPrefab: {fileID: 100100000, guid: a1f6f020f0dfb0446b1c96011ee22fff, type: 3}
@@ -452,7 +456,7 @@ GameObject:
   - 33: {fileID: 2007983801}
   - 23: {fileID: 2007983800}
   m_Layer: 0
-  m_Name: default
+  m_Name: playerMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
