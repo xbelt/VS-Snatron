@@ -31,12 +31,25 @@ public class Drive : MonoBehaviour {
 			if (touch.phase == TouchPhase.Began) {
 				// Construct a ray from the current touch coordinates
 				if (touch.position.x > WidthPixels/2) {
-					transform.Rotate(Vector3.up, 90);
+					TurnRight();
 				}
 				else {
-					transform.Rotate(Vector3.up, 270);
+					TurnLeft();
 				}
 			}
+		}
+
+	}
+
+    void TurnLeft()
+    {
+        transform.Rotate(Vector3.up, 270);
+    }
+
+    void TurnRight()
+    {
+        transform.Rotate(Vector3.up, 90);
+    }
 		}
 	}
 
