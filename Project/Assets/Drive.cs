@@ -25,7 +25,7 @@ public class Drive : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Translate (Vector3.forward * Time.deltaTime * 5);
+		transform.Translate (Vector3.forward * Time.deltaTime * 20);
 
 		foreach(var touch in Input.touches) {
 			if (touch.phase == TouchPhase.Began) {
