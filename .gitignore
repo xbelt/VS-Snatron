@@ -24,5 +24,36 @@ Project/proguard/
 *.iws
 .idea/
 
-Project/Library/metadata/*/*
-Project/Temp/*
+# =============== #
+# Unity generated #
+# =============== #
+Project/Temp/
+Project/Obj/
+Project/UnityGenerated/
+Project/Library/
+ 
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+ 
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
