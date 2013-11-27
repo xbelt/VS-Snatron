@@ -56,10 +56,10 @@ public class Drive : MonoBehaviour {
 		if (latestWall != null) {
 			latestWall.GetComponent<WallBehaviour> ().updateWall(WallSpawn);
 		}
-		
+
+		//Handling touch input
 		foreach(var touch in Input.touches) {
 			if (touch.phase == TouchPhase.Began) {
-				// Construct a ray from the current touch coordinates
 				if (touch.position.x > WidthPixels/2) {
 					TurnRight();
 				}

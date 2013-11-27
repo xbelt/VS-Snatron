@@ -13,7 +13,7 @@ public class WallBehaviour : MonoBehaviour {
 	public void updateWall (Vector3 newEnd) {
 		end = newEnd;
 		float angle = (start.x == end.x) ? 0 : 90;
-		transform.position = Vector3.Lerp(start, end, 0.5f) + Vector3.up * 0.5f;
+		transform.position = Vector3.Lerp(start, end, 0.5f) + Vector3.up * 1f;
 		transform.eulerAngles = new Vector3(0, angle, 0);
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(start, end));
 	}
