@@ -17,9 +17,20 @@ public class Drive : MonoBehaviour {
 
     GUI_Control startScreen;
 
-	Vector3 WallSpawn {
+    Vector3 Offset {
+        get {
+            return Vector3.forward * 5;
+        }
+    }
+    Vector3 WallOffset {
+        get {
+            return transform.rotation * Offset;
+        }
+    }
+
+	Vector3 CurrentWallEnd {
 		get {
-			return transform.position;
+			return transform.position - WallOffset;
 		}
 	}
 
@@ -58,7 +69,7 @@ public class Drive : MonoBehaviour {
 		AdjustSpeed ();
 	    transform.Translate(Speed*Time.deltaTime);
 	    if (latestWall != null) {
-			latestWall.GetComponent<WallBehaviour> ().updateWall(WallSpawn);
+			latestWall.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
 
 		//Handling touch input
@@ -83,15 +94,19 @@ public class Drive : MonoBehaviour {
 	}
 
     void TurnLeft()
-    {
-        NewWall();
+    {   
+        latestWall.updateWall(transform.position);
         transform.Rotate(Vector3.up, 270);
+        transform.Translate(Offset);
+        NewWall();
     }
 
     void TurnRight()
     {
-        NewWall();
+        latestWall.updateWall(transform.position);
         transform.Rotate(Vector3.up, 90);
+        transform.Translate(Offset);
+        NewWall();
     }
 
 	void OnTriggerEnter(Collider other) {
@@ -110,10 +125,9 @@ public class Drive : MonoBehaviour {
 	}
 
 	void NewWall() {
-		latestWall = (Instantiate (wallTemplate, WallSpawn, Quaternion.identity) as Transform).GetComponent<WallBehaviour> ();
-		latestWall.GetComponent<WallBehaviour> ().start = WallSpawn;
-		latestWall.GetComponent<WallBehaviour> ().end = WallSpawn;
-		latestWall.GetComponent<WallBehaviour> ().updateWall (WallSpawn);
-
+		latestWall = (Instantiate (wallTemplate, CurrentWallEnd, Quaternion.identity) as Transform).GetComponent<WallBehaviour> ();
+		latestWall.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
+		latestWall.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
+		latestWall.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
 	}
 }
