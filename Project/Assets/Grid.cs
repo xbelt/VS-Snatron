@@ -26,7 +26,7 @@ public class Grid : MonoBehaviour
 		float length = 100f;
 
 
-		int linesThroughOrigin = 2;
+		int linesThroughOrigin = 1;
 		int linesPerDirection = (int) (length / Resolution);
 		// 4 directions, -X, X, Z, -Z
 		int linesTotal = linesThroughOrigin + 2 * linesPerDirection;
