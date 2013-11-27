@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
@@ -14,8 +13,6 @@ public class Drive : MonoBehaviour {
 
 	int HeightPixels;
 	int WidthPixels;
-
-    GUI_Control startScreen;
 
     Vector3 Offset {
         get {
@@ -63,9 +60,6 @@ public class Drive : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!gameObject.GetComponent<GUI_Control>().gameStarted) {
-            return;
-        }
 		AdjustSpeed ();
 	    transform.Translate(Speed*Time.deltaTime);
 	    if (latestWall != null) {
