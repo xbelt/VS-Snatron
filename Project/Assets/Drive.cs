@@ -14,7 +14,8 @@ public class Drive : MonoBehaviour {
 
 	int HeightPixels;
 	int WidthPixels;
-	// Use this for initialization
+
+    GUI_Control startScreen;
 
 	Vector3 WallSpawn {
 		get {
@@ -51,9 +52,12 @@ public class Drive : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!gameObject.GetComponent<GUI_Control>().gameStarted) {
+            return;
+        }
 		AdjustSpeed ();
-		transform.Translate (Speed * Time.deltaTime);
-		if (latestWall != null) {
+	    transform.Translate(Speed*Time.deltaTime);
+	    if (latestWall != null) {
 			latestWall.GetComponent<WallBehaviour> ().updateWall(WallSpawn);
 		}
 

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GUI_Control : MonoBehaviour {
 
+    public bool gameStarted = false;
 	// Use this for initialization
 	void Start () {
 	
@@ -13,8 +14,11 @@ public class GUI_Control : MonoBehaviour {
 	
 	}
 	private void OnGUI() {
-		GUI.Label (new Rect (10, 10, 100, 40), "welcome to Snatron");
-		GUI.Button (new Rect (25, 75, 100, 30), "START!!");
+	    if (!gameStarted) {
+	        if (GUI.Button(new Rect(25, 75, 100, 30), "START!!")) {
+	            gameStarted = true;
+	        }
+	    }
 	}
 
 }
