@@ -24,7 +24,7 @@ public class Drive : MonoBehaviour {
 
 	void AdjustSpeed ()
 	{
-		if (NumberOfWallsNear > 2) {
+		if (NumberOfWallsNear > 1) {
 			Speed = Vector3.MoveTowards (Speed, MaxSpeed, 30 * Time.deltaTime);
 		} else {
 			Speed = Vector3.MoveTowards(Speed, MinSpeed, 30 * Time.deltaTime);
