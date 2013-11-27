@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GUI_Control : MonoBehaviour {
 
-    public bool gameStarted = false;
 	// Use this for initialization
 	void Start () {
 	
@@ -14,11 +13,17 @@ public class GUI_Control : MonoBehaviour {
 	
 	}
 	private void OnGUI() {
-	    if (!gameStarted) {
-	        if (GUI.Button(new Rect(25, 75, 100, 30), "START!!")) {
-	            gameStarted = true;
-	        }
-	    }
+        if (GUI.Button(new Rect(25, 25, 100, 30), "Host"))
+        {
+        }
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Join"))
+        {
+        }
+        if (GUI.Button(new Rect(25, 125, 100, 30), "Race"))
+        {
+            Application.LoadLevel(1);
+        }
 	}
 
 }
+
