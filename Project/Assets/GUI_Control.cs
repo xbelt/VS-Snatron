@@ -45,24 +45,29 @@ public class GUI_Control : MonoBehaviour {
             HeightPixels = 600;
             WidthPixels = 800;
         }
+        StartDiscoverServerThread();
+    }
+
+    private void StartDiscoverServerThread()
+    {
         (new Thread(() =>
-	        {
-	            while (_isSearching)
-	            {
-	                var newServer = ServerDiscoverer.DiscoverServers();
-	                var addServer = true;
-	                foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip)))
-	                {
-	                    addServer = false;
-	                }
-	                if (addServer && newServer != null && newServer.Name != null)
-	                {
-	                    _servers.Add(newServer);
-	                }
-	            }
-	        })
-        ).Start();
-	}
+        {
+            while (_isSearching)
+            {
+                var newServer = ServerDiscoverer.DiscoverServers();
+                var addServer = true;
+                foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip)))
+                {
+                    addServer = false;
+                }
+                if (addServer && newServer != null && newServer.Name != null)
+                {
+                    _servers.Add(newServer);
+                }
+            }
+        })
+            ).Start();
+    }
 
     private int WidthPixels { get; set; }
 
@@ -76,10 +81,14 @@ public class GUI_Control : MonoBehaviour {
 	        _hostServerGui = false;
 	    }
 	}
+// ReSharper disable once UnusedMember.Local
 	private void OnGUI() {
 	    if (_hostServerGui)
 	    {
-	        GUI.Button(new Rect(25, 25, 100, 30), "Play");
+	        if (GUI.Button(new Rect(25, 25, 100, 30), "Play"))
+	        {
+	            ServerHoster.HostServer(_hostNameTextField);
+	        }
             GUI.Label(new Rect(25, 75, 100, 30), "HostName");
             _hostNameTextField = GUI.TextField(new Rect(150, 75, 100, 30), _hostNameTextField, 20);
             GUI.Label(new Rect(25, 125, 100, 30), "# Players");
@@ -90,8 +99,6 @@ public class GUI_Control : MonoBehaviour {
 	        if (GUI.Button(new Rect(25, 25, 100, 30), "Host"))
 	        {
 	            _hostServerGui = true;
-	            //TODO: replace with chosen name
-	            //ServerHoster.HostServer("testName2");
 	        }
 	        if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
 	        {
