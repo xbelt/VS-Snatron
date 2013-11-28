@@ -1,7 +1,8 @@
 ﻿namespace Assets
 {
     static class Protocol {
-        public static int serverPort = 10100;
+        public const int ServerPort = 10100;
         public static string Discover = "Discover";
+        public const int GamePort = 10101;
     }
 }
