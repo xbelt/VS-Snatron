@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.InteropServices;
+using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
@@ -13,6 +14,8 @@ public class Drive : MonoBehaviour {
 
 	int HeightPixels;
 	int WidthPixels;
+
+    private GameConfiguration config;
 
     Vector3 Offset {
         get {
@@ -40,7 +43,10 @@ public class Drive : MonoBehaviour {
 		}
 	}
 
-	void Start () {
+	void Start ()
+	{
+	    config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
+
 		NewWall();
 		using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"),
 		    metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
