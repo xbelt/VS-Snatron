@@ -8,17 +8,28 @@ using UnityEngine;
 
 // ReSharper disable once UnusedMember.Global
 public class GUI_Control : MonoBehaviour {
+
     private readonly List<Server> _servers = new List<Server>();
     private bool _isSearching = true;
     private bool _hostServerGui;
-    private string _numberOfPlayersTextField = "1";
-    private string _hostNameTextField = "hostName";
+
+    private GameConfiguration config;
 
     Vector2 _scrollPosition = Vector2.zero;
+
+    private int WidthPixels { get; set; }
+    private int HeightPixels { get; set; }
 
 
 // ReSharper disable once UnusedMember.Local
     private void Start()
+    {
+        config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
+        ReadScreenDimensionsAndroid();
+        StartDiscoverServerThread();
+    }
+
+    private void ReadScreenDimensionsAndroid()
     {
         try
         {
@@ -45,7 +56,6 @@ public class GUI_Control : MonoBehaviour {
             HeightPixels = 600;
             WidthPixels = 800;
         }
-        StartDiscoverServerThread();
     }
 
     private void StartDiscoverServerThread()
@@ -69,62 +79,73 @@ public class GUI_Control : MonoBehaviour {
             ).Start();
     }
 
-    private int WidthPixels { get; set; }
-
-    private int HeightPixels { get; set; }
 
 // ReSharper disable once UnusedMember.Local
 	void Update () {
-        _numberOfPlayersTextField = Regex.Replace(_numberOfPlayersTextField, "[^.0-9]", "");
 	    if (Input.GetKeyDown(KeyCode.Escape))
 	    {
 	        _hostServerGui = false;
 	    }
 	}
-// ReSharper disable once UnusedMember.Local
+
+    #region GUI
+    // ReSharper disable once UnusedMember.Local
 	private void OnGUI() {
 	    if (_hostServerGui)
 	    {
-	        if (GUI.Button(new Rect(25, 25, 100, 30), "Play"))
-	        {
-	            ServerHoster.HostServer(_hostNameTextField);
-	        }
-            GUI.Label(new Rect(25, 75, 100, 30), "HostName");
-            _hostNameTextField = GUI.TextField(new Rect(150, 75, 100, 30), _hostNameTextField, 20);
-            GUI.Label(new Rect(25, 125, 100, 30), "# Players");
-	        _numberOfPlayersTextField = GUI.TextField(new Rect(150, 125, 100, 30), _numberOfPlayersTextField);
+	        HandleHostingGUI();
 	    }
 	    else
 	    {
-	        if (GUI.Button(new Rect(25, 25, 100, 30), "Host"))
-	        {
-	            _hostServerGui = true;
-	        }
-	        if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
-	        {
-	            _isSearching = false;
-	            ServerHoster.IsHosting = false;
-	            Application.LoadLevel(1);
-	        }
-
-	        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
-	        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-	        GUILayout.BeginVertical(GUI.skin.box);
-
-	        foreach (var item in _servers)
-	        {
-	            if (GUILayout.Button(item.Ip + " " + item.Name, GUI.skin.box, GUILayout.ExpandWidth(true)))
-	            {
-	                _isSearching = false;
-	                ServerHoster.IsHosting = false;
-	                Application.LoadLevel(1);
-	            }
-	        }
-
-	        GUILayout.EndVertical();
-	        GUILayout.EndScrollView();
-	        GUILayout.EndArea();
+	        HandleStartScreenGUI();
 	    }
 	}
 
+    private void HandleStartScreenGUI()
+    {
+        if (GUI.Button(new Rect(25, 25, 100, 30), "Host"))
+        {
+            _hostServerGui = true;
+        }
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
+        {
+            _isSearching = false;
+            ServerHoster.IsHosting = false;
+            Application.LoadLevel(1);
+        }
+
+        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+        GUILayout.BeginVertical(GUI.skin.box);
+
+        foreach (var item in _servers)
+        {
+            if (GUILayout.Button(item.Ip + " " + item.Name, GUI.skin.box, GUILayout.ExpandWidth(true)))
+            {
+                _isSearching = false;
+                ServerHoster.IsHosting = false;
+                Application.LoadLevel(1);
+            }
+        }
+
+        GUILayout.EndVertical();
+        GUILayout.EndScrollView();
+        GUILayout.EndArea();
+    }
+
+    private void HandleHostingGUI()
+    {
+        if (GUI.Button(new Rect(25, 25, 100, 30), "Play"))
+        {
+            ServerHoster.HostServer(config.HostName);
+        }
+        GUI.Label(new Rect(25, 175, 100, 30), config.NumberOfPlayers + "hallo");
+        GUI.Label(new Rect(25, 75, 100, 30), "HostName");
+        config.HostName = GUI.TextField(new Rect(150, 75, 100, 30), config.HostName, 20);
+        GUI.Label(new Rect(25, 125, 100, 30), "# Players");
+        config.NumberOfPlayers =
+            Convert.ToInt32(Regex.Replace(
+                GUI.TextField(new Rect(150, 125, 100, 30), config.NumberOfPlayers.ToString()), "[^.0-9]", ""));
+    }
+    #endregion
 }
