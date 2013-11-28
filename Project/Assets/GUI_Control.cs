@@ -9,6 +9,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GUI_Control : MonoBehaviour {
+
     public Boolean isDiscovering = true;
     private List<String> servers = new List<String>();
 
@@ -16,21 +17,36 @@ public class GUI_Control : MonoBehaviour {
     UdpClient udpClient = new UdpClient();
 
     Vector2 scrollPosition = Vector2.zero;
+
+
     // Use this for initialization
 	void Start () {
-        var sendBytes4 = Encoding.ASCII.GetBytes(Protocol.Discover);
+        /*var sendBytes4 = Encoding.ASCII.GetBytes(Protocol.Discover);
         udpClient.Send(sendBytes4, sendBytes4.Length, ipEndPoint);
 
         (new Thread(() =>
         {
             while (isDiscovering)
             {
-                var endPoint = new IPEndPoint(IPAddress.Any, Protocol.serverPort);
+                Socket sock = new Socket(AddressFamily.InterNetwork,
+                      SocketType.Dgram, ProtocolType.Udp);
+                IPEndPoint iep = new IPEndPoint(IPAddress.Any, Protocol.serverPort);
+                sock.Bind(iep);
+                EndPoint ep = (EndPoint)iep;
+                Console.WriteLine("Ready to receive...");
+
+                byte[] data = new byte[1024];
+                int recv = sock.ReceiveFrom(data, ref ep);
+                string stringData = Encoding.ASCII.GetString(data, 0, recv);
+                Console.WriteLine("received: {0}  from: {1}",
+                                      stringData, ep.ToString());
+                servers.Add(stringData);
+                /*var endPoint = new IPEndPoint(IPAddress.Any, Protocol.serverPort);
                 var result = udpClient.Receive(ref endPoint);
                 var message = Encoding.ASCII.GetString(result);
                 servers.Add(message);
             }
-        })).Start();
+        })).Start();*/
 	}
 	
 	// Update is called once per frame
