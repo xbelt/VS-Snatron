@@ -7,7 +7,7 @@ public class GameConfiguration : MonoBehaviour
 {
 
     public int NumberOfPlayers;
-    public String HostName;
+    public String HostName = "";
 
 	// Use this for initialization
 	void Start () {
