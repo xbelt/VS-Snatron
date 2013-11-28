@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using Assets;
 using UnityEngine;
@@ -19,9 +17,7 @@ public class GUI_Control : MonoBehaviour {
 	    {
 	        while (isSearching)
 	        {
-                Debug.Log("First line");
 	            var newServer = ServerDiscoverer.DiscoverServers();
-                Debug.Log("Got new server");
 	            bool addServer = true;
 	            foreach (var server in _servers)
 	            {
