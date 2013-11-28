@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 
 namespace Assets
 {
     class Server {
-    private IPAddress IP;
-    private int port;
+        private IPAddress _ip;
+        private int _port;
 
-    public Server(IPAddress ip, int port) {
-        IP = ip;
-        this.port = port;
+        public Server(IPAddress ip, int port, String name) {
+        _ip = ip;
+        _port = port;
+        Name = name;
     }
-} 
+
+        public string Name { get; private set; }
+    } 
 }
