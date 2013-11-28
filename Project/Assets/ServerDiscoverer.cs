@@ -10,22 +10,24 @@ namespace Assets
 {
     class ServerDiscoverer
     {
-        private static bool _messageReceived = false;
-        private static Server _result = null;
-        public static Server DiscoverServers() {
+        public static bool MessageReceived;
+        private static Server _result;
+        public static Server DiscoverServers()
+        {
+            MessageReceived = false;
             var ipEndPoint = new IPEndPoint(IPAddress.Any, Protocol.serverPort);
             var udpClient = new UdpClient(ipEndPoint);
 
             var udpState = new UdpState();
             udpState.IpEndPoint = ipEndPoint;
             udpState.UdpClient = udpClient;
-
             udpClient.BeginReceive(ReceiveCallback, udpState);
 
-            while (!_messageReceived)
+            while (!MessageReceived)
             {
                 Thread.Sleep(100);
             }
+            udpClient.Close();
             return _result;
         }
 
@@ -37,11 +39,11 @@ namespace Assets
             var receiveBytes = u.EndReceive(ar, ref e);
             var receiveString = Encoding.ASCII.GetString(receiveBytes);
 
-            _messageReceived = true;
+            MessageReceived = true;
             var mySerializer = new XmlSerializer(typeof(ServerMessage));
             using (var myFileStream = new StringReader(receiveString)) {
                 var serverMessage = (ServerMessage) mySerializer.Deserialize(myFileStream);
-                _result = new Server(e.Address, serverMessage.Port);
+                _result = new Server(e.Address, serverMessage._port, serverMessage._name);
             }
 
         }
