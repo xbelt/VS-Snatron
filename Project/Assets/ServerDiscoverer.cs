@@ -15,7 +15,7 @@ namespace Assets
         public static Server DiscoverServers()
         {
             MessageReceived = false;
-            var ipEndPoint = new IPEndPoint(IPAddress.Any, Protocol.serverPort);
+            var ipEndPoint = new IPEndPoint(IPAddress.Any, Protocol.ServerPort);
             var udpClient = new UdpClient(ipEndPoint);
 
             var udpState = new UdpState();

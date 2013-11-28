@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace Assets
 {
@@ -14,10 +15,10 @@ namespace Assets
         public static bool IsHosting = true;
 
         public static void HostServer(String hostname) {
-            var ipEndPoint = new IPEndPoint(IPAddress.Broadcast, Protocol.serverPort);
+            var ipEndPoint = new IPEndPoint(IPAddress.Broadcast, Protocol.ServerPort);
             var udpClient = new UdpClient();
 
-            var message = new ServerMessage(Protocol.serverPort, hostname);
+            var message = new ServerMessage(Protocol.ServerPort, hostname);
             //Serialize message
             var serializer = new XmlSerializer(message.GetType());
             using (var writer = new StringWriter())
@@ -28,6 +29,7 @@ namespace Assets
                 {
                     while (IsHosting)
                     {
+                        Debug.Log("Sending host info");
                         udpClient.Send(sendBytes4, sendBytes4.Length, ipEndPoint);
                         Thread.Sleep(Timeout);
                     }
