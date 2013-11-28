@@ -66,6 +66,7 @@ public class GUI_Control : MonoBehaviour {
             while (_isSearching)
             {
                 var newServer = ServerDiscoverer.DiscoverServers();
+                Debug.Log("Discovered new Server");
                 var addServer = true;
                 foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip)))
                 {
@@ -108,6 +109,17 @@ public class GUI_Control : MonoBehaviour {
 
     private void HandleWaitingScreen()
     {
+        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+        GUILayout.BeginVertical(GUI.skin.box);
+
+        foreach (var item in Network.connections)
+        {
+            GUILayout.Label(item.ipAddress + " " + item.port, GUI.skin.box, GUILayout.ExpandWidth(true));
+        }
+        GUILayout.EndVertical();
+        GUILayout.EndScrollView();
+        GUILayout.EndArea();
         if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
         {
             _isSearching = false;
@@ -129,6 +141,9 @@ public class GUI_Control : MonoBehaviour {
             Application.LoadLevel(1);
         }
 
+        GUI.Label(new Rect(475, 25, 100, 30), "Player Name:");
+        GUI.TextField(new Rect(600, 25, 100, 30), "Player");
+
         GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(GUI.skin.box);
@@ -137,9 +152,11 @@ public class GUI_Control : MonoBehaviour {
         {
             if (GUILayout.Button(item.Ip + " " + item.Name, GUI.skin.box, GUILayout.ExpandWidth(true)))
             {
+                Network.Connect(item.Ip.ToString(), Protocol.GamePort);
                 _isSearching = false;
                 ServerHoster.IsHosting = false;
-                Application.LoadLevel(1);
+                _waitingScreenOn = true;
+                //Application.LoadLevel(1);
             }
         }
 
@@ -155,6 +172,7 @@ public class GUI_Control : MonoBehaviour {
             _waitingScreenOn = true;
             _hostServerGui = false;
             ServerHoster.HostServer(config.HostName);
+            Network.InitializeServer(config.NumberOfPlayers*2, Protocol.GamePort, false);
         }
         GUI.Label(new Rect(25, 75, 100, 30), "HostName");
         config.HostName = GUI.TextField(new Rect(150, 75, 100, 30), config.HostName, 20);
