@@ -12,6 +12,7 @@ public class GUI_Control : MonoBehaviour {
     private readonly List<Server> _servers = new List<Server>();
     private bool _isSearching = true;
     private bool _hostServerGui;
+    private bool _waitingScreenOn;
 
     private GameConfiguration config;
 
@@ -95,11 +96,25 @@ public class GUI_Control : MonoBehaviour {
 	    {
 	        HandleHostingGUI();
 	    }
+        else if (_waitingScreenOn)
+        {
+            HandleWaitingScreen();
+        }
 	    else
 	    {
 	        HandleStartScreenGUI();
 	    }
 	}
+
+    private void HandleWaitingScreen()
+    {
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
+        {
+            _isSearching = false;
+            ServerHoster.IsHosting = false;
+            Application.LoadLevel(1);
+        }
+    }
 
     private void HandleStartScreenGUI()
     {
@@ -137,9 +152,10 @@ public class GUI_Control : MonoBehaviour {
     {
         if (GUI.Button(new Rect(25, 25, 100, 30), "Play"))
         {
+            _waitingScreenOn = true;
+            _hostServerGui = false;
             ServerHoster.HostServer(config.HostName);
         }
-        GUI.Label(new Rect(25, 175, 100, 30), config.NumberOfPlayers + "hallo");
         GUI.Label(new Rect(25, 75, 100, 30), "HostName");
         config.HostName = GUI.TextField(new Rect(150, 75, 100, 30), config.HostName, 20);
         GUI.Label(new Rect(25, 125, 100, 30), "# Players");
