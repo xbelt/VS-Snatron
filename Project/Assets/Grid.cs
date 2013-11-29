@@ -8,15 +8,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Linq;
 using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
 	public static int Resolution = 4;
-	GameObject player;
-	void Start ()
-	{
-		player = GameObject.Find("player");
+	void Start () {
 		MeshFilter mf = gameObject.AddComponent<MeshFilter>();
 		gameObject.AddComponent<MeshRenderer>();
 		
@@ -75,12 +73,15 @@ public class Grid : MonoBehaviour
 	}
 
 	void Update () {
-		int playerX = (int) player.transform.position.x;
-		int playerZ = (int) player.transform.position.z;
+        foreach(var player in GameObject.FindGameObjectsWithTag("tron").Where(obj => obj.networkView.isMine))
+	    {
+	        int playerX = (int) player.transform.position.x;
+	        int playerZ = (int) player.transform.position.z;
 
-		// Round down to Resolution
-		int newGridX = (int) (playerX / Resolution) * Resolution;
-		int newGridZ = (int) (playerZ / Resolution) * Resolution;
-		transform.position = new Vector3 (newGridX, 0, newGridZ);
+	        // Round down to Resolution
+	        int newGridX = (int) (playerX/Resolution)*Resolution;
+	        int newGridZ = (int) (playerZ/Resolution)*Resolution;
+	        transform.position = new Vector3(newGridX, 0, newGridZ);
+	    }
 	}
 }
