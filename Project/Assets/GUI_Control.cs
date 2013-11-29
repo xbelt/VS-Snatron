@@ -14,6 +14,7 @@ public class GUI_Control : MonoBehaviour {
     private bool _hostServerGui;
     private bool _waitingScreenOn;
 
+    public string currentIP = "0.0.0.0";
     private GameConfiguration config;
 
     Vector2 _scrollPosition = Vector2.zero;
@@ -23,11 +24,14 @@ public class GUI_Control : MonoBehaviour {
 
 
 // ReSharper disable once UnusedMember.Local
-    private void Start()
-    {
+    private void Start() {
+        ChangeWifiSettingsAndroid();
         config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
         ReadScreenDimensionsAndroid();
         StartDiscoverServerThread();
+    }
+
+    private void ChangeWifiSettingsAndroid() {
     }
 
     private void ReadScreenDimensionsAndroid()
@@ -109,17 +113,20 @@ public class GUI_Control : MonoBehaviour {
 
     private void HandleWaitingScreen()
     {
-        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
-        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-        GUILayout.BeginVertical(GUI.skin.box);
+        if (ServerHoster.IsHosting) {
+            GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+            GUILayout.BeginVertical(GUI.skin.box);
 
-        foreach (var item in Network.connections)
-        {
-            GUILayout.Label(item.ipAddress + " " + item.port, GUI.skin.box, GUILayout.ExpandWidth(true));
+            foreach (var item in Network.connections) {
+                GUILayout.Label(item.ipAddress + " " + item.port, GUI.skin.box, GUILayout.ExpandWidth(true));
+            }
+            GUILayout.EndVertical();
+            GUILayout.EndScrollView();
+            GUILayout.EndArea();
         }
-        GUILayout.EndVertical();
-        GUILayout.EndScrollView();
-        GUILayout.EndArea();
+        GUI.Label(new Rect(25, 175, 100, 30), _servers.Find(x => x.Name.Equals(config.HostName)) == null ? "" : _servers.Find(x => x.Name.Equals(config.HostName)).Ip.ToString());
+
         if (GUI.Button(new Rect(25, 75, 100, 30), "Race"))
         {
             _isSearching = false;
@@ -156,13 +163,21 @@ public class GUI_Control : MonoBehaviour {
                 _isSearching = false;
                 ServerHoster.IsHosting = false;
                 _waitingScreenOn = true;
-                //Application.LoadLevel(1);
             }
         }
 
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
+
+        GUI.Label(new Rect(475, 75, 100, 30), "Server IP");
+        currentIP = GUI.TextField(new Rect(600, 75, 100, 30), currentIP);
+        if (GUI.Button(new Rect(725, 75, 100, 30), "Join")) {
+            Network.Connect(currentIP, Protocol.GamePort);
+            _isSearching = false;
+            ServerHoster.IsHosting = false;
+            _waitingScreenOn = true;
+        }
     }
 
     private void HandleHostingGUI()
@@ -172,14 +187,14 @@ public class GUI_Control : MonoBehaviour {
             _waitingScreenOn = true;
             _hostServerGui = false;
             ServerHoster.HostServer(config.HostName);
-            Network.InitializeServer(config.NumberOfPlayers*2, Protocol.GamePort, false);
+            Network.InitializeServer(config.NumberOfPlayers, Protocol.GamePort, false);
         }
+        
         GUI.Label(new Rect(25, 75, 100, 30), "HostName");
         config.HostName = GUI.TextField(new Rect(150, 75, 100, 30), config.HostName, 20);
-        GUI.Label(new Rect(25, 125, 100, 30), "# Players");
-        config.NumberOfPlayers =
-            Convert.ToInt32(Regex.Replace(
-                GUI.TextField(new Rect(150, 125, 100, 30), config.NumberOfPlayers.ToString()), "[^.0-9]", ""));
+        GUI.Label(new Rect(25, 125, 100, 30), "# of opponents");
+        Int32.TryParse(Regex.Replace(
+            GUI.TextField(new Rect(150, 125, 100, 30), config.NumberOfPlayers.ToString()), "[^.0-9]", ""), out config.NumberOfPlayers);
     }
     #endregion
 }
