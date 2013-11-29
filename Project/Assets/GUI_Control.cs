@@ -118,6 +118,7 @@ public class GUI_Control : MonoBehaviour {
         foreach (var item in _servers) {
             if (GUILayout.Button(item.Ip + " " + item.Name, GUI.skin.box, GUILayout.ExpandWidth(true))) {
                 Network.Connect(item.Ip.ToString(), Protocol.GamePort);
+                
                 _isSearching = false;
                 ServerHoster.IsHosting = false;
                 _waitingScreenOn = true;
@@ -154,6 +155,8 @@ public class GUI_Control : MonoBehaviour {
             out config.NumberOfPlayers);
     }
 
+
+
     private void HandleWaitingScreen() {
         if (Network.isServer) {
             GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
@@ -172,18 +175,31 @@ public class GUI_Control : MonoBehaviour {
             _servers.Find(x => x.Name.Equals(config.HostName)) == null
                 ? ""
                 : _servers.Find(x => x.Name.Equals(config.HostName)).Ip.ToString());*/
-        if (Network.maxConnections == Network.connections.Length) {
+        //if(Network.isClient)
+        if (Network.isServer && Network.connections.Length > 0) {
+
             StartNetworkGame();
+            Debug.Log("RPC made");
+            GameObject.Find("NetworkThingy").GetComponent<NetworkView>().RPC("StartNetworkGame", RPCMode.All);
         }
+        /*if (Network.maxConnections == Network.connections.Length) {
+            StartNetworkGame();
+        }*/
 
         if (GUI.Button(new Rect(25, 75, 100, 30), "Race")) {
             StartQuickGame();
         }
     }
 
+    void OnConnectedToServer() {
+        print("Connected");
+    }
+
+    [RPC]
     private void StartNetworkGame() {
         _isSearching = false;
         ServerHoster.IsHosting = false;
+        Debug.Log(config.NumberOfPlayers + " " + "RPC called" );
         var game = new Game(config.NumberOfPlayers, tron, grid);
         game.StartGame();
     }
@@ -195,6 +211,7 @@ public class GUI_Control : MonoBehaviour {
         var game = new Game(1, tron, grid);
         game.StartGame();
     }
+
 
 
     #endregion
