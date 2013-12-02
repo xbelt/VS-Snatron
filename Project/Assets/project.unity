@@ -222,6 +222,7 @@ GameObject:
   - 65: {fileID: 1447392289}
   - 23: {fileID: 1447392288}
   - 114: {fileID: 1447392287}
+  - 148: {fileID: 1447392292}
   m_Layer: 0
   m_Name: SplashScreen
   m_TagString: Untagged
@@ -293,6 +294,18 @@ Transform:
   m_LocalScale: {x: 40, y: 20, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!148 &1447392292
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1447392286}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1447392291}
+  m_ViewID:
+    m_ID: 2
+    m_Type: 1
 --- !u!1 &1452918953
 GameObject:
   m_ObjectHideFlags: 0

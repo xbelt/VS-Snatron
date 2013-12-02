@@ -180,7 +180,7 @@ public class GUI_Control : MonoBehaviour {
 
             StartNetworkGame();
             Debug.Log("RPC made");
-            GameObject.Find("NetworkThingy").GetComponent<NetworkView>().RPC("StartNetworkGame", RPCMode.All);
+            gameObject.GetComponent<NetworkView>().RPC("StartNetworkGame", RPCMode.All);
         }
         /*if (Network.maxConnections == Network.connections.Length) {
             StartNetworkGame();
