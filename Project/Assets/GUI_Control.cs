@@ -38,6 +38,7 @@ public class GUI_Control : MonoBehaviour {
     private void ChangeWifiSettingsAndroid() {}
 
     private void ReadScreenDimensionsAndroid() {
+#if UNITY_Android
         try {
             using (var unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
                 using (new AndroidJavaClass("android.util.DisplayMetrics")) {
@@ -58,6 +59,11 @@ public class GUI_Control : MonoBehaviour {
             HeightPixels = 600;
             WidthPixels = 800;
         }
+#else
+        HeightPixels = 600;
+        WidthPixels = 800;
+#endif
+
     }
 
     private void StartDiscoverServerThread() {

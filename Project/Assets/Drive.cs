@@ -48,6 +48,7 @@ public class Drive : MonoBehaviour {
 	    config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
 
 		NewWall();
+#if UNITY_Android
 		using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"),
 		    metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
 		) {
@@ -62,6 +63,10 @@ public class Drive : MonoBehaviour {
 				WidthPixels = metricsInstance.Get<int> ("widthPixels");
 			}
 		}
+#else
+        HeightPixels = 600;
+        WidthPixels = 800;
+#endif
 	}
 	
 	// Update is called once per frame
