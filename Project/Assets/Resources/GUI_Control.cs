@@ -68,8 +68,8 @@ public class GUI_Control : MonoBehaviour {
         HeightPixels = Screen.height;
         WidthPixels = Screen.width;
 #endif
-        buttonGUIStyle.fontSize = HeightPixels/50;
-        labelGUIStyle.fontSize = HeightPixels/50;
+        buttonGUIStyle.fontSize = HeightPixels / 50 < 12 ? 12 : HeightPixels / 50;
+        labelGUIStyle.fontSize  = HeightPixels / 50 < 12 ? 12 : HeightPixels / 50;
     }
 
     private void StartDiscoverServerThread() {
