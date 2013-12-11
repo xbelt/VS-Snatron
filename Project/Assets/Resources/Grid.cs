@@ -21,7 +21,8 @@ public class Grid : MonoBehaviour
 		gameObject.renderer.material.color = new Color(0f, 0f, 1f, 0);
 		
 		float width = 0.05f;
-		float length = 100f;
+        //Should always be at least as big as the game field
+		float length = 400f;
 
 
 		int linesThroughOrigin = 1;
