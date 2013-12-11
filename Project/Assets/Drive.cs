@@ -30,7 +30,15 @@ public class Drive : MonoBehaviour {
 
 	Vector3 CurrentWallEnd {
 		get {
-			return transform.position - WallOffset;
+		    if (latestWall != null) {
+		        if (Vector3.SqrMagnitude(latestWall.end - latestWall.start) > 20) {
+		            return transform.position - WallOffset;
+		        }
+		        else {
+		            return transform.position;
+		        }
+		    }
+            return transform.position - WallOffset;
 		}
 	}
 
@@ -102,7 +110,6 @@ public class Drive : MonoBehaviour {
     {   
         latestWall.updateWall(transform.position);
         transform.Rotate(Vector3.up, 270);
-        transform.Translate(Offset);
         NewWall();
     }
 
@@ -110,7 +117,7 @@ public class Drive : MonoBehaviour {
     {
         latestWall.updateWall(transform.position);
         transform.Rotate(Vector3.up, 90);
-        transform.Translate(Offset);
+        
         NewWall();
     }
 
