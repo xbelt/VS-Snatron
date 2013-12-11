@@ -201,7 +201,8 @@ public class GUI_Control : MonoBehaviour {
     private void StartNetworkGame() {
         _isSearching = false;
         ServerHoster.IsHosting = false;
-        var game = new Game(Network.maxConnections + 1, tron, grid);
+        Debug.Log("Before passing: " + (tron == null));
+        var game = new Game(Network.maxConnections + 1, Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
         Destroy(gameObject);
         game.StartGame();
     }
@@ -210,7 +211,7 @@ public class GUI_Control : MonoBehaviour {
         _isSearching = false;
         ServerHoster.IsHosting = false;
         Network.InitializeServer(1, Protocol.GamePort, false);
-        var game = new Game(1, tron, grid);
+        var game = new Game(1, Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
         Destroy(gameObject);
         game.StartGame();
     }
@@ -232,6 +233,7 @@ public class GUI_Control : MonoBehaviour {
         }
 
         private void SpawnPlayer() {
+            Debug.Log((_playerPrefab == null) + " playerPrefab");
             var player = Network.Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity, 0) as Transform;
             GameObject.Find("Main Camera").GetComponent<SmoothFollow>().target = player;
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
