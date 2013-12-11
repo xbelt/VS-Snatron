@@ -20,6 +20,7 @@ public class GUI_Control : MonoBehaviour {
 
     public Transform tron;
     public Transform grid;
+    public GUIStyle buttonGUIStyle;
 
     private Vector2 _scrollPosition = Vector2.zero;
     private bool drawGUI = true;
@@ -109,10 +110,11 @@ public class GUI_Control : MonoBehaviour {
     }
 
     private void HandleStartScreenGUI() {
-        if (GUI.Button(new Rect(25, 25, 100, 30), "Host")) {
+        if (GUI.Button(new Rect(25, 25, 100, 30), "Host", buttonGUIStyle))
+        {
             _hostServerGui = true;
         }
-        if (GUI.Button(new Rect(25, 75, 100, 30), "Race")) {
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle)) {
             StartQuickGame();
         }
 
@@ -139,7 +141,8 @@ public class GUI_Control : MonoBehaviour {
     }
 
     private void HandleHostingGUI() {
-        if (GUI.Button(new Rect(25, 25, 100, 30), "Play")) {
+        if (GUI.Button(new Rect(25, 25, 100, 30), "Play", buttonGUIStyle))
+        {
             _waitingScreenOn = true;
             _hostServerGui = false;
             _isSearching = false;
