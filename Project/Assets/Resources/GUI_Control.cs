@@ -21,6 +21,8 @@ public class GUI_Control : MonoBehaviour {
     public Transform tron;
     public Transform grid;
     public GUIStyle buttonGUIStyle;
+    public GUIStyle labelGUIStyle;
+    public GUIStyle layoutGUIStyle;
 
     private Vector2 _scrollPosition = Vector2.zero;
     private bool drawGUI = true;
@@ -63,10 +65,11 @@ public class GUI_Control : MonoBehaviour {
             WidthPixels = 800;
         }
 #else
-        HeightPixels = 600;
-        WidthPixels = 800;
+        HeightPixels = Screen.height;
+        WidthPixels = Screen.width;
 #endif
-
+        buttonGUIStyle.fontSize = HeightPixels/50;
+        labelGUIStyle.fontSize = HeightPixels/50;
     }
 
     private void StartDiscoverServerThread() {
@@ -110,18 +113,18 @@ public class GUI_Control : MonoBehaviour {
     }
 
     private void HandleStartScreenGUI() {
-        if (GUI.Button(new Rect(25, 25, 100, 30), "Host", buttonGUIStyle))
+        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Host", buttonGUIStyle))
         {
             _hostServerGui = true;
         }
-        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle)) {
+        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Race", buttonGUIStyle))
+        {
             StartQuickGame();
         }
 
-        GUI.Label(new Rect(475, 25, 100, 30), "Player Name:");
-        _playerName = GUI.TextField(new Rect(600, 25, 100, 30), _playerName);
-
-        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
+        GUI.Label(new Rect(17 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Player Name:", labelGUIStyle);
+        _playerName = GUI.TextField(new Rect(21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName);
+        GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(GUI.skin.box);
 
@@ -141,7 +144,7 @@ public class GUI_Control : MonoBehaviour {
     }
 
     private void HandleHostingGUI() {
-        if (GUI.Button(new Rect(25, 25, 100, 30), "Play", buttonGUIStyle))
+        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Play", buttonGUIStyle))
         {
             _waitingScreenOn = true;
             _hostServerGui = false;
