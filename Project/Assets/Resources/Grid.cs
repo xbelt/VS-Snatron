@@ -18,7 +18,7 @@ public class Grid : MonoBehaviour
 		MeshFilter mf = gameObject.AddComponent<MeshFilter>();
 		gameObject.AddComponent<MeshRenderer>();
 		
-		gameObject.renderer.material.color = new Color(0f, 0f, 0f, 0);
+		gameObject.renderer.material.color = new Color(0f, 0f, 1f, 0);
 		
 		float width = 0.05f;
 		float length = 100f;
