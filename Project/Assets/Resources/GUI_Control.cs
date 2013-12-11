@@ -23,6 +23,7 @@ public class GUI_Control : MonoBehaviour {
     public GUIStyle buttonGUIStyle;
     public GUIStyle labelGUIStyle;
     public GUIStyle layoutGUIStyle;
+    public GUIStyle textFieldGUIStyle;
 
     private Vector2 _scrollPosition = Vector2.zero;
     private bool drawGUI = true;
@@ -68,10 +69,25 @@ public class GUI_Control : MonoBehaviour {
         HeightPixels = Screen.height;
         WidthPixels = Screen.width;
 #endif
-        buttonGUIStyle.fontSize = HeightPixels / 50 < 12 ? 12 : HeightPixels / 50;
-        labelGUIStyle.fontSize  = HeightPixels / 50 < 12 ? 12 : HeightPixels / 50;
+        SetFontSize(HeightPixels / 50);
+        SetTextColor(Color.white);
     }
 
+    private void SetTextColor(Color color)
+    {
+        buttonGUIStyle.normal.textColor = color;
+        labelGUIStyle.normal.textColor = color;
+        layoutGUIStyle.normal.textColor = color;
+        textFieldGUIStyle.normal.textColor = color;
+    }
+
+    private void SetFontSize(int size)
+    {
+        buttonGUIStyle.fontSize = size < 12 ? 12 : size;
+        labelGUIStyle.fontSize = size < 12 ? 12 : size;
+        layoutGUIStyle.fontSize = size < 12 ? 12 : size;
+        textFieldGUIStyle.fontSize = size < 12 ? 12 : size;
+    }
     private void StartDiscoverServerThread() {
         (new Thread(() => {
             while (_isSearching) {
@@ -154,11 +170,11 @@ public class GUI_Control : MonoBehaviour {
             Network.sendRate = 15;
         }
 
-        GUI.Label(new Rect(25, 75, 100, 30), "HostName");
-        config.HostName = GUI.TextField(new Rect(150, 75, 100, 30), config.HostName, 20);
-        GUI.Label(new Rect(25, 125, 100, 30), "# of opponents");
+        GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName", labelGUIStyle);
+        config.HostName = GUI.TextField(new Rect(5 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), config.HostName, 20, textFieldGUIStyle);
+        GUI.Label(new Rect(1 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "# of opponents", labelGUIStyle);
         Int32.TryParse(Regex.Replace(
-            GUI.TextField(new Rect(150, 125, 100, 30), config.NumberOfPlayers.ToString()), "[^.0-9]", ""),
+            GUI.TextField(new Rect(5 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), config.NumberOfPlayers.ToString(), textFieldGUIStyle), "[^.0-9]", ""),
             out config.NumberOfPlayers);
     }
 
