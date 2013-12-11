@@ -231,14 +231,18 @@ public class GUI_Control : MonoBehaviour {
             Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
         var backWall =
             Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 0, -FieldBorderCoordinates);
-        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 0, -FieldBorderCoordinates));
-        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 0, -FieldBorderCoordinates);
-        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 0,  FieldBorderCoordinates));
-        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 0,  FieldBorderCoordinates);
-        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 0,  FieldBorderCoordinates));
-        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 0,  FieldBorderCoordinates);
-        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 0, -FieldBorderCoordinates));
+        leftWall .transform.localScale = new Vector3(1, 5, 1);
+        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates);
+        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates));
+        frontWall .transform.localScale = new Vector3(1, 5, 1);
+        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates);
+        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates));
+        rightWall .transform.localScale = new Vector3(1, 5, 1);
+        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates);
+        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates));
+        backWall .transform.localScale = new Vector3(1, 5, 1);
+        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates);
+        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates));
     }
 
     #endregion
