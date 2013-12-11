@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
-	WallBehaviour latestWall;
+    private Transform latestWallGameObject;
 
 	static Vector3 MinSpeed = Vector3.forward * 25;
 	static Vector3 MaxSpeed = Vector3.forward * 45;
@@ -30,8 +30,9 @@ public class Drive : MonoBehaviour {
 
 	Vector3 CurrentWallEnd {
 		get {
-		    if (latestWall == null) return transform.position - WallOffset;
-		    if (Vector3.SqrMagnitude(latestWall.end - latestWall.start) > 20) {
+		    if (latestWallGameObject == null) return transform.position - WallOffset;
+            if (Vector3.SqrMagnitude(latestWallGameObject.GetComponent<WallBehaviour>().end - latestWallGameObject.GetComponent<WallBehaviour>().start) > 20)
+            {
 		        return transform.position - WallOffset;
 		    }
 		    return transform.position;
@@ -77,8 +78,8 @@ public class Drive : MonoBehaviour {
 	void Update () {
 		AdjustSpeed ();
 	    transform.Translate(Speed*Time.deltaTime);
-	    if (latestWall != null) {
-			latestWall.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
+	    if (latestWallGameObject != null) {
+			latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
 
         GameObject.Find("LightFront").GetComponent<Light>().transform.position = transform.position + Vector3.up;
@@ -106,15 +107,15 @@ public class Drive : MonoBehaviour {
 	}
 
     void TurnLeft()
-    {   
-        latestWall.updateWall(transform.position);
+    {
+        latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         transform.Rotate(Vector3.up, 270);
         NewWall();
     }
 
     void TurnRight()
     {
-        latestWall.updateWall(transform.position);
+        latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         transform.Rotate(Vector3.up, 90);
         
         NewWall();
@@ -134,9 +135,9 @@ public class Drive : MonoBehaviour {
 	}
 
 	void NewWall() {
-		latestWall = (Network.Instantiate (wallTemplate, CurrentWallEnd, Quaternion.identity, 1) as Transform).GetComponent<WallBehaviour> ();
-		latestWall.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
-		latestWall.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
-		latestWall.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
+	    latestWallGameObject = (Transform) Network.Instantiate(wallTemplate, CurrentWallEnd, Quaternion.identity, 0);
+		latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
+		latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
+		latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
 	}
 }
