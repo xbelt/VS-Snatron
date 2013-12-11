@@ -241,19 +241,6 @@ public class GUI_Control : MonoBehaviour {
 
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
-            var lightGameObject = new GameObject("LightFront");
-            lightGameObject.AddComponent<Light>();
-            lightGameObject.light.color = Color.blue;
-            lightGameObject.light.intensity = 1;
-            lightGameObject.light.shadows = LightShadows.Hard;
-            lightGameObject.transform.position = Vector3.up;
-
-            var lightGameObject2 = new GameObject("LightBack");
-            lightGameObject2.AddComponent<Light>();
-            lightGameObject2.light.color = Color.blue;
-            lightGameObject2.light.intensity = 1;
-            lightGameObject2.light.shadows = LightShadows.Hard;
-            lightGameObject2.transform.position = Vector3.up;
         }
 
         public void StartGame() {

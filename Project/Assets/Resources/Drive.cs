@@ -82,8 +82,6 @@ public class Drive : MonoBehaviour {
 			latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
 
-        GameObject.Find("LightFront").GetComponent<Light>().transform.position = transform.position + Vector3.up;
-        GameObject.Find("LightBack").GetComponent<Light>().transform.position = transform.position + Vector3.up - WallOffset;
 
 	    if (GetComponent<NetworkView>().isMine) {
 		    //Handling touch input
