@@ -30,15 +30,11 @@ public class Drive : MonoBehaviour {
 
 	Vector3 CurrentWallEnd {
 		get {
-		    if (latestWall != null) {
-		        if (Vector3.SqrMagnitude(latestWall.end - latestWall.start) > 20) {
-		            return transform.position - WallOffset;
-		        }
-		        else {
-		            return transform.position;
-		        }
+		    if (latestWall == null) return transform.position - WallOffset;
+		    if (Vector3.SqrMagnitude(latestWall.end - latestWall.start) > 20) {
+		        return transform.position - WallOffset;
 		    }
-            return transform.position - WallOffset;
+		    return transform.position;
 		}
 	}
 
@@ -85,6 +81,9 @@ public class Drive : MonoBehaviour {
 			latestWall.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
 
+        GameObject.Find("LightFront").GetComponent<Light>().transform.position = transform.position + Vector3.up;
+        GameObject.Find("LightBack").GetComponent<Light>().transform.position = transform.position + Vector3.up - WallOffset;
+
 		//Handling touch input
 		foreach(var touch in Input.touches) {
 			if (touch.phase == TouchPhase.Began) {
@@ -125,14 +124,12 @@ public class Drive : MonoBehaviour {
 		if (other.gameObject.tag == "wall") {
 			print (other.name + " " + name);
 				NumberOfWallsNear++;
-				print ("Walls near: " + NumberOfWallsNear);
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "wall") {
 			NumberOfWallsNear--;
-			print ("Walls near: " + NumberOfWallsNear);
 		}
 	}
 

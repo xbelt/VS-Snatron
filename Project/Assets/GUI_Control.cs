@@ -134,21 +134,13 @@ public class GUI_Control : MonoBehaviour {
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
-
-        /*GUI.Label(new Rect(475, 75, 100, 30), "Server IP");
-        _currentIp = GUI.TextField(new Rect(600, 75, 100, 30), _currentIp);
-        if (GUI.Button(new Rect(725, 75, 100, 30), "Join")) {
-            Network.Connect(_currentIp, Protocol.GamePort);
-            _isSearching = false;
-            ServerHoster.IsHosting = false;
-            _waitingScreenOn = true;
-        }*/
     }
 
     private void HandleHostingGUI() {
         if (GUI.Button(new Rect(25, 25, 100, 30), "Play")) {
             _waitingScreenOn = true;
             _hostServerGui = false;
+            _isSearching = false;
             ServerHoster.HostServer(config.HostName);
             Network.InitializeServer(config.NumberOfPlayers, Protocol.GamePort, false);
         }
@@ -185,6 +177,7 @@ public class GUI_Control : MonoBehaviour {
         if (Network.isServer && Network.connections.Length > 0) {
 
             StartNetworkGame();
+            ServerHoster.IsHosting = false;
             Debug.Log("RPC made");
             gameObject.GetComponent<NetworkView>().RPC("StartNetworkGame", RPCMode.All);
         }
@@ -213,7 +206,7 @@ public class GUI_Control : MonoBehaviour {
     private void StartQuickGame() {
         _isSearching = false;
         ServerHoster.IsHosting = false;
-        Network.InitializeServer(0, Protocol.GamePort, false);
+        Network.InitializeServer(1, Protocol.GamePort, false);
         var game = new Game(1, tron, grid);
         game.StartGame();
     }
@@ -239,6 +232,19 @@ public class GUI_Control : MonoBehaviour {
             GameObject.Find("Main Camera").GetComponent<SmoothFollow>().target = player;
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
+            var lightGameObject = new GameObject("LightFront");
+            lightGameObject.AddComponent<Light>();
+            lightGameObject.light.color = Color.blue;
+            lightGameObject.light.intensity = 1;
+            lightGameObject.light.shadows = LightShadows.Hard;
+            lightGameObject.transform.position = Vector3.up;
+
+            var lightGameObject2 = new GameObject("LightBack");
+            lightGameObject2.AddComponent<Light>();
+            lightGameObject2.light.color = Color.blue;
+            lightGameObject2.light.intensity = 1;
+            lightGameObject2.light.shadows = LightShadows.Hard;
+            lightGameObject2.transform.position = Vector3.up;
         }
 
         public void StartGame() {
