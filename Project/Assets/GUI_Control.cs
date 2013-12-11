@@ -201,7 +201,6 @@ public class GUI_Control : MonoBehaviour {
     private void StartNetworkGame() {
         _isSearching = false;
         ServerHoster.IsHosting = false;
-        Debug.Log(config.NumberOfPlayers + " " + "RPC called" );
         var game = new Game(Network.maxConnections + 1, tron, grid);
         Destroy(gameObject);
         game.StartGame();
