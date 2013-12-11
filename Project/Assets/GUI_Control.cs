@@ -22,6 +22,7 @@ public class GUI_Control : MonoBehaviour {
     public Transform grid;
 
     private Vector2 _scrollPosition = Vector2.zero;
+    private bool drawGUI = true;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
@@ -101,7 +102,7 @@ public class GUI_Control : MonoBehaviour {
         else if (_waitingScreenOn) {
             HandleWaitingScreen();
         }
-        else {
+        else if (drawGUI){
             HandleStartScreenGUI();
         }
     }
@@ -178,8 +179,9 @@ public class GUI_Control : MonoBehaviour {
 
             StartNetworkGame();
             ServerHoster.IsHosting = false;
-            Debug.Log("RPC made");
-            gameObject.GetComponent<NetworkView>().RPC("StartNetworkGame", RPCMode.All);
+            _hostServerGui = false;
+            _waitingScreenOn = false;
+            drawGUI = false;
         }
         /*if (Network.maxConnections == Network.connections.Length) {
             StartNetworkGame();
@@ -192,6 +194,7 @@ public class GUI_Control : MonoBehaviour {
 
     void OnConnectedToServer() {
         print("Connected");
+        StartNetworkGame();
     }
 
     [RPC]
@@ -199,7 +202,8 @@ public class GUI_Control : MonoBehaviour {
         _isSearching = false;
         ServerHoster.IsHosting = false;
         Debug.Log(config.NumberOfPlayers + " " + "RPC called" );
-        var game = new Game(config.NumberOfPlayers, tron, grid);
+        var game = new Game(Network.maxConnections + 1, tron, grid);
+        Destroy(gameObject);
         game.StartGame();
     }
 
@@ -208,6 +212,7 @@ public class GUI_Control : MonoBehaviour {
         ServerHoster.IsHosting = false;
         Network.InitializeServer(1, Protocol.GamePort, false);
         var game = new Game(1, tron, grid);
+        Destroy(gameObject);
         game.StartGame();
     }
 
@@ -248,7 +253,6 @@ public class GUI_Control : MonoBehaviour {
         }
 
         public void StartGame() {
-            Destroy(GameObject.Find("SplashScreen"));
             SpawnPlayer();
         }
     }

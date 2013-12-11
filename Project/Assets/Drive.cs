@@ -134,7 +134,7 @@ public class Drive : MonoBehaviour {
 	}
 
 	void NewWall() {
-		latestWall = (Instantiate (wallTemplate, CurrentWallEnd, Quaternion.identity) as Transform).GetComponent<WallBehaviour> ();
+		latestWall = (Network.Instantiate (wallTemplate, CurrentWallEnd, Quaternion.identity, 1) as Transform).GetComponent<WallBehaviour> ();
 		latestWall.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		latestWall.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
 		latestWall.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
