@@ -1,9 +1,0 @@
-fileFormatVersion: 2
-guid: afbfaa41300753543974471e7b6324aa
-MonoImporter:
-  serializedVersion: 2
-  defaultReferences:
-  - wallTemplate: {fileID: 400000, guid: cc6c1a291c23fb341b2b331e862cdd1a, type: 2}
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
