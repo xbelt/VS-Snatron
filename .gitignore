@@ -12,6 +12,7 @@
 # generated files
 Project/bin/
 Project/gen/
+Project/Snatron_Data/*
 
 # Local configuration file (sdk path, etc)
 Project/local.properties
