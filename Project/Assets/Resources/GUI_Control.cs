@@ -23,6 +23,7 @@ public class GUI_Control : MonoBehaviour {
 
     private Vector2 _scrollPosition = Vector2.zero;
     private bool drawGUI = true;
+    private int FieldBorderCoordinates = 200;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
@@ -183,6 +184,8 @@ public class GUI_Control : MonoBehaviour {
             _hostServerGui = false;
             _waitingScreenOn = false;
             drawGUI = false;
+            InstantiateGameBorders();
+            
         }
         /*if (Network.maxConnections == Network.connections.Length) {
             StartNetworkGame();
@@ -213,11 +216,30 @@ public class GUI_Control : MonoBehaviour {
         ServerHoster.IsHosting = false;
         Network.InitializeServer(1, Protocol.GamePort, false);
         var game = new Game(1, Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
+        InstantiateGameBorders();
         Destroy(gameObject);
         game.StartGame();
     }
 
-
+    private void InstantiateGameBorders()
+    {
+        var leftWall =
+            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
+        var frontWall =
+            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
+        var rightWall =
+            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
+        var backWall =
+            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
+        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 0, -FieldBorderCoordinates);
+        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 0, -FieldBorderCoordinates));
+        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 0, -FieldBorderCoordinates);
+        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 0,  FieldBorderCoordinates));
+        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 0,  FieldBorderCoordinates);
+        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 0,  FieldBorderCoordinates));
+        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 0,  FieldBorderCoordinates);
+        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 0, -FieldBorderCoordinates));
+    }
 
     #endregion
 
