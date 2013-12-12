@@ -6,6 +6,6 @@ The goal of this game is to force your opponent(s) to die. You die if you either
 created by an other player.
 
 Technical specs:
-- Java 1.6
-- Everything is done in OpenGL
-- Android 4.0+
+- C#
+- Unity Pro
+- Android 4.1+
