@@ -1,21 +1,22 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
-    private Transform latestWallGameObject;
+    private Transform _latestWallGameObject;
 
-	static Vector3 MinSpeed = Vector3.forward * 25;
-	static Vector3 MaxSpeed = Vector3.forward * 45;
+	static readonly Vector3 MinSpeed = Vector3.forward * 25;
+	static readonly Vector3 MaxSpeed = Vector3.forward * 45;
 	
-	Vector3 Speed = MinSpeed;
+	Vector3 _speed = MinSpeed;
 
-	int NumberOfWallsNear = 0;
+	int _numberOfWallsNear = 0;
 
-	int HeightPixels;
-	int WidthPixels;
+    private int _heightPixels;
+	private int _widthPixels;
 
-    private GameConfiguration config;
+    private GameConfiguration _config;
 
     Vector3 Offset {
         get {
@@ -30,8 +31,8 @@ public class Drive : MonoBehaviour {
 
 	Vector3 CurrentWallEnd {
 		get {
-		    if (latestWallGameObject == null) return transform.position - WallOffset;
-            if (Vector3.SqrMagnitude(latestWallGameObject.GetComponent<WallBehaviour>().end - latestWallGameObject.GetComponent<WallBehaviour>().start) > 20)
+		    if (_latestWallGameObject == null) return transform.position - WallOffset;
+            if (Vector3.SqrMagnitude(_latestWallGameObject.GetComponent<WallBehaviour>().end - _latestWallGameObject.GetComponent<WallBehaviour>().start) > 20)
             {
 		        return transform.position - WallOffset;
 		    }
@@ -41,16 +42,13 @@ public class Drive : MonoBehaviour {
 
 	void AdjustSpeed ()
 	{
-		if (NumberOfWallsNear > 1) {
-			Speed = Vector3.MoveTowards (Speed, MaxSpeed, 30 * Time.deltaTime);
-		} else {
-			Speed = Vector3.MoveTowards(Speed, MinSpeed, 30 * Time.deltaTime);
-		}
+	    _speed = Vector3.MoveTowards(_speed, _numberOfWallsNear > 1 ? MaxSpeed : MinSpeed, 30 * Time.deltaTime);
 	}
 
+// ReSharper disable once UnusedMember.Local
 	void Start ()
 	{
-	    config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
+	    _config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
 
 		NewWall();
 #if UNITY_Android
@@ -69,35 +67,35 @@ public class Drive : MonoBehaviour {
 			}
 		}
 #else
-        HeightPixels = 600;
-        WidthPixels = 800;
+        _heightPixels = Screen.height;
+        _widthPixels = Screen.width;
 #endif
 	}
 	
-	// Update is called once per frame
+// ReSharper disable once UnusedMember.Local
 	void Update () {
 		AdjustSpeed ();
-	    transform.Translate(Speed*Time.deltaTime);
-	    if (latestWallGameObject != null) {
-			latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
+	    transform.Translate(_speed*Time.deltaTime);
+	    if (_latestWallGameObject != null) {
+			_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
 
 
-	    if (GetComponent<NetworkView>().isMine) {
-		    //Handling touch input
-		    foreach(var touch in Input.touches) {
-			    if (touch.phase == TouchPhase.Began) {
-				    if (touch.position.x > WidthPixels/2) {
-					    TurnRight();
-				    }
-				    else {
-					    TurnLeft();
-				    }
-			    }
-		    }
+	    if (GetComponent<NetworkView>().isMine)
+	    {
+	        //Handling touch input
+	        foreach (var touch in Input.touches.Where(touch => touch.phase == TouchPhase.Began))
+	        {
+	            if (touch.position.x > _widthPixels/2) {
+	                TurnRight();
+	            }
+	            else {
+	                TurnLeft();
+	            }
+	        }
 
 
-            // Input for preview
+	        // Input for preview
 		    if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			    TurnLeft();
 		    } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
@@ -108,36 +106,38 @@ public class Drive : MonoBehaviour {
 
     void TurnLeft()
     {
-        latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
+        _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         transform.Rotate(Vector3.up, 270);
         NewWall();
     }
 
     void TurnRight()
     {
-        latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
+        _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         transform.Rotate(Vector3.up, 90);
         
         NewWall();
     }
 
+// ReSharper disable UnusedMember.Local
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "wall") {
 			print (other.name + " " + name);
-				NumberOfWallsNear++;
+				_numberOfWallsNear++;
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "wall") {
-			NumberOfWallsNear--;
+			_numberOfWallsNear--;
 		}
 	}
+// ReSharper restore UnusedMember.Local
 
 	void NewWall() {
-	    latestWallGameObject = (Transform) Network.Instantiate(wallTemplate, CurrentWallEnd, Quaternion.identity, 0);
-		latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
-		latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
-		latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
+	    _latestWallGameObject = (Transform) Network.Instantiate(wallTemplate, CurrentWallEnd, Quaternion.identity, 0);
+		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
+		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
+		_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
 	}
 }
