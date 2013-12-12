@@ -80,7 +80,7 @@ GameObject:
   - 4: {fileID: 400008}
   - 108: {fileID: 10800002}
   m_Layer: 0
-  m_Name: Point light
+  m_Name: LightBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
