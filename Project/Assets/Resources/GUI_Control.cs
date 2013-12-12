@@ -255,22 +255,27 @@ public class GUI_Control : MonoBehaviour {
         var backWall =
             Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
         var wallColor = new Color(204/255f, 204/255f, 204/255f, 1f);
+        var shader = Shader.Find("Diffuse");
         leftWall .transform.localScale = new Vector3(1, 5, 1);
-        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates);
-        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates));
+        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
+        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
         leftWall .GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+        leftWall.renderer.material.shader = shader;
         frontWall.transform.localScale = new Vector3(1, 5, 1);
-        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates);
-        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates));
+        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
+        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates));
         frontWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+        frontWall.renderer.material.shader = shader;
         rightWall.transform.localScale = new Vector3(1, 5, 1);
-        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates);
-        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates));
+        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates);
+        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates));
         rightWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+        rightWall.renderer.material.shader = shader;
         backWall .transform.localScale = new Vector3(1, 5, 1);
-        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 2.5f,  FieldBorderCoordinates);
-        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 2.5f, -FieldBorderCoordinates));
+        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates);
+        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
         backWall .GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+        backWall .renderer.material.shader = shader;
     }
 
     #endregion
