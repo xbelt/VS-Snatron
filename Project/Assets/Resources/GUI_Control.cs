@@ -11,19 +11,20 @@ using Assets;
 using UnityEngine;
 
 // ReSharper disable once UnusedMember.Global
-public class GUI_Control : MonoBehaviour {
+public class GUI_Control : MonoBehaviour
+{
 
     private readonly List<Server> _servers = new List<Server>();
     private bool _isSearching = true;
     private bool _hostServerGui;
     private bool _waitingScreenOn;
-    private Dictionary<int, String> playerID2Username = new Dictionary<int, string>();
-    private int currentPlayerID = 0;
+    private readonly Dictionary<int, String> _playerID2Username = new Dictionary<int, string>();
+    private int _currentPlayerID = 0;
 
     private string _currentIp = "0.0.0.0";
     private string _playerName = "Player";
-    private int playerID;
-    private GameConfiguration config;
+    private int _playerID;
+    private GameConfiguration _config;
 
     public Transform tron;
     public Transform grid;
@@ -41,17 +42,19 @@ public class GUI_Control : MonoBehaviour {
     private int HeightPixels { get; set; }
 
 
-// ReSharper disable once UnusedMember.Local
-    private void Start() {
+    // ReSharper disable once UnusedMember.Local
+    private void Start()
+    {
         ChangeWifiSettingsAndroid();
-        config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
+        _config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
         ReadScreenDimensionsAndroid();
         StartDiscoverServerThread();
     }
 
-    private void ChangeWifiSettingsAndroid() {}
+    private void ChangeWifiSettingsAndroid() { }
 
-    private void ReadScreenDimensionsAndroid() {
+    private void ReadScreenDimensionsAndroid()
+    {
 #if UNITY_Android
         try {
             using (var unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
@@ -96,16 +99,21 @@ public class GUI_Control : MonoBehaviour {
         layoutGUIStyle.fontSize = size < 12 ? 12 : size;
         textFieldGUIStyle.fontSize = size < 12 ? 12 : size;
     }
-    private void StartDiscoverServerThread() {
-        (new Thread(() => {
-            while (_isSearching) {
+    private void StartDiscoverServerThread()
+    {
+        (new Thread(() =>
+        {
+            while (_isSearching)
+            {
                 var newServer = ServerDiscoverer.DiscoverServers();
                 Debug.Log("Discovered new Server");
                 var addServer = true;
-                foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip))) {
+                foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip)))
+                {
                     addServer = false;
                 }
-                if (addServer && newServer != null && newServer.Name != null) {
+                if (addServer && newServer != null && newServer.Name != null)
+                {
                     _servers.Add(newServer);
                 }
             }
@@ -114,9 +122,11 @@ public class GUI_Control : MonoBehaviour {
     }
 
 
-// ReSharper disable once UnusedMember.Local
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+    // ReSharper disable once UnusedMember.Local
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
             _hostServerGui = false;
         }
     }
@@ -124,19 +134,24 @@ public class GUI_Control : MonoBehaviour {
     #region GUI
 
     // ReSharper disable once UnusedMember.Local
-    private void OnGUI() {
-        if (_hostServerGui) {
+    private void OnGUI()
+    {
+        if (_hostServerGui)
+        {
             HandleHostingGUI();
         }
-        else if (_waitingScreenOn) {
+        else if (_waitingScreenOn)
+        {
             HandleWaitingScreen();
         }
-        else if (drawGUI){
+        else if (drawGUI)
+        {
             HandleStartScreenGUI();
         }
     }
 
-    private void HandleStartScreenGUI() {
+    private void HandleStartScreenGUI()
+    {
         if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Host", buttonGUIStyle))
         {
             _hostServerGui = true;
@@ -152,14 +167,13 @@ public class GUI_Control : MonoBehaviour {
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true, horizontalScrollbarGUIStyle, horizontalScrollbarGUIStyle);
         GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
 
-        foreach (var item in _servers) {
-            if (GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))) {
-                Network.Connect(item.Ip.ToString(), Protocol.GamePort);
-                
-                _isSearching = false;
-                ServerHoster.IsHosting = false;
-                _waitingScreenOn = true;
-            }
+        foreach (var item in _servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
+        {
+            //TODO: test new LINQ expression
+            Network.Connect(item.Ip.ToString(), Protocol.GamePort);
+            _isSearching = false;
+            ServerHoster.IsHosting = false;
+            _waitingScreenOn = true;
         }
 
         GUILayout.EndVertical();
@@ -167,36 +181,46 @@ public class GUI_Control : MonoBehaviour {
         GUILayout.EndArea();
     }
 
-    private void HandleHostingGUI() {
-        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Play", buttonGUIStyle))
+    private void HandleHostingGUI()
+    {
+        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+            "Play", buttonGUIStyle))
         {
             _waitingScreenOn = true;
             _hostServerGui = false;
             _isSearching = false;
-            ServerHoster.HostServer(config.HostName);
-            Network.InitializeServer(config.NumberOfPlayers, Protocol.GamePort, false);
+            ServerHoster.HostServer(_config.HostName);
+            Network.InitializeServer(_config.NumberOfPlayers, Protocol.GamePort, false);
             Network.sendRate = 15;
-            playerID = 0;
-            playerID2Username.Add(currentPlayerID++, _playerName);
+            _playerID = 0;
+            _playerID2Username.Add(_currentPlayerID++, _playerName);
         }
 
-        GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName", labelGUIStyle);
-        config.HostName = GUI.TextField(new Rect(5 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), config.HostName, 20, textFieldGUIStyle);
-        GUI.Label(new Rect(1 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "# of opponents", labelGUIStyle);
+        GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName",
+            labelGUIStyle);
+        _config.HostName =
+            GUI.TextField(new Rect(5 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                _config.HostName, 20, textFieldGUIStyle);
+        GUI.Label(new Rect(1 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+            "# of opponents", labelGUIStyle);
         Int32.TryParse(Regex.Replace(
-            GUI.TextField(new Rect(5 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), config.NumberOfPlayers.ToString(), textFieldGUIStyle), "[^.0-9]", ""),
-            out config.NumberOfPlayers);
+            GUI.TextField(new Rect(5 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                _config.NumberOfPlayers.ToString(), textFieldGUIStyle), "[^.0-9]", ""),
+            out _config.NumberOfPlayers);
     }
 
 
 
-    private void HandleWaitingScreen() {
-        if (Network.isServer) {
+    private void HandleWaitingScreen()
+    {
+        if (Network.isServer)
+        {
             GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), layoutGUIStyle);
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true, horizontalScrollbarGUIStyle, horizontalScrollbarGUIStyle);
             GUILayout.BeginVertical(layoutGUIStyle);
 
-            foreach (var item in Network.connections) {
+            foreach (var item in Network.connections)
+            {
                 GUILayout.Label(item.ipAddress + " " + item.port, labelGUIStyle, GUILayout.ExpandWidth(true));
             }
             GUILayout.EndVertical();
@@ -204,8 +228,8 @@ public class GUI_Control : MonoBehaviour {
             GUILayout.EndArea();
         }
 
-        //if(Network.isClient)
-        if (Network.isServer && Network.connections.Length > 0) {
+        if (Network.isServer && Network.connections.Length > 0)
+        {
 
             StartNetworkGame();
             ServerHoster.IsHosting = false;
@@ -213,54 +237,60 @@ public class GUI_Control : MonoBehaviour {
             _waitingScreenOn = false;
             drawGUI = false;
             InstantiateGameBorders();
-            
+
         }
         /*if (Network.maxConnections == Network.connections.Length) {
-            StartNetworkGame();
-            ServerHoster.IsHosting = false;
-            _hostServerGui = false;
-            _waitingScreenOn = false;
-            drawGUI = false;
-            InstantiateGameBorders();
-        }*/
+        StartNetworkGame();
+        ServerHoster.IsHosting = false;
+        _hostServerGui = false;
+        _waitingScreenOn = false;
+        drawGUI = false;
+        InstantiateGameBorders();
+    }*/
 
-        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle)) {
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle))
+        {
             StartQuickGame();
         }
     }
 
-    void OnConnectedToServer() {
+    // ReSharper disable UnusedMember.Local
+    void OnConnectedToServer()
+    {
         print("Connected");
         StartNetworkGame();
     }
 
     void OnPlayerConnected(NetworkPlayer player)
     {
-        GetComponent<NetworkView>().RPC("setPlayerID", player, currentPlayerID++);
+        GetComponent<NetworkView>().RPC("SetPlayerID", player, _currentPlayerID++);
     }
 
     [RPC]
-    private void setPlayerID(int id)
+    private void SetPlayerID(int id)
     {
         Debug.Log("received RPC");
-        playerID = id;
+        _playerID = id;
     }
+    // ReSharper restore UnusedMember.Local
 
     [RPC]
-    private void StartNetworkGame() {
+    private void StartNetworkGame()
+    {
         _isSearching = false;
         ServerHoster.IsHosting = false;
         Debug.Log("Before passing: " + (tron == null));
-        var game = new Game(Network.maxConnections + 1, Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
+        var game = new Game(Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
         Destroy(gameObject);
         game.StartGame();
     }
 
-    private void StartQuickGame() {
+    private void StartQuickGame()
+    {
         _isSearching = false;
         ServerHoster.IsHosting = false;
         Network.InitializeServer(1, Protocol.GamePort, false);
-        var game = new Game(1, Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
+        var game = new Game(Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
         InstantiateGameBorders();
         Destroy(gameObject);
         game.StartGame();
@@ -276,46 +306,57 @@ public class GUI_Control : MonoBehaviour {
             Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
         var backWall =
             Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        var wallColor = new Color(204/255f, 204/255f, 204/255f, 1f);
+        var wallColor = new Color(204 / 255f, 204 / 255f, 204 / 255f, 1f);
         var shader = Shader.Find("Diffuse");
-        leftWall .transform.localScale = new Vector3(1, 5, 1);
-        leftWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-        leftWall .GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-        leftWall .GetComponent<WallBehaviour>().setDefaultColor(wallColor);
-        leftWall.renderer.material.shader = shader;
-        frontWall.transform.localScale = new Vector3(1, 5, 1);
-        frontWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-        frontWall.GetComponent<WallBehaviour>().updateWall( new Vector3( FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates));
-        frontWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
-        frontWall.renderer.material.shader = shader;
-        rightWall.transform.localScale = new Vector3(1, 5, 1);
-        rightWall.GetComponent<WallBehaviour>().start =     new Vector3( FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates);
-        rightWall.GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates));
-        rightWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
-        rightWall.renderer.material.shader = shader;
-        backWall .transform.localScale = new Vector3(1, 5, 1);
-        backWall .GetComponent<WallBehaviour>().start =     new Vector3(-FieldBorderCoordinates, 1.5f,  FieldBorderCoordinates);
-        backWall .GetComponent<WallBehaviour>().updateWall( new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-        backWall .GetComponent<WallBehaviour>().setDefaultColor(wallColor);
-        backWall .renderer.material.shader = shader;
+        if (leftWall != null)
+        {
+            leftWall.transform.localScale = new Vector3(1, 5, 1);
+            leftWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
+            leftWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
+            leftWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+            leftWall.renderer.material.shader = shader;
+        }
+        if (frontWall != null)
+        {
+            frontWall.transform.localScale = new Vector3(1, 5, 1);
+            frontWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
+            frontWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
+            frontWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+            frontWall.renderer.material.shader = shader;
+        }
+        if (rightWall != null)
+        {
+            rightWall.transform.localScale = new Vector3(1, 5, 1);
+            rightWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
+            rightWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
+            rightWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+            rightWall.renderer.material.shader = shader;
+        }
+        if (backWall != null)
+        {
+            backWall.transform.localScale = new Vector3(1, 5, 1);
+            backWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
+            backWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
+            backWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
+            backWall.renderer.material.shader = shader;
+        }
     }
 
     #endregion
 
-
-    public class Game {
-        private readonly int _numberOfPlayers;
+    private class Game
+    {
         private readonly Transform _playerPrefab;
         private readonly Transform _gridPrefab;
 
-        public Game(int numberOfPlayers, Transform playerPrefab, Transform gridPrefab) {
-            _numberOfPlayers = numberOfPlayers;
+        public Game(Transform playerPrefab, Transform gridPrefab)
+        {
             _playerPrefab = playerPrefab;
             _gridPrefab = gridPrefab;
         }
 
-        private void SpawnPlayer() {
-            Debug.Log((_playerPrefab == null) + " playerPrefab");
+        private void SpawnPlayer()
+        {
             var player = Network.Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity, 0) as Transform;
             var cam = GameObject.Find("Main Camera");
             cam.AddComponent<SmoothFollow>().target = player;
@@ -324,7 +365,8 @@ public class GUI_Control : MonoBehaviour {
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
         }
 
-        public void StartGame() {
+        public void StartGame()
+        {
             SpawnPlayer();
         }
     }
