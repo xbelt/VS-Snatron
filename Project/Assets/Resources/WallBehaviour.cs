@@ -4,10 +4,22 @@ using UnityEngine;
 public class WallBehaviour : MonoBehaviour {
 	public Vector3 start;
 	public Vector3 end;
+    public Color DefaultColor = new Color(45/255f, 203/255f, 1, 0.8f);
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+	{
+	    
 	}
+
+    void Update()
+    {
+        gameObject.renderer.material.color = DefaultColor;
+    }
+
+    public void setDefaultColor(Color c)
+    {
+        DefaultColor = c;
+    }
 	
 	// Update is called once per frame
 	public void updateWall (Vector3 newEnd) {
