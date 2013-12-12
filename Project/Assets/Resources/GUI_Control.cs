@@ -48,6 +48,8 @@ public class GUI_Control : MonoBehaviour
         ChangeWifiSettingsAndroid();
         _config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
         ReadScreenDimensionsAndroid();
+        SetFontSize(HeightPixels / 50);
+        SetTextColor(Color.white);
         StartDiscoverServerThread();
     }
 
@@ -80,8 +82,6 @@ public class GUI_Control : MonoBehaviour
         HeightPixels = Screen.height;
         WidthPixels = Screen.width;
 #endif
-        SetFontSize(HeightPixels / 50);
-        SetTextColor(Color.white);
     }
 
     private void SetTextColor(Color color)
