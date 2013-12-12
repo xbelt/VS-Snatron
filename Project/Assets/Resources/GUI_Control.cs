@@ -183,12 +183,12 @@ public class GUI_Control : MonoBehaviour {
 
     private void HandleWaitingScreen() {
         if (Network.isServer) {
-            GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), GUI.skin.window);
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-            GUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), layoutGUIStyle);
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true, horizontalScrollbarGUIStyle, horizontalScrollbarGUIStyle);
+            GUILayout.BeginVertical(layoutGUIStyle);
 
             foreach (var item in Network.connections) {
-                GUILayout.Label(item.ipAddress + " " + item.port, GUI.skin.box, GUILayout.ExpandWidth(true));
+                GUILayout.Label(item.ipAddress + " " + item.port, labelGUIStyle, GUILayout.ExpandWidth(true));
             }
             GUILayout.EndVertical();
             GUILayout.EndScrollView();
@@ -214,7 +214,7 @@ public class GUI_Control : MonoBehaviour {
             StartNetworkGame();
         }*/
 
-        if (GUI.Button(new Rect(25, 75, 100, 30), "Race")) {
+        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle)) {
             StartQuickGame();
         }
     }
