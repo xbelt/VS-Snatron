@@ -143,10 +143,10 @@ public class GUI_Control : MonoBehaviour {
         _playerName = GUI.TextField(new Rect(21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName, textFieldGUIStyle);
         GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true, horizontalScrollbarGUIStyle, horizontalScrollbarGUIStyle);
-        GUILayout.BeginVertical(GUI.skin.box);
+        GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
 
         foreach (var item in _servers) {
-            if (GUILayout.Button(item.Ip + " " + item.Name, GUI.skin.box, GUILayout.ExpandWidth(true))) {
+            if (GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))) {
                 Network.Connect(item.Ip.ToString(), Protocol.GamePort);
                 
                 _isSearching = false;
