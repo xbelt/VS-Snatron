@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*TODO:
+ * make Padding of TextField dependant of screen resolution
+ * Correctly send userID's
+ * */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,9 +17,12 @@ public class GUI_Control : MonoBehaviour {
     private bool _isSearching = true;
     private bool _hostServerGui;
     private bool _waitingScreenOn;
+    private Dictionary<int, String> playerID2Username = new Dictionary<int, string>();
+    private int currentPlayerID = 0;
 
     private string _currentIp = "0.0.0.0";
     private string _playerName = "Player";
+    private int playerID;
     private GameConfiguration config;
 
     public Transform tron;
@@ -169,6 +176,8 @@ public class GUI_Control : MonoBehaviour {
             ServerHoster.HostServer(config.HostName);
             Network.InitializeServer(config.NumberOfPlayers, Protocol.GamePort, false);
             Network.sendRate = 15;
+            playerID = 0;
+            playerID2Username.Add(currentPlayerID++, _playerName);
         }
 
         GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName", labelGUIStyle);
@@ -195,10 +204,6 @@ public class GUI_Control : MonoBehaviour {
             GUILayout.EndArea();
         }
 
-        /*GUI.Label(new Rect(25, 175, 100, 30),
-            _servers.Find(x => x.Name.Equals(config.HostName)) == null
-                ? ""
-                : _servers.Find(x => x.Name.Equals(config.HostName)).Ip.ToString());*/
         //if(Network.isClient)
         if (Network.isServer && Network.connections.Length > 0) {
 
@@ -212,6 +217,11 @@ public class GUI_Control : MonoBehaviour {
         }
         /*if (Network.maxConnections == Network.connections.Length) {
             StartNetworkGame();
+            ServerHoster.IsHosting = false;
+            _hostServerGui = false;
+            _waitingScreenOn = false;
+            drawGUI = false;
+            InstantiateGameBorders();
         }*/
 
         if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle)) {
@@ -222,6 +232,18 @@ public class GUI_Control : MonoBehaviour {
     void OnConnectedToServer() {
         print("Connected");
         StartNetworkGame();
+    }
+
+    void OnPlayerConnected(NetworkPlayer player)
+    {
+        GetComponent<NetworkView>().RPC("setPlayerID", player, currentPlayerID++);
+    }
+
+    [RPC]
+    private void setPlayerID(int id)
+    {
+        Debug.Log("received RPC");
+        playerID = id;
     }
 
     [RPC]
