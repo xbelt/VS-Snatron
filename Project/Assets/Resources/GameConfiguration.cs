@@ -8,6 +8,7 @@ public class GameConfiguration : MonoBehaviour
 
     public int NumberOfPlayers;
     public String HostName = "";
+	public int NumberOfCubes;
 
 	// Use this for initialization
 	void Start () {
