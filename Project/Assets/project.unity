@@ -259,7 +259,7 @@ GameObject:
   - 4: {fileID: 66100340}
   - 108: {fileID: 66100339}
   m_Layer: 8
-  m_Name: Directional light Start screen
+  m_Name: SplashScreenLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -782,6 +782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NumberOfPlayers: 0
   HostName: 
+  NumberOfCubes: 0
 --- !u!4 &1452918955
 Transform:
   m_ObjectHideFlags: 0

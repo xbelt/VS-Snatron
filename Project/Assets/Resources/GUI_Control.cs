@@ -241,6 +241,7 @@ public class GUI_Control : MonoBehaviour
         ServerHoster.IsHosting = false;
         Network.InitializeServer(1, Protocol.GamePort, false);
         NetworkControl.InstantiateGameBorders();
+        Destroy(GameObject.Find("SplashScreenLight"));
         Destroy(gameObject);
         NetworkControl.StartGame();
     }
