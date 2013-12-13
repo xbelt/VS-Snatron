@@ -13,6 +13,7 @@ public class NetworkControl : MonoBehaviour {
     private static readonly Dictionary<int, String> PlayerId2Username = new Dictionary<int, String>();
     private static int _currentPlayerID = 0;
     public static string HostName = "";
+    public static string PlayerName = "Player";
     public static int NumberOfPlayers = 0;
     public static int NumberOfCubes = 5;
     private const int FieldBorderCoordinates = 200;
@@ -71,10 +72,13 @@ public class NetworkControl : MonoBehaviour {
     public static void Connect(string ip, int port) {
         Network.Connect(ip, port);
     }
+    void OnGUI()
+    {
 
-    public static void AddPlayer(string playerName) {
-        PlayerId2Username.Add(_currentPlayerID++, playerName);
+        GUI.Label(new Rect(100, 100, 150, 100), string.Join(", ", PlayerId2Username.Select((x) => x.Key + ": " + x.Value).ToArray()));
+       
     }
+
 
     public static void InstantiateCubes() {
         List<Transform> cubes = new List<Transform>();
@@ -141,18 +145,33 @@ public class NetworkControl : MonoBehaviour {
         return ++_currentPlayerID;
     }
 
+
+    public static void AddPlayer(string playerName)
+    {
+        PlayerId2Username.Add(0, playerName);
+    }
+
+    [RPC]
+   private void AddPlayer(string playerName, int playerID)
+    {
+        Debug.Log("Received addPlayer RPC");
+        PlayerId2Username.Add(playerID, playerName);
+
+    }
+
     [RPC]
     private void SetPlayerID(int id)
     {
-        Debug.Log("received RPC");
+        Debug.Log("received RPC from server(hopefully from server)"); 
         PlayerID = id;
+        GetComponent<NetworkView>().RPC("AddPlayer", RPCMode.AllBuffered, PlayerName, id);
     }
 
     void OnPlayerConnected(NetworkPlayer player)
     {
         GetComponent<NetworkView>().RPC("SetPlayerID", player, NextPlayerID());
+        GetComponent<NetworkView>().RPC("AddPlayer", player, PlayerName, 0); //add the host, since he's not in the buffer since he is added by GUI_control which uses this via static functions which cannot do RPC </rant>
     }
-
     private class Game
     {
         private readonly Transform _playerPrefab;
