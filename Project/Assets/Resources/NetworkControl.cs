@@ -115,7 +115,7 @@ public class NetworkControl : MonoBehaviour {
         IsSearching = false;
     }
 
-    public static int NextPlayerID() {
+    private static int NextPlayerID() {
         return ++_currentPlayerID;
     }
 
@@ -128,7 +128,7 @@ public class NetworkControl : MonoBehaviour {
 
     void OnPlayerConnected(NetworkPlayer player)
     {
-        GetComponent<NetworkView>().RPC("SetPlayerID", player, NetworkControl.NextPlayerID());
+        GetComponent<NetworkView>().RPC("SetPlayerID", player, NextPlayerID());
     }
 
     private class Game
