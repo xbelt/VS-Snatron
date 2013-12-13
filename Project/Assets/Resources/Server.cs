@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Assets
 {
-    class Server {
+    public class Server {
         public Server(IPAddress ip, int port, String name) {
         Ip = ip;
         Port = port;
