@@ -238,7 +238,7 @@ public class GUI_Control : MonoBehaviour
     private void StartQuickGame()
     {
         NetworkControl.StopSearching();
-        ServerHoster.IsHosting = false;
+        NetworkControl.StopAnnouncingServer();
         Network.InitializeServer(1, Protocol.GamePort, false);
         NetworkControl.InstantiateGameBorders();
         Destroy(GameObject.Find("SplashScreenLight"));
