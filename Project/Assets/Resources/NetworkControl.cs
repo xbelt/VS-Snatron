@@ -15,6 +15,7 @@ public class NetworkControl : MonoBehaviour {
     public static string HostName = "";
     public static int NumberOfPlayers = 0;
     private const int FieldBorderCoordinates = 200;
+    private Dictionary<int, Vector3> StartPositions = new Dictionary<int, Vector3>();  
 
     // Use this for initialization
 	void Start () {
