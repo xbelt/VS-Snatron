@@ -18,7 +18,7 @@ RenderSettings:
   m_FogDensity: .00999999978
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
+  m_AmbientLight: {r: 1, g: 1, b: 1, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 1ce746eab45682a42bbeeea21e016bbc, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
@@ -88,6 +88,7 @@ GameObject:
   - 81: {fileID: 18469730}
   - 114: {fileID: 18469735}
   - 82: {fileID: 18469736}
+  - 114: {fileID: 18469737}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -230,6 +231,24 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+--- !u!114 &18469737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 18469729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d1352984e3c6465088f6cc7c4ce6e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowIntensity: 1.25
+  blurIterations: 2
+  blurSpread: .699999988
+  glowTint: {r: 1, g: 1, b: 1, a: 0}
+  compositeShader: {fileID: 4800000, guid: 96ca71e39c7b6fb4f9bec2c5bf331349, type: 3}
+  blurShader: {fileID: 4800000, guid: fb52973118cf00648825ced2fcca240c, type: 3}
+  downsampleShader: {fileID: 4800000, guid: b14b79b8936134d3f8238f0c2d40d634, type: 3}
 --- !u!1 &66100338
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,8 +258,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 66100340}
   - 108: {fileID: 66100339}
-  m_Layer: 0
-  m_Name: Directional light
+  m_Layer: 8
+  m_Name: Directional light Start screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,7 +293,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   m_Lightmapping: 1
   m_ShadowSamples: 1
   m_ShadowRadius: 0
@@ -356,7 +375,7 @@ GameObject:
   - 23: {fileID: 1447392288}
   - 114: {fileID: 1447392287}
   - 148: {fileID: 1447392292}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SplashScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}

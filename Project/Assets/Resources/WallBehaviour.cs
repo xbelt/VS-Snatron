@@ -4,16 +4,15 @@ using UnityEngine;
 public class WallBehaviour : MonoBehaviour {
 	public Vector3 start;
 	public Vector3 end;
-    public Color DefaultColor = new Color(45/255f, 203/255f, 1, 0.8f);
+    private Color DefaultColor = new Color(255/255f,255/255f,255/255f,0f);
 	// Use this for initialization
 	void Start ()
 	{
-	    
+        //gameObject.renderer.material.color = DefaultColor;
 	}
 
     void Update()
     {
-        gameObject.renderer.material.color = DefaultColor;
     }
 
     public void setDefaultColor(Color c)
