@@ -14,6 +14,7 @@ public class NetworkControl : MonoBehaviour {
     private static int _currentPlayerID = 0;
     public static string HostName = "";
     public static int NumberOfPlayers = 0;
+    public static int NumberOfCubes = 5;
     private const int FieldBorderCoordinates = 200;
     private static Dictionary<int, Vector3> StartPositions = new Dictionary<int, Vector3>();  
 
@@ -73,6 +74,18 @@ public class NetworkControl : MonoBehaviour {
 
     public static void AddPlayer(string playerName) {
         PlayerId2Username.Add(_currentPlayerID++, playerName);
+    }
+
+    public static void InstantiateCubes() {
+        List<Transform> cubes = new List<Transform>();
+        System.Random random = new System.Random();
+        var shader = Shader.Find("Diffuse");
+        for(int i = 0; i < NumberOfCubes; ++i) {
+            int _x = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
+            int _z = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
+            cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3((float)_x, 1.5f, (float)_z), Quaternion.identity, 0) as Transform);
+            cubes[i].renderer.material.shader = shader;
+        }
     }
 
     public static void InstantiateGameBorders() {
