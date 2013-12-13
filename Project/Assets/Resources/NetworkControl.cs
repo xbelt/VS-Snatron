@@ -15,7 +15,7 @@ public class NetworkControl : MonoBehaviour {
     public static string HostName = "";
     public static int NumberOfPlayers = 0;
     private const int FieldBorderCoordinates = 200;
-    private Dictionary<int, Vector3> StartPositions = new Dictionary<int, Vector3>();  
+    private static Dictionary<int, Vector3> StartPositions = new Dictionary<int, Vector3>();  
 
     // Use this for initialization
 	void Start () {
@@ -52,8 +52,16 @@ public class NetworkControl : MonoBehaviour {
         ServerHoster.HostServer(HostName);
         Network.InitializeServer(NumberOfPlayers, Protocol.GamePort, false);
         Network.sendRate = 30;
+        InitializeStartPositions();
     }
 
+    private static void InitializeStartPositions() {
+        for (int i = 0; i < NumberOfPlayers + 1; i++) {
+            double angle = 360/(i + 1) * Math.PI / 180;
+            //TODO: check calculations
+            StartPositions.Add(i, new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)));
+        }
+    }
 
     public static void StopAnnouncingServer() {
         ServerHoster.IsHosting = false;
