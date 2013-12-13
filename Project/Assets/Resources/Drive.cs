@@ -16,9 +16,8 @@ public class Drive : MonoBehaviour {
     private int HeightPixels;
 	private int WidthPixels;
 
-    private GameConfiguration _config;
-    private bool showPauseMenu = false;
-    public GUIStyle buttonStyle = new GUIStyle();
+    private bool _showPauseMenu;
+    private GUIStyle buttonStyle = new GUIStyle();
 
     Vector3 Offset {
         get {
@@ -54,7 +53,6 @@ public class Drive : MonoBehaviour {
 	    var size = HeightPixels/50;
         buttonStyle.fontSize = size < 12 ? 12 : size;
         buttonStyle.alignment = TextAnchor.MiddleCenter;
-	    _config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
 
 		NewWall();
 #if UNITY_Android
@@ -82,35 +80,33 @@ public class Drive : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            showPauseMenu = !showPauseMenu;
+            _showPauseMenu = !_showPauseMenu;
         }
-	    if (!showPauseMenu) {
-	        AdjustSpeed();
-	        transform.Translate(_speed*Time.deltaTime);
-	        if (_latestWallGameObject != null) {
-	            _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(CurrentWallEnd);
+	    AdjustSpeed();
+	    transform.Translate(_speed*Time.deltaTime);
+	    if (_latestWallGameObject != null) {
+	        _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(CurrentWallEnd);
+	    }
+
+
+	    if (GetComponent<NetworkView>().isMine) {
+	        //Handling touch input
+	        foreach (var touch in Input.touches.Where(touch => touch.phase == TouchPhase.Began)) {
+	            if (touch.position.x > WidthPixels/2) {
+	                TurnRight();
+	            }
+	            else {
+	                TurnLeft();
+	            }
 	        }
 
 
-	        if (GetComponent<NetworkView>().isMine) {
-	            //Handling touch input
-	            foreach (var touch in Input.touches.Where(touch => touch.phase == TouchPhase.Began)) {
-	                if (touch.position.x > WidthPixels/2) {
-	                    TurnRight();
-	                }
-	                else {
-	                    TurnLeft();
-	                }
-	            }
-
-
-	            // Input for preview
-	            if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-	                TurnLeft();
-	            }
-	            else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-	                TurnRight();
-	            }
+	        // Input for preview
+	        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+	            TurnLeft();
+	        }
+	        else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+	            TurnRight();
 	        }
 	    }
 	}
@@ -145,7 +141,7 @@ public class Drive : MonoBehaviour {
 	}
 
     private void OnGUI() {
-        if (showPauseMenu) {
+        if (_showPauseMenu) {
             if (GUI.Button(new Rect(15/30f*WidthPixels, 10/20f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
                 "Exit", buttonStyle)) {
                 Application.Quit();
