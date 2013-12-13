@@ -301,8 +301,9 @@ GameObject:
   m_Component:
   - 4: {fileID: 1019847855}
   - 148: {fileID: 1019847854}
+  - 114: {fileID: 1019847856}
   m_Layer: 0
-  m_Name: NetworkThingy
+  m_Name: Network
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -331,6 +332,17 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!114 &1019847856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1019847853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 927cdf0d594a14f409bcb6bccf85bf4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1447392286
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,7 +730,7 @@ NetworkView:
   m_GameObject: {fileID: 1447392286}
   m_Enabled: 1
   m_StateSynchronization: 1
-  m_Observed: {fileID: 1447392291}
+  m_Observed: {fileID: 0}
   m_ViewID:
     m_ID: 2
     m_Type: 1
