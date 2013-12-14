@@ -141,6 +141,9 @@ public class NetworkControl : MonoBehaviour {
         IsSearching = false;
     }
 
+	// TODO It seems like every player receives the same id = 0 at the moment.
+	// Reason: Every player who joins, sends his own _currentPlayerID, which is 0
+	// Solution: Make sure only the server assigns and distributes these IDs
     private static int NextPlayerID() {
         return ++_currentPlayerID;
     }
@@ -183,9 +186,18 @@ public class NetworkControl : MonoBehaviour {
             _gridPrefab = gridPrefab;
         }
 
+		public void StartGame()
+		{
+			SpawnPlayer();
+		}
+
         private void SpawnPlayer()
         {
-            var player = Network.Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity, 0) as Transform;
+			Vector3 location = new Vector3();
+			Quaternion orientation = new Quaternion ();
+			mapStartLocation (PlayerID, location, orientation);
+
+            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
             var cam = GameObject.Find("Main Camera");
             cam.AddComponent<SmoothFollow>().target = player;
 
@@ -193,10 +205,31 @@ public class NetworkControl : MonoBehaviour {
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
         }
 
-        public void StartGame()
-        {
-            SpawnPlayer();
-        }
+		private void mapStartLocation(int playerId, Vector3 location, Quaternion orientation)
+		{
+			// This is how players are arranged in a square, by id
+			// 4 0 6
+			// 3 * 2
+			// 7 1 5
+
+			// Orientations:
+			// 0,1,2,3 look towards the center * @(0/0/0)
+			// 4,5,6,7 look in clockwise direction
+
+			float levelSize = 500; // TODO get actual value
+			float dist = levelSize / 2;
+
+			switch (playerId) {
+			case 0: location.Set(0, 0, -dist); orientation.SetFromToRotation(location, Vector3.zero); break;
+			case 1:	location.Set(0, 0,  dist); orientation.SetFromToRotation(location, Vector3.zero); break;
+			case 2:	location.Set( dist, 0, 0); orientation.SetFromToRotation(location, Vector3.zero); break;
+			case 3:	location.Set(-dist, 0, 0); orientation.SetFromToRotation(location, Vector3.zero); break;
+			case 4:	location.Set(-dist, 0, -dist); orientation.SetFromToRotation(location, new Vector3(0, 0, -dist)); break;
+			case 5:	location.Set( dist, 0,  dist); orientation.SetFromToRotation(location, new Vector3(0, 0, dist)); break;
+			case 6:	location.Set( dist, 0, -dist); orientation.SetFromToRotation(location, new Vector3( dist, 0, 0)); break;
+			case 7:	location.Set(-dist, 0,  dist); orientation.SetFromToRotation(location, new Vector3( -dist, 0, 0)); break;
+			}
+		}
     }
 
     public static void StartGame() {
