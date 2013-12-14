@@ -141,9 +141,6 @@ public class NetworkControl : MonoBehaviour {
         IsSearching = false;
     }
 
-	// TODO It seems like every player receives the same id = 0 at the moment.
-	// Reason: Every player who joins, sends his own _currentPlayerID, which is 0
-	// Solution: Make sure only the server assigns and distributes these IDs
     private static int NextPlayerID() {
         return ++_currentPlayerID;
     }
