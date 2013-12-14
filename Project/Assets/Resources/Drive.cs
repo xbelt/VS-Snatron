@@ -6,10 +6,13 @@ public class Drive : MonoBehaviour {
 	public Transform wallTemplate;
     private Transform _latestWallGameObject;
 
-	static readonly Vector3 MinSpeed = Vector3.forward * 25;
-	static readonly Vector3 MaxSpeed = Vector3.forward * 45;
+	static readonly float MinSpeed = 25;
+	static readonly float MaxSpeed = 50;
+
+	public float accelerationRate = 10;
+	public float decelerationRate = 5;
 	
-	Vector3 _speed = MinSpeed;
+	float _speed = MinSpeed;
 
 	int _numberOfWallsNear = 0;
 
@@ -38,11 +41,6 @@ public class Drive : MonoBehaviour {
 		    }
 		    return transform.position;
 		}
-	}
-
-	void AdjustSpeed ()
-	{
-	    _speed = Vector3.MoveTowards(_speed, _numberOfWallsNear > 1 ? MaxSpeed : MinSpeed, 30 * Time.deltaTime);
 	}
 
 // ReSharper disable once UnusedMember.Local
@@ -74,64 +72,98 @@ public class Drive : MonoBehaviour {
 	
 // ReSharper disable once UnusedMember.Local
 	void Update () {
-		AdjustSpeed ();
-	    transform.Translate(_speed*Time.deltaTime);
-	    if (_latestWallGameObject != null) {
-			_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
-		}
-
-
 	    if (GetComponent<NetworkView>().isMine)
 	    {
-	        //Handling touch input
-	        foreach (var touch in Input.touches.Where(touch => touch.phase == TouchPhase.Began))
-	        {
-	            if (touch.position.x > _widthPixels/2) {
-	                TurnRight();
-	            }
-	            else {
-	                TurnLeft();
-	            }
-	        }
-
-
-	        // Input for preview
-		    if (Input.GetKeyDown (KeyCode.LeftArrow)) {
-			    TurnLeft();
-		    } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
-			    TurnRight();
-		    }
+	        bool applied = ApplyUserCommands ();
+			if (applied)
+				return;
 	    }
+		
+		AdjustSpeed ();
+
+		// Hope Collision events have happened
+		// otherwise do not proceed forward when turning around
+
+		print ("Predicted Collisions: " + _predictedCollisions);
+		if (_deathPredicted) {
+			kill();
+			return;
+		}
+		
+		if (_predictedCollisions > 0) {
+			_deathPredicted = true;
+		}
+		
+		transform.Translate(Vector3.forward*_speed*Time.deltaTime);
+		if (_latestWallGameObject != null) {
+			_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
+		}
 	}
 
+	bool ApplyUserCommands ()
+	{
+		//Handling touch input
+		foreach (var touch in Input.touches.Where (touch => touch.phase == TouchPhase.Began)) {
+			if (touch.position.x > _widthPixels / 2) {
+				TurnRight ();
+				return true;
+			}
+			else {
+				TurnLeft ();
+				return true;
+			}
+		}
+		// Input for preview
+		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			TurnLeft ();
+			return true;
+		}
+		else
+		if (Input.GetKeyDown (KeyCode.RightArrow)) {
+			TurnRight ();
+			return true;
+		}
+		return false;
+	}
+
+	private bool _deathPredicted = false;
+
+	void AdjustSpeed ()
+	{
+		if (_numberOfWallsNear > 0) {
+			_speed = Mathf.MoveTowards (_speed, MaxSpeed, accelerationRate * Time.deltaTime);
+		} else {
+			_speed = Mathf.MoveTowards (_speed, MinSpeed, decelerationRate * Time.deltaTime);
+		}
+		
+		if (CollisionPrediction != null)
+			CollisionPrediction.Length = _speed*transform.localScale.z;
+	}
+	
     void TurnLeft()
-    {
-        _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
-        transform.Rotate(Vector3.up, 270);
-        NewWall();
+	{
+		Turn (270f);
     }
 
     void TurnRight()
     {
-        _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
-        transform.Rotate(Vector3.up, 90);
-        
-        NewWall();
+		Turn (90f);
     }
 
-// ReSharper disable UnusedMember.Local
-	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "wall") {
-			print (other.name + " " + name);
-				_numberOfWallsNear++;
+	// Turn right
+	void Turn(float degrees)
+	{
+		_deathPredicted = false;
+
+		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
+		transform.Rotate(Vector3.up, degrees);
+		NewWall();
+
+		if (_predictedCollisions > 0) {
+			_deathPredicted = true;
 		}
 	}
 
-	void OnTriggerExit(Collider other) {
-		if (other.gameObject.tag == "wall") {
-			_numberOfWallsNear--;
-		}
-	}
 // ReSharper restore UnusedMember.Local
 
 	void NewWall() {
@@ -139,5 +171,55 @@ public class Drive : MonoBehaviour {
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
+	}
+
+	// Collision Stuff
+
+	private bool isAlive = true;
+
+	// This player will die
+	public void kill()
+	{
+		Debug.Log ("player is dead.");
+		isAlive = false;
+		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
+		Destroy (gameObject);
+		// TODO sync
+	}
+
+	private CollisionPrediction _collisionPrediction;
+
+	public CollisionPrediction CollisionPrediction{
+		get {
+			return _collisionPrediction;
+		}
+		set{
+			this._collisionPrediction = value;
+		}
+	}
+
+	private int _predictedCollisions = 0;
+
+	public void OnPredictedCollisionEnter()
+	{
+		_predictedCollisions++;
+	}
+
+	public void OnPredictedCollisionExit()
+	{
+		_predictedCollisions--;
+	}
+
+	// SpeedUpCollider
+	
+	// ReSharper disable UnusedMember.Local
+	public void OnSpeedUpTriggerEnter()
+	{
+		_numberOfWallsNear++;
+	}
+	
+	public void OnSpeedUpTriggerExit()
+	{
+		_numberOfWallsNear--;
 	}
 }

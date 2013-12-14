@@ -7,6 +7,8 @@ TagManager:
   - tron
   - tronCollider
   - gameConfig
+  - collisionPredictor
+  - SpeedUpCollider
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
