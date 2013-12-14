@@ -133,6 +133,8 @@ public class GUI_Control : MonoBehaviour
 
         GUI.Label(new Rect(17 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Player Name:", labelGUIStyle);
         _playerName = GUI.TextField(new Rect(21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName, textFieldGUIStyle);
+        NetworkControl.PlayerName = _playerName;
+
         GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
