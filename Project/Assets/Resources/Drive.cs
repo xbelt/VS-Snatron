@@ -78,37 +78,39 @@ public class Drive : MonoBehaviour {
 	void Update () {
 	    if (GetComponent<NetworkView>().isMine)
 	    {
+			// Note: For the collision detection to work well,
+			// it is essential that the tron rests at the same place
+			// when it is turning. Otherwise the engine has no time to
+			// predict the collision. Therefore we return if there was some user input
 	        bool applied = ApplyUserCommands ();
 			if (applied)
 				return;
 	    }
-		
-		AdjustSpeed ();
 
-		// Hope Collision events have happened
-		// otherwise do not proceed forward when turning around
-
-		print ("Predicted Collisions: " + _predictedCollisions);
-		if (_deathPredicted) {
+		// The tron would keep moving straight
+		// But are there any obstacles in front?
+		if (_predictedCollisions > 0) {
 			kill();
 			return;
 		}
-		
-		if (_predictedCollisions > 0) {
-			_deathPredicted = true;
-		}
-		
+
+		// move forward
 		transform.Translate(Vector3.forward*_speed*Time.deltaTime);
 		if (_latestWallGameObject != null) {
 			_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall(CurrentWallEnd);
 		}
+
+		// Adjust the speed last. Implies resizing collider for collision prediction.
+		// want to resize the collider before control is returned to unity for collision detection etc.
+		// Adjusting the collider within this method, earlier, would not immediately trigger new collisions etc.
+		AdjustSpeed ();
 	}
 
 	bool ApplyUserCommands ()
 	{
 		//Handling touch input
 		foreach (var touch in Input.touches.Where (touch => touch.phase == TouchPhase.Began)) {
-			if (touch.position.x > _widthPixels / 2) {
+			if (touch.position.x > WidthPixels / 2) {
 				TurnRight ();
 				return true;
 			}
@@ -129,8 +131,6 @@ public class Drive : MonoBehaviour {
 		}
 		return false;
 	}
-
-	private bool _deathPredicted = false;
 
 	void AdjustSpeed ()
 	{
@@ -157,15 +157,9 @@ public class Drive : MonoBehaviour {
 	// Turn right
 	void Turn(float degrees)
 	{
-		_deathPredicted = false;
-
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
 		transform.Rotate(Vector3.up, degrees);
 		NewWall();
-
-		if (_predictedCollisions > 0) {
-			_deathPredicted = true;
-		}
 	}
 
     private void OnGUI() {
@@ -187,16 +181,16 @@ public class Drive : MonoBehaviour {
 
 	// Collision Stuff
 
-	private bool isAlive = true;
-
-	// This player will die
 	public void kill()
 	{
 		Debug.Log ("player is dead.");
-		isAlive = false;
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
 		Destroy (gameObject);
 		// TODO sync
+		// call some RPC method which will kill the dude on all devices
+		// (must ?) also somehow display the info who has died and who wins...
+		// and return to the main menu to start a new game.
+		// or just start a new round when the last one has died
 	}
 
 	private CollisionPrediction _collisionPrediction;

@@ -34,20 +34,6 @@ public class CollisionPrediction : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision collision) {
-		Debug.Log ("Predict Collision enter " + collision.collider.name + " " + name);
-		if (collision.collider.gameObject.tag == "wall") {
-			_drive.OnPredictedCollisionEnter ();
-		}
-	}
-	
-	void OnCollisionExit(Collision collision) {
-		Debug.Log ("Predict Collision exit " + collision.collider.name + " " + name);
-		if (collision.collider.gameObject.tag == "wall") {
-			_drive.OnPredictedCollisionExit ();
-		}
-	}
-
 	public float Length {
 		get {
 			return _collider.size.z;
@@ -56,8 +42,7 @@ public class CollisionPrediction : MonoBehaviour {
 			Vector3 old = _collider.size;
 			_collider.size = new Vector3(old.x, old.y, value);
 			Vector3 pos = _collider.transform.position;
-			_collider.transform.position.Set(pos.x, pos.y, 5.1f + value/2);
-
+			_collider.transform.position.Set(pos.x, pos.y, transform.localScale.z*5.1f + value/2);
 		}
 	}
 }
