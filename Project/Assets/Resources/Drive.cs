@@ -16,10 +16,11 @@ public class Drive : MonoBehaviour {
 
 	int _numberOfWallsNear = 0;
 
-    private int _heightPixels;
-	private int _widthPixels;
+    private int HeightPixels;
+	private int WidthPixels;
 
-    private GameConfiguration _config;
+    private bool _showPauseMenu;
+    private GUIStyle buttonStyle = new GUIStyle();
 
     Vector3 Offset {
         get {
@@ -44,9 +45,12 @@ public class Drive : MonoBehaviour {
 	}
 
 // ReSharper disable once UnusedMember.Local
-	void Start ()
-	{
-	    _config = GameObject.FindGameObjectWithTag("gameConfig").GetComponent<GameConfiguration>();
+	void Start () {
+	    buttonStyle.normal.background = Resources.Load<Texture2D>("TextBox");
+	    buttonStyle.normal.textColor = Color.white;
+	    var size = HeightPixels/50;
+        buttonStyle.fontSize = size < 12 ? 12 : size;
+        buttonStyle.alignment = TextAnchor.MiddleCenter;
 
 		NewWall();
 #if UNITY_Android
@@ -65,8 +69,8 @@ public class Drive : MonoBehaviour {
 			}
 		}
 #else
-        _heightPixels = Screen.height;
-        _widthPixels = Screen.width;
+        HeightPixels = Screen.height;
+        WidthPixels = Screen.width;
 #endif
 	}
 	
@@ -164,6 +168,14 @@ public class Drive : MonoBehaviour {
 		}
 	}
 
+    private void OnGUI() {
+        if (_showPauseMenu) {
+            if (GUI.Button(new Rect(15/30f*WidthPixels, 10/20f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
+                "Exit", buttonStyle)) {
+                Application.Quit();
+            }
+        }
+    }
 // ReSharper restore UnusedMember.Local
 
 	void NewWall() {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class CubeBehavour : MonoBehaviour {
+public class CubeBehaviour : MonoBehaviour {
 	public float width;
 	public Vector3 speed;
 	public Vector3 initialPosition;

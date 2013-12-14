@@ -205,6 +205,7 @@ public class GUI_Control : MonoBehaviour
             _waitingScreenOn = false;
             drawGUI = false;
             NetworkControl.InstantiateGameBorders();
+            NetworkControl.InstantiateCubes();
 
         }
         /*if (Network.maxConnections == Network.connections.Length) {
@@ -238,9 +239,11 @@ public class GUI_Control : MonoBehaviour
     private void StartQuickGame()
     {
         NetworkControl.StopSearching();
-        ServerHoster.IsHosting = false;
+        NetworkControl.StopAnnouncingServer();
         Network.InitializeServer(1, Protocol.GamePort, false);
         NetworkControl.InstantiateGameBorders();
+        NetworkControl.InstantiateCubes();
+        Destroy(GameObject.Find("SplashScreenLight"));
         Destroy(gameObject);
         NetworkControl.StartGame();
     }
