@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Drive : MonoBehaviour {
-	public Transform wallTemplate;
+	//public Transform wallTemplate;
     private Transform _latestWallGameObject;
 
 	static readonly float MinSpeed = 25;
@@ -173,7 +173,7 @@ public class Drive : MonoBehaviour {
 // ReSharper restore UnusedMember.Local
 
 	void NewWall() {
-	    _latestWallGameObject = (Transform) Network.Instantiate(wallTemplate, CurrentWallEnd, Quaternion.identity, 0);
+	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+NetworkControl.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);
