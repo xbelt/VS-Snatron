@@ -23,7 +23,9 @@ public class CollisionPrediction : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		Debug.Log ("Predict Collision enter: " + other.name + " " + name);
 		if (other.gameObject.tag == "wall") {
-			_drive.OnPredictedCollisionEnter ();
+			if (_drive != null) {
+				_drive.OnPredictedCollisionEnter ();
+			}
 		}
 	}
 	
