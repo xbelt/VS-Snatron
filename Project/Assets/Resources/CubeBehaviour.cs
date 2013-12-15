@@ -16,7 +16,6 @@ public class CubeBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Math.Abs(transform.position.x - initialPosition.x) < width) {
-			Debug.Log(speed);
 				transform.Translate (speed * Time.deltaTime);
 		} else {
 				initialPosition = transform.position;
