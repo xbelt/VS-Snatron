@@ -229,7 +229,7 @@ public class NetworkControl : MonoBehaviour {
             InstantiateGameBorders();
             InstantiateCubes();
         }
-        var game = new Game(Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
+        var game = new Game(Resources.Load<Transform>("Player" + PlayerID), Resources.Load<Transform>("Lines"));
         game.StartGame();
     }
 }
