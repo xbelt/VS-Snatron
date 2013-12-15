@@ -181,35 +181,35 @@ public class GUI_Control : MonoBehaviour
 
     private void HandleWaitingScreen()
     {
+        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), layoutGUIStyle);
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+        GUILayout.BeginVertical(layoutGUIStyle);
+
+        foreach (KeyValuePair<int, string> entry in NetworkControl.PlayerId2Username)
+        {
+            GUILayout.Label(entry.Key + ": " + entry.Value, labelGUIStyle, GUILayout.ExpandWidth(true));
+        }
+        GUILayout.EndVertical();
+        GUILayout.EndScrollView();
+        GUILayout.EndArea();
+
         if (Network.isServer)
         {
-            GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), layoutGUIStyle);
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-            GUILayout.BeginVertical(layoutGUIStyle);
-
-            foreach (KeyValuePair<int, string> entry in NetworkControl.PlayerId2Username)
+            if (NetworkControl.PlayerId2Username.Keys.Contains(0))
             {
-                GUILayout.Label(entry.Key + ": " + entry.Value , labelGUIStyle, GUILayout.ExpandWidth(true));
+                NetworkControl.PlayerId2Username.Remove(0);
             }
-            GUILayout.EndVertical();
-            GUILayout.EndScrollView();
-            GUILayout.EndArea();
+            NetworkControl.PlayerId2Username.Add(0, NetworkControl.PlayerName);
+            if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
+            {
+                NetworkControl.StopAnnouncingServer();
+                _hostServerGui = false;
+                _waitingScreenOn = false;
+                drawGUI = false;
+                StartNetworkGame();
+            }
         }
 
-       
-        if (Network.isServer &&  GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
-        {
-            NetworkControl.StopAnnouncingServer();
-            _hostServerGui = false;
-            _waitingScreenOn = false;
-            drawGUI = false;
-            StartNetworkGame();
-        }
-
-        if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle))
-        {
-            StartQuickGame();
-        }
     }
 
     void OnConnectedToServer()

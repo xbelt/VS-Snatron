@@ -184,7 +184,7 @@ public class NetworkControl : MonoBehaviour {
         {
 			Vector3 location = new Vector3();
 			Quaternion orientation = new Quaternion ();
-			mapStartLocation (PlayerID, location, orientation);
+			mapStartLocation (PlayerID, ref location, ref orientation);
 
             var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
             var cam = GameObject.Find("Main Camera");
@@ -194,7 +194,7 @@ public class NetworkControl : MonoBehaviour {
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
         }
 
-		private void mapStartLocation(int playerId, Vector3 location, Quaternion orientation)
+		private void mapStartLocation(int playerId,ref Vector3 location, ref Quaternion orientation)
 		{
 			// This is how players are arranged in a square, by id
 			// 4 0 6
@@ -205,18 +205,17 @@ public class NetworkControl : MonoBehaviour {
 			// 0,1,2,3 look towards the center * @(0/0/0)
 			// 4,5,6,7 look in clockwise direction
 
-			float levelSize = 500; // TODO get actual value
-			float dist = levelSize / 2;
+            float dist = FieldBorderCoordinates/2;
 
 			switch (playerId) {
-			case 0: location.Set(0, 0, -dist); orientation.SetFromToRotation(location, Vector3.zero); break;
-			case 1:	location.Set(0, 0,  dist); orientation.SetFromToRotation(location, Vector3.zero); break;
-			case 2:	location.Set( dist, 0, 0); orientation.SetFromToRotation(location, Vector3.zero); break;
-			case 3:	location.Set(-dist, 0, 0); orientation.SetFromToRotation(location, Vector3.zero); break;
-			case 4:	location.Set(-dist, 0, -dist); orientation.SetFromToRotation(location, new Vector3(0, 0, -dist)); break;
-			case 5:	location.Set( dist, 0,  dist); orientation.SetFromToRotation(location, new Vector3(0, 0, dist)); break;
-			case 6:	location.Set( dist, 0, -dist); orientation.SetFromToRotation(location, new Vector3( dist, 0, 0)); break;
-			case 7:	location.Set(-dist, 0,  dist); orientation.SetFromToRotation(location, new Vector3( -dist, 0, 0)); break;
+			case 0: location.Set(0, 0, -dist); orientation.SetFromToRotation(Vector3.zero, location); break;
+            case 1: location.Set(0, 0, dist); orientation.SetFromToRotation(Vector3.zero, location); break;
+			case 2:	location.Set( dist, 0, 0); orientation.SetFromToRotation(Vector3.zero, location); break;
+			case 3:	location.Set(-dist, 0, 0); orientation.SetFromToRotation(Vector3.zero,location); break;
+			case 4:	location.Set(-dist, 0, -dist); orientation.SetFromToRotation(new Vector3(0, 0, -dist),location); break;
+			case 5:	location.Set( dist, 0,  dist); orientation.SetFromToRotation(new Vector3(0, 0, dist), location); break;
+			case 6:	location.Set( dist, 0, -dist); orientation.SetFromToRotation(new Vector3( dist, 0, 0), location); break;
+			case 7:	location.Set(-dist, 0,  dist); orientation.SetFromToRotation(new Vector3( -dist, 0, 0), location); break;
 			}
 		}
     }
