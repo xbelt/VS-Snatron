@@ -52,7 +52,10 @@ public class Drive : MonoBehaviour {
         buttonStyle.fontSize = size < 12 ? 12 : size;
         buttonStyle.alignment = TextAnchor.MiddleCenter;
 
-		NewWall();
+		if (GetComponent<NetworkView>().isMine) {
+			NewWall();
+		}
+
 #if UNITY_Android
 		using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"),
 		    metricsClass = new AndroidJavaClass("android.util.DisplayMetrics")
