@@ -114,22 +114,17 @@ public class Drive : MonoBehaviour {
 				TurnRight ();
 				return true;
 			}
-			else {
-				TurnLeft ();
-				return true;
-			}
+			TurnLeft ();
+			return true;
 		}
 		// Input for preview
 		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			TurnLeft ();
 			return true;
 		}
-		else
-		if (Input.GetKeyDown (KeyCode.RightArrow)) {
-			TurnRight ();
-			return true;
-		}
-		return false;
+	    if (!Input.GetKeyDown(KeyCode.RightArrow)) return false;
+	    TurnRight ();
+	    return true;
 	}
 
 	void AdjustSpeed ()
@@ -185,8 +180,7 @@ public class Drive : MonoBehaviour {
 	{
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
-		Destroy (gameObject);
-		// TODO sync
+        Network.Destroy(gameObject);
 		// call some RPC method which will kill the dude on all devices
 		// (must ?) also somehow display the info who has died and who wins...
 		// and return to the main menu to start a new game.
@@ -200,11 +194,11 @@ public class Drive : MonoBehaviour {
 			return _collisionPrediction;
 		}
 		set{
-			this._collisionPrediction = value;
+			_collisionPrediction = value;
 		}
 	}
 
-	private int _predictedCollisions = 0;
+	private int _predictedCollisions;
 
 	public void OnPredictedCollisionEnter()
 	{
