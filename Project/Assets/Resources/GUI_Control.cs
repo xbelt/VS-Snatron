@@ -160,11 +160,9 @@ public class GUI_Control : MonoBehaviour
         {
             _waitingScreenOn = true;
             _hostServerGui = false;
-            NetworkControl.AnnounceServer();
             NetworkControl.IsSearching = false;
-            NetworkControl.PlayerID = 0;
-            NetworkControl.AddPlayer(_playerName);
-        }
+            NetworkControl.AnnounceServer();
+       }
 
         GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName",
             labelGUIStyle);
@@ -189,35 +187,24 @@ public class GUI_Control : MonoBehaviour
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
             GUILayout.BeginVertical(layoutGUIStyle);
 
-            foreach (var item in Network.connections)
+            foreach (KeyValuePair<int, string> entry in NetworkControl.PlayerId2Username)
             {
-                GUILayout.Label(item.ipAddress + " " + item.port, labelGUIStyle, GUILayout.ExpandWidth(true));
+                GUILayout.Label(entry.Key + ": " + entry.Value , labelGUIStyle, GUILayout.ExpandWidth(true));
             }
             GUILayout.EndVertical();
             GUILayout.EndScrollView();
             GUILayout.EndArea();
         }
 
-        if (Network.isServer && Network.connections.Length > 0)
+       
+        if (Network.isServer &&  GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
         {
-
-            StartNetworkGame();
             NetworkControl.StopAnnouncingServer();
             _hostServerGui = false;
             _waitingScreenOn = false;
             drawGUI = false;
-            NetworkControl.InstantiateGameBorders();
-            NetworkControl.InstantiateCubes();
-
+            StartNetworkGame();
         }
-        /*if (Network.maxConnections == Network.connections.Length) {
-        StartNetworkGame();
-        ServerHoster.IsHosting = false;
-        _hostServerGui = false;
-        _waitingScreenOn = false;
-        drawGUI = false;
-        InstantiateGameBorders();
-    }*/
 
         if (GUI.Button(new Rect(25, 75, 100, 30), "Race", buttonGUIStyle))
         {
@@ -228,14 +215,13 @@ public class GUI_Control : MonoBehaviour
     void OnConnectedToServer()
     {
         print("Connected");
-        StartNetworkGame();
+        //update server list?
     }
     private void StartNetworkGame()
     {
         NetworkControl.StopSearching();
         NetworkControl.StopAnnouncingServer();
-        NetworkControl.StartGame();
-        Destroy(gameObject);
+        GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
     }
 
     private void StartQuickGame()
@@ -243,11 +229,8 @@ public class GUI_Control : MonoBehaviour
         NetworkControl.StopSearching();
         NetworkControl.StopAnnouncingServer();
         Network.InitializeServer(1, Protocol.GamePort, false);
-        NetworkControl.InstantiateGameBorders();
-        NetworkControl.InstantiateCubes();
-        Destroy(GameObject.Find("SplashScreenLight"));
-        Destroy(gameObject);
-        NetworkControl.StartGame();
+        GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
+        //this is so I don't have to bother with another, static, "StartGame" method
     }
 
     #endregion

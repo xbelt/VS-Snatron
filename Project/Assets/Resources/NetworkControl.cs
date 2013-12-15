@@ -10,7 +10,7 @@ public class NetworkControl : MonoBehaviour {
     public static bool IsSearching = true;
     public static readonly List<Server> Servers = new List<Server>();
     public static int PlayerID;
-    private static readonly Dictionary<int, String> PlayerId2Username = new Dictionary<int, String>();
+    public static readonly Dictionary<int, String> PlayerId2Username = new Dictionary<int, String>();
     private static int _currentPlayerID = 0;
     public static string HostName = "";
     public static string PlayerName = "Player";
@@ -108,7 +108,6 @@ public class NetworkControl : MonoBehaviour {
             leftWall.transform.localScale = new Vector3(1, 5, 1);
             leftWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
             leftWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-            leftWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
             leftWall.renderer.material.shader = shader;
         }
         if (frontWall != null)
@@ -116,7 +115,6 @@ public class NetworkControl : MonoBehaviour {
             frontWall.transform.localScale = new Vector3(1, 5, 1);
             frontWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
             frontWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-            frontWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
             frontWall.renderer.material.shader = shader;
         }
         if (rightWall != null)
@@ -124,7 +122,6 @@ public class NetworkControl : MonoBehaviour {
             rightWall.transform.localScale = new Vector3(1, 5, 1);
             rightWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
             rightWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-            rightWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
             rightWall.renderer.material.shader = shader;
         }
         if (backWall != null)
@@ -132,7 +129,6 @@ public class NetworkControl : MonoBehaviour {
             backWall.transform.localScale = new Vector3(1, 5, 1);
             backWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
             backWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-            backWall.GetComponent<WallBehaviour>().setDefaultColor(wallColor);
             backWall.renderer.material.shader = shader;
         }
     }
@@ -146,11 +142,7 @@ public class NetworkControl : MonoBehaviour {
     }
 
 
-    public static void AddPlayer(string playerName)
-    {
-        PlayerId2Username.Add(0, playerName);
-    }
-
+    
     [RPC]
    private void AddPlayer(string playerName, int playerID)
     {
@@ -229,7 +221,15 @@ public class NetworkControl : MonoBehaviour {
 		}
     }
 
-    public static void StartGame() {
+    [RPC]
+    public void StartGame() {
+        Destroy(GameObject.Find("SplashScreenLight"));
+        Destroy(GameObject.Find("SplashScreen"));
+        if (Network.isServer)
+        {
+            InstantiateGameBorders();
+            InstantiateCubes();
+        }
         var game = new Game(Resources.Load<Transform>("Player"), Resources.Load<Transform>("Lines"));
         game.StartGame();
     }
