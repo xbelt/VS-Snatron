@@ -19,7 +19,7 @@ public class CollisionPrediction : MonoBehaviour {
 		this._drive = transform.parent.gameObject.GetComponent<Drive>();
 		_drive.CollisionPrediction = this;
 	}
-	
+
 	void OnTriggerEnter(Collider other) {
 		Debug.Log ("Predict Collision enter: " + other.name + " " + name);
 		if (other.gameObject.tag == "wall") {
@@ -41,8 +41,7 @@ public class CollisionPrediction : MonoBehaviour {
 		set {
 			Vector3 old = _collider.size;
 			_collider.size = new Vector3(old.x, old.y, value);
-			Vector3 pos = _collider.transform.position;
-			_collider.transform.position.Set(pos.x, pos.y, transform.localScale.z*5.1f + value/2);
+            _collider.center = new Vector3(_collider.center.x, _collider.center.y, value / 2f + 4.7f);
 		}
 	}
 }
