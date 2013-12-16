@@ -99,7 +99,7 @@ public class NetworkControl : MonoBehaviour {
     [RPC]
     public void StartGame() {
 		StopAnnouncingServer ();
-		Game.NewGame().StartGame (PlayerID); //TODO move all direct interaction out of network control
+		Game.Instance.StartGame (PlayerID); //TODO move all direct interaction out of network control
         ID2AliveState.Add(PlayerID, true);
 		if (OnGameStarted != null)
 			OnGameStarted ();
