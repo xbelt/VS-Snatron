@@ -1,12 +1,9 @@
 ﻿/*TODO:
- * make Padding of TextField dependant of screen resolution
+ * make Padding of TextField dependent of screen resolution
  * Correctly send userID's
  * */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 using Assets;
 using UnityEngine;
 
@@ -15,7 +12,7 @@ public class GUI_Control : MonoBehaviour
 {
    	private string _playerName = "Player";
 
-	private NetworkControl networkControl;
+	private NetworkControl _networkControl;
 
     public Transform tron;
     public Transform grid;
@@ -25,14 +22,14 @@ public class GUI_Control : MonoBehaviour
     public GUIStyle textFieldGUIStyle;
     public GUIStyle horizontalScrollbarGUIStyle;
 
-	private GameObject splashScreenLight;
-	private GameObject splashScreen;
+	private GameObject _splashScreenLight;
+	private GameObject _splashScreen;
 
     private Vector2 _scrollPosition = Vector2.zero;
-   
-	public enum State { StartScreen, Lobby, Game, GamePaused }
 
-	private State state = State.StartScreen;
+    private enum State { StartScreen, Lobby, Game, GamePaused }
+
+	private State _state = State.StartScreen;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
@@ -45,12 +42,12 @@ public class GUI_Control : MonoBehaviour
         ReadScreenDimensionsAndroid();
         SetFontSize(HeightPixels / 50);
         SetTextColor(Color.white);
-		networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();		networkControl.OnGameEnded += StopGame;
-		networkControl.OnGameStarted += StartGame;
+		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();		_networkControl.OnGameEnded += StopGame;
+		_networkControl.OnGameStarted += StartGame;
         NetworkControl.StartListeningForNewServers();
 		
-		splashScreenLight = GameObject.Find ("SplashScreenLight");
-		splashScreen = GameObject.Find ("SplashScreen");
+		_splashScreenLight = GameObject.Find ("SplashScreenLight");
+		_splashScreen = GameObject.Find ("SplashScreen");
     }
 
     private void ChangeWifiSettingsAndroid() { }
@@ -104,12 +101,12 @@ public class GUI_Control : MonoBehaviour
 	
 	private void StartServer()
 	{
-		state = State.Lobby;
+		_state = State.Lobby;
 		NetworkControl.AnnounceServer ();
 	}
 	
-	private void joinGame(String ipAddress, int port){
-		state = State.Lobby;
+	private void JoinGame(String ipAddress, int port){
+		_state = State.Lobby;
 		NetworkControl.Connect(ipAddress, port);
 		NetworkControl.StopSearching();
 		NetworkControl.StopAnnouncingServer();
@@ -131,34 +128,34 @@ public class GUI_Control : MonoBehaviour
 
 	private void StartGame()
 	{
-		hideMenuBackground ();
-		state = State.Game;
+		HideMenuBackground ();
+		_state = State.Game;
 		NetworkControl.StopSearching();
 		NetworkControl.StopAnnouncingServer();
 	}
-	
-	public void StopGame()
+
+    private void StopGame()
 	{
 		// TODO make sure all players are disconnected
 		// and they all show the main menu
 		
 		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
-		state = State.StartScreen;
+		_state = State.StartScreen;
 	}
-	
-	public void PauseGame()
+
+    private void PauseGame()
 	{
 		// TODO
-		state = State.GamePaused;
+		_state = State.GamePaused;
 	}
-	
-	public void ResumeGame()
+
+    private void ResumeGame()
 	{
 		// TODO
-		state = State.Game;
+		_state = State.Game;
 	}
-	
-	public void ExitApp()
+
+    private void ExitApp()
 	{
 		Application.Quit ();
 	}
@@ -167,9 +164,9 @@ public class GUI_Control : MonoBehaviour
     {
         Network.Disconnect();
         Game.Instance.StopGame();
-        showMenuBackground();
+        ShowMenuBackground();
         ResetCamerPositionRotation();
-        state = State.StartScreen;
+        _state = State.StartScreen;
 
     }
     #endregion state transitions
@@ -180,18 +177,18 @@ public class GUI_Control : MonoBehaviour
         GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
     }
 	
+// ReSharper disable UnusedMember.Local
 	void OnConnectedToServer()
 	{
 		print("Connected");
 		//update server list?
 	}
 		
-	// ReSharper disable once UnusedMember.Local
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			switch(state){
+			switch(_state){
 			case State.Lobby: break;
 			case State.Game: PauseGame(); break;
 			case State.StartScreen: ExitApp(); break;
@@ -200,13 +197,14 @@ public class GUI_Control : MonoBehaviour
 			}
 		}
 	}
+// ReSharper restore UnusedMember.Local
 	
 	#region GUI
 	
 	// ReSharper disable once UnusedMember.Local
     private void OnGUI()
     {
-		switch (state) {
+		switch (_state) {
 				case State.StartScreen:
 						HandleStartScreenGUI ();
 						break;
@@ -243,7 +241,7 @@ public class GUI_Control : MonoBehaviour
 
         foreach (var item in NetworkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
         {
-			joinGame(item.Ip.ToString(), Protocol.GamePort);
+			JoinGame(item.Ip.ToString(), Protocol.GamePort);
         }
 
         GUILayout.EndVertical();
@@ -286,7 +284,7 @@ public class GUI_Control : MonoBehaviour
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
 		// * YOU HAVE WON
-		// * PAUSE BUTTON?
+		// * PAUSE BUTTON? -> no since pause makes no sense in multiplayer
 	}
 
 	private void HandleGamePaused()
@@ -303,22 +301,20 @@ public class GUI_Control : MonoBehaviour
         }
 		// TODO Add menu for
 		// * settings?
-		// * Stop game
-		// * ...
 	}
 
-    private void hideMenuBackground()
+    private void HideMenuBackground()
 	{
-		splashScreenLight.SetActive (false);
-		splashScreen.SetActive (false);
-		splashScreen.renderer.enabled = false;
+		_splashScreenLight.SetActive (false);
+		_splashScreen.SetActive (false);
+		_splashScreen.renderer.enabled = false;
 	}
 
-	private void showMenuBackground()
+	private void ShowMenuBackground()
 	{
-		splashScreenLight.SetActive (true);
-		splashScreen.SetActive (true);
-		splashScreen.renderer.enabled = true;
+		_splashScreenLight.SetActive (true);
+		_splashScreen.SetActive (true);
+		_splashScreen.renderer.enabled = true;
 	}
 	
     #endregion
