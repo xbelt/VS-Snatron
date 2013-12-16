@@ -23,7 +23,7 @@ public class Game : MonoBehaviour
 
 	private int _localPlayerId;
 	public int PlayerID { get {return _localPlayerId;} }
-	private readonly string[] PlayerId2UserName = new string[MaxPlayers];
+	public readonly string[] PlayerId2UserName = new string[MaxPlayers];
 
 	public int NumberOfCubes { get {return 5;} }
 	public int FieldBorderCoordinates { get { return 200; } }
@@ -112,13 +112,13 @@ public class Game : MonoBehaviour
 	}
 	
 	private void InstantiateCubes() {
-		List<Transform> cubes = new List<Transform>();
-		System.Random random = new System.Random();
+		var cubes = new List<Transform>();
+		var random = new System.Random();
 		var shader = Shader.Find("Diffuse");
-		for(int i = 0; i < NumberOfCubes; ++i) {
-			int _x = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
-			int _z = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
-			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3((float)_x, 1.5f, (float)_z), Quaternion.identity, 0) as Transform);
+		for(var i = 0; i < NumberOfCubes; ++i) {
+			var x = random.Next(-FieldBorderCoordinates, FieldBorderCoordinates);
+			var z = random.Next(-FieldBorderCoordinates, FieldBorderCoordinates);
+			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3(x, 1.5f, z), Quaternion.identity, 0) as Transform);
 			cubes[i].renderer.material.shader = shader;
 		}
 	}
@@ -133,8 +133,8 @@ public class Game : MonoBehaviour
 		var cam = GameObject.Find("Main Camera");
 		cam.AddComponent<SmoothFollow>().target = player;
 
-		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
-		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
+		Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
+		Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 	}
 
 	public void setPlayer(int playerId, string playerName) {
