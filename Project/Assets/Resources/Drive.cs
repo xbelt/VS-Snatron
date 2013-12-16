@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public class Drive : MonoBehaviour {
@@ -17,6 +18,8 @@ public class Drive : MonoBehaviour {
 
     private int HeightPixels;
 	private int WidthPixels;
+
+    private System.Random random = new System.Random();
 
     private bool _showPauseMenu;
     private GUIStyle buttonStyle = new GUIStyle();
@@ -87,6 +90,15 @@ public class Drive : MonoBehaviour {
 	        bool applied = ApplyUserCommands ();
 			if (applied)
 				return;
+	    }
+
+	    if (Network.isServer && random.Next(0, 1000) < 2)
+	    {
+            Debug.Log("Spawn powerUp");
+            var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
+            var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
+            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab"), new Vector3(x, 0, z),
+                    Quaternion.identity, 0);
 	    }
 
 		// The tron would keep moving straight
