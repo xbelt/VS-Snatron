@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Game
+public class Game : MonoBehaviour
 {
 	public static readonly int MaxPlayers = 8;
 	// The only game instance
@@ -48,7 +48,26 @@ public class Game
 	
 	public void StopGame()
 	{
-		// TODO remove all objects? necessary?
+	    var walls = GameObject.FindGameObjectsWithTag("wall");
+	    foreach (var wall in walls)
+	    {
+	        Destroy(wall);
+	    }
+	    var lines = GameObject.FindGameObjectsWithTag("line");
+	    foreach (var line in lines)
+	    {
+	        Destroy(line);
+	    }
+	    var cubes = GameObject.FindGameObjectsWithTag("cube");
+	    foreach (var cube in cubes)
+	    {
+	        Destroy(cube);
+	    }
+	    var players = GameObject.FindGameObjectsWithTag("tron");
+	    foreach (var player in players)
+	    {
+	        Destroy(player);
+	    }
 	}
 
 	private void InstantiateGameBorders() {
