@@ -27,8 +27,9 @@ public class Game : MonoBehaviour
 
 	public int NumberOfCubes { get {return 5;} }
 	public int FieldBorderCoordinates { get { return 200; } }
+    public bool PlayerHasWon;
 
-	private Game() { }
+    private Game() { }
 
 	// Start the game and give the local player control of the tron with localPlayerId
 	public void StartGame(int localPlayerId)
