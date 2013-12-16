@@ -10,6 +10,9 @@ TagManager:
   - collisionPredictor
   - SpeedUpCollider
   - cube
+  - line
+  - 
+  - lines
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
