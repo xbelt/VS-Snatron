@@ -13,11 +13,9 @@ using UnityEngine;
 // ReSharper disable once UnusedMember.Global
 public class GUI_Control : MonoBehaviour
 {
-    private bool _hostServerGui;
-    private bool _waitingScreenOn;
+   	private string _playerName = "Player";
 
-    private string _currentIp = "0.0.0.0";
-    private string _playerName = "Player";
+	private NetworkControl networkControl;
 
     public Transform tron;
     public Transform grid;
@@ -27,8 +25,14 @@ public class GUI_Control : MonoBehaviour
     public GUIStyle textFieldGUIStyle;
     public GUIStyle horizontalScrollbarGUIStyle;
 
+	private GameObject splashScreenLight;
+	private GameObject splashScreen;
+
     private Vector2 _scrollPosition = Vector2.zero;
-    private bool drawGUI = true;
+   
+	public enum State { StartScreen, Lobby, Game, GamePaused }
+
+	private State state = State.StartScreen;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
@@ -41,7 +45,12 @@ public class GUI_Control : MonoBehaviour
         ReadScreenDimensionsAndroid();
         SetFontSize(HeightPixels / 50);
         SetTextColor(Color.white);
+		networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();		networkControl.OnGameEnded += StopGame;
+		networkControl.OnGameStarted += StartGame;
         NetworkControl.StartListeningForNewServers();
+		
+		splashScreenLight = GameObject.Find ("SplashScreenLight");
+		splashScreen = GameObject.Find ("SplashScreen");
     }
 
     private void ChangeWifiSettingsAndroid() { }
@@ -91,41 +100,121 @@ public class GUI_Control : MonoBehaviour
         textFieldGUIStyle.fontSize = size < 12 ? 12 : size;
     }
 
+	#region state transitions
+	
+	private void StartServer()
+	{
+		state = State.Lobby;
+		NetworkControl.AnnounceServer ();
+	}
+	
+	private void joinGame(String ipAddress, int port){
+		state = State.Lobby;
+		//TODO: test new LINQ expression
+		NetworkControl.Connect(ipAddress, port);
+		NetworkControl.StopSearching();
+		NetworkControl.StopAnnouncingServer();
+	}
+	
+	private void StartNetworkGame()
+	{
+		StartGame ();
+		GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
+	}
+	
+	private void StartQuickGame()
+	{
+		StartGame ();
+		Network.InitializeServer(1, Protocol.GamePort, false);
+		GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
+		//this is so I don't have to bother with another, static, "StartGame" method
+	}
 
-    // ReSharper disable once UnusedMember.Local
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            _hostServerGui = false;
-        }
-    }
+	private void StartGame()
+	{
+		hideMenuBackground ();
+		state = State.Game;
+		NetworkControl.StopSearching();
+		NetworkControl.StopAnnouncingServer();
+	}
+	
+	public void StopGame()
+	{
+		// TODO make sure all players are disconnected
+		// and they all show the main menu
+		
+		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
+		state = State.StartScreen;
+	}
+	
+	public void PauseGame()
+	{
+		// TODO
+		state = State.GamePaused;
+	}
+	
+	public void ResumeGame()
+	{
+		// TODO
+		state = State.Game;
+	}
+	
+	public void ExitApp()
+	{
+		Application.Quit ();
+	}
 
-    #region GUI
-
-    // ReSharper disable once UnusedMember.Local
+	
+	#endregion state transitions
+	
+	void OnConnectedToServer()
+	{
+		print("Connected");
+		//update server list?
+	}
+		
+	// ReSharper disable once UnusedMember.Local
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			switch(state){
+			case State.Lobby:
+			case State.Game:
+			default: StopGame (); break;
+			case State.StartScreen: ExitApp(); break;
+			case State.GamePaused: ResumeGame(); break;
+			}
+		}
+	}
+	
+	#region GUI
+	
+	// ReSharper disable once UnusedMember.Local
     private void OnGUI()
     {
-        if (_hostServerGui)
-        {
-            HandleHostingGUI();
-        }
-        else if (_waitingScreenOn)
-        {
-            HandleWaitingScreen();
-        }
-        else if (drawGUI)
-        {
-            HandleStartScreenGUI();
-        }
+		switch (state) {
+				case State.StartScreen:
+						HandleStartScreenGUI ();
+						break;
+				case State.Lobby:
+						HandleWaitingScreen ();
+						break;
+				case State.Game:
+						HandleGame ();
+						break;
+				case State.GamePaused:
+						HandleGamePaused ();
+						break;
+				}
     }
 
     private void HandleStartScreenGUI()
     {
         if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Host", buttonGUIStyle))
         {
-            _hostServerGui = true;
-        }
+			StartServer();
+		}
         if (GUI.Button(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Race", buttonGUIStyle))
         {
             StartQuickGame();
@@ -141,18 +230,14 @@ public class GUI_Control : MonoBehaviour
 
         foreach (var item in NetworkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
         {
-            //TODO: test new LINQ expression
-            NetworkControl.Connect(item.Ip.ToString(), Protocol.GamePort);
-            NetworkControl.StopSearching();
-            NetworkControl.StopAnnouncingServer();
-            _waitingScreenOn = true;
+			joinGame(item.Ip.ToString(), Protocol.GamePort);
         }
 
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
     }
-
+	/*
     private void HandleHostingGUI()
     {
         if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
@@ -175,7 +260,7 @@ public class GUI_Control : MonoBehaviour
             GUI.TextField(new Rect(5 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
                 NetworkControl.NumberOfPlayers.ToString(), textFieldGUIStyle), "[^.0-9]", ""),
             out NetworkControl.NumberOfPlayers);
-    }
+    }*/
 
 
 
@@ -185,53 +270,62 @@ public class GUI_Control : MonoBehaviour
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(layoutGUIStyle);
 
-        foreach (KeyValuePair<int, string> entry in NetworkControl.PlayerId2Username)
-        {
-            GUILayout.Label(entry.Key + ": " + entry.Value, labelGUIStyle, GUILayout.ExpandWidth(true));
-        }
+		for (int id = 0; id < Game.MaxPlayers; id++) {
+			string name = Game.Instance.getPlayerName(id);
+			if (name != null) {
+				// TODO fix ArgumentException
+				GUILayout.Label(id + ": " + name, labelGUIStyle, GUILayout.ExpandWidth(true));
+			}
+		}
+
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
 
         if (Network.isServer)
-        {
-            if (NetworkControl.PlayerId2Username.Keys.Contains(0))
-            {
-                NetworkControl.PlayerId2Username.Remove(0);
-            }
-            NetworkControl.PlayerId2Username.Add(0, NetworkControl.PlayerName);
-            if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
+		{
+			Game.Instance.setPlayer(0, NetworkControl.PlayerName);
+			if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
             {
                 NetworkControl.StopAnnouncingServer();
-                _hostServerGui = false;
-                _waitingScreenOn = false;
-                drawGUI = false;
                 StartNetworkGame();
             }
         }
 
     }
 
-    void OnConnectedToServer()
-    {
-        print("Connected");
-        //update server list?
-    }
-    private void StartNetworkGame()
-    {
-        NetworkControl.StopSearching();
-        NetworkControl.StopAnnouncingServer();
-        GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
-    }
+	private void HandleGame(){
+		// TODO Draw Player info :
+		// * who's still alive?
+		// * "YOU WERE KILLED (BY ...?)"
+		// * YOU HAVE WON
+		// * PAUSE BUTTON?
+	}
 
-    private void StartQuickGame()
-    {
-        NetworkControl.StopSearching();
-        NetworkControl.StopAnnouncingServer();
-        Network.InitializeServer(1, Protocol.GamePort, false);
-        GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
-        //this is so I don't have to bother with another, static, "StartGame" method
-    }
+	private void HandleGamePaused()
+	{
+		// TODO Add menu for
+		// * settings?
+		// * Stop game
+		// * ...
+	}
 
+	private void hideMenuBackground()
+	{
+		// Old impl
+		//Destroy (GameObject.Find ("SplashScreenLight"));
+		//Destroy (GameObject.Find ("SplashScreen"));
+		splashScreenLight.SetActive (false);
+		splashScreen.SetActive (false);
+		splashScreen.renderer.enabled = false;
+	}
+
+	private void showMenuBackground()
+	{
+		splashScreenLight.SetActive (true);
+		splashScreen.SetActive (true);
+		splashScreen.renderer.enabled = true;
+	}
+	
     #endregion
 }

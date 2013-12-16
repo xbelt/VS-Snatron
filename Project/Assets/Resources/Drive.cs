@@ -171,7 +171,7 @@ public class Drive : MonoBehaviour {
 // ReSharper restore UnusedMember.Local
 
 	void NewWall() {
-	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+NetworkControl.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
+	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+ Game.Instance.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);

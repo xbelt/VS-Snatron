@@ -5,14 +5,84 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets
 {
     class ServerDiscoverer
-    {
-        public static bool MessageReceived;
-        private static Server _result;
-        public static Server DiscoverServers()
+	{
+        public bool MessageReceived;
+        private Server _result;
+
+		private Thread ServerListener;
+		
+		private readonly List<Server> _servers = new List<Server>();
+		// Defensive implementation
+		private List<Server> publicCopy = new List<Server>();
+
+		private bool _hasChanged;
+
+		// Has the server list changed since the last read?
+		private bool HasChanged(){
+			lock (this) {
+				return _hasChanged;
+			}
+		}
+
+		// Before calling this, use HasChanged, please
+		public List<Server> Servers {
+			get {
+				lock(this){
+					if (_hasChanged)
+						publicCopy = _servers.ToList();
+					_hasChanged = false;
+					return publicCopy;
+				}
+			}
+		}
+
+		public void StartListeningForNewServers() {
+			lock (this)
+			{
+				if (ServerListener != null && ServerListener.IsAlive)
+					return;
+
+				ServerListener = new Thread (() =>
+				{
+					while (true) {
+						var newServer = DiscoverServers ();
+						Debug.Log ("Discovered new Server");
+						var addServer = true;
+
+						foreach (var server in _servers.Where(server => server.Ip.Equals(newServer.Ip))) {
+							addServer = false;
+						}
+						if (addServer && newServer != null && newServer.Name != null) {
+							lock(this) {
+								_hasChanged = true;
+								_servers.Add (newServer);
+							}
+						}
+					}
+				});
+				ServerListener.Start ();
+			}
+		}
+		
+		public void StopSearching() {
+			lock (this) {
+				if (ServerListener == null || !ServerListener.IsAlive)
+					return;
+				ServerListener.Abort();
+				ServerListener = null;
+				_servers.RemoveAll((server) => true);
+				_hasChanged = true;
+			}
+		}
+
+        private Server DiscoverServers()
         {
             MessageReceived = false;
             var ipEndPoint = new IPEndPoint(IPAddress.Any, Protocol.ServerPort);
@@ -31,7 +101,7 @@ namespace Assets
             return _result;
         }
 
-        private static void ReceiveCallback(IAsyncResult ar)
+        private void ReceiveCallback(IAsyncResult ar)
         {
             var u = ((UdpState)(ar.AsyncState)).UdpClient;
             var e = ((UdpState)(ar.AsyncState)).IpEndPoint;

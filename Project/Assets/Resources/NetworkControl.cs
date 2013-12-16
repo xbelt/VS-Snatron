@@ -7,16 +7,18 @@ using UnityEngine;
 using System.Collections;
 
 public class NetworkControl : MonoBehaviour {
-    public static bool IsSearching = true;
-    public static readonly List<Server> Servers = new List<Server>();
-    public static int PlayerID;
-    public static readonly Dictionary<int, String> PlayerId2Username = new Dictionary<int, String>();
-    private static int _currentPlayerID = 0;
-    public static string HostName = "";
-    public static string PlayerName = "Player";
-    public static int NumberOfPlayers = 0;
-    public static int NumberOfCubes = 5;
-    private const int FieldBorderCoordinates = 200; 
+	// Local Player
+	private int PlayerID;
+	public static string PlayerName = "Player";
+	private static readonly ServerDiscoverer discoverer = new ServerDiscoverer ();
+	public static List<Server> Servers { get { return discoverer.Servers; } }
+	// Hosting
+	public static string HostName{ get { return PlayerName + "'s Game"; } }
+	private readonly Dictionary<string,int> _ip2playerId = new Dictionary<string, int> ();
+
+	// Client
+
+   	private static int _currentPlayerID = 0;
 
     // Use this for initialization
 	void Start () {
@@ -29,29 +31,17 @@ public class NetworkControl : MonoBehaviour {
 	}
 
     public static void StartListeningForNewServers() {
-        (new Thread(() =>
-        {
-            while (IsSearching)
-            {
-                var newServer = ServerDiscoverer.DiscoverServers();
-                Debug.Log("Discovered new Server");
-                var addServer = true;
-                foreach (var server in Servers.Where(server => server.Ip.Equals(newServer.Ip)))
-                {
-                    addServer = false;
-                }
-                if (addServer && newServer != null && newServer.Name != null)
-                {
-                    Servers.Add(newServer);
-                }
-            }
-        })
-            ).Start();
-    }
-
-    public static void AnnounceServer() {
+		discoverer.StartListeningForNewServers ();
+	}
+	
+	public static void StopSearching() {
+		discoverer.StopSearching ();
+	}
+	
+	public static void AnnounceServer() {
+		StopSearching ();
         ServerHoster.HostServer(HostName);
-        Network.InitializeServer(NumberOfPlayers, Protocol.GamePort, false);
+        Network.InitializeServer(Game.MaxPlayers, Protocol.GamePort, false);
         Network.sendRate = 30;
     }
 
@@ -62,83 +52,26 @@ public class NetworkControl : MonoBehaviour {
     public static void Connect(string ip, int port) {
         Network.Connect(ip, port);
     }
+
+	public static void Disconnect() {
+		Network.Disconnect ();
+	}
+
     void OnGUI()
     {
-
-        GUI.Label(new Rect(100, 100, 150, 100), string.Join(", ", PlayerId2Username.Select((x) => x.Key + ": " + x.Value).ToArray()));
-       
-    }
-
-
-    public static void InstantiateCubes() {
-        List<Transform> cubes = new List<Transform>();
-        System.Random random = new System.Random();
-        var shader = Shader.Find("Diffuse");
-        for(int i = 0; i < NumberOfCubes; ++i) {
-            int _x = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
-            int _z = random.Next(-(int) FieldBorderCoordinates, (int) FieldBorderCoordinates);
-            cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3((float)_x, 1.5f, (float)_z), Quaternion.identity, 0) as Transform);
-            cubes[i].renderer.material.shader = shader;
-        }
-    }
-
-    public static void InstantiateGameBorders() {
-        var leftWall =
-            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        var frontWall =
-            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        var rightWall =
-            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        var backWall =
-            Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-        var wallColor = new Color(204 / 255f, 204 / 255f, 204 / 255f, 1f);
-        var shader = Shader.Find("Diffuse");
-        if (leftWall != null)
-        {
-            leftWall.transform.localScale = new Vector3(1, 5, 1);
-            leftWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-            leftWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-            leftWall.renderer.material.shader = shader;
-        }
-        if (frontWall != null)
-        {
-            frontWall.transform.localScale = new Vector3(1, 5, 1);
-            frontWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-            frontWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-            frontWall.renderer.material.shader = shader;
-        }
-        if (rightWall != null)
-        {
-            rightWall.transform.localScale = new Vector3(1, 5, 1);
-            rightWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
-            rightWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-            rightWall.renderer.material.shader = shader;
-        }
-        if (backWall != null)
-        {
-            backWall.transform.localScale = new Vector3(1, 5, 1);
-            backWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
-            backWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-            backWall.renderer.material.shader = shader;
-        }
-    }
-
-    public static void StopSearching() {
-        IsSearching = false;
+		// Marko: Is this necessary??
+        //GUI.Label(new Rect(100, 100, 150, 100), string.Join(", ", PlayerId2Username.Select((x) => x.Key + ": " + x.Value).ToArray()));
     }
 
     private static int NextPlayerID() {
         return ++_currentPlayerID;
     }
 
-
-    
     [RPC]
-   private void AddPlayer(string playerName, int playerID)
+	private void SetPlayer(string playerName, int playerID)
     {
-        Debug.Log("Received addPlayer RPC");
-        PlayerId2Username.Add(playerID, playerName);
-
+        Debug.Log("Received SetPlayer RPC");
+		Game.Instance.setPlayer (playerID, playerName);
     }
 
     [RPC]
@@ -146,81 +79,62 @@ public class NetworkControl : MonoBehaviour {
     {
         Debug.Log("received RPC from server(hopefully from server)"); 
         PlayerID = id;
-        GetComponent<NetworkView>().RPC("AddPlayer", RPCMode.AllBuffered, PlayerName, id);
+		GetComponent<NetworkView>().RPC("SetPlayer", RPCMode.AllBuffered, PlayerName, id);
     }
 
+	// Called on Server when a player connects : Assign player id to connected player
     void OnPlayerConnected(NetworkPlayer player)
     {
-        GetComponent<NetworkView>().RPC("SetPlayerID", player, NextPlayerID());
-        GetComponent<NetworkView>().RPC("AddPlayer", player, PlayerName, 0); //add the host, since he's not in the buffer since he is added by GUI_control which uses this via static functions which cannot do RPC </rant>
+		int playerId = Game.Instance.getFirstFreePlayerId ();
+		_ip2playerId.Add (player.ipAddress, playerId);
+
+        GetComponent<NetworkView>().RPC("SetPlayerID", player, Game.Instance.getFirstFreePlayerId());
+		GetComponent<NetworkView>().RPC("SetPlayer", player, PlayerName, 0); //add the host, since he's not in the buffer since he is added by GUI_control which uses this via static functions which cannot do RPC </rant>
     }
-    private class Game
-    {
-        private readonly Transform _playerPrefab;
-        private readonly Transform _gridPrefab;
+	
+	// Called on Server when a player disconnects : Destroy all objects from that player
+	void OnPlayerDisconnected(NetworkPlayer player)
+	{
+		if (!_ip2playerId.ContainsKey(player.ipAddress))
+			return;
 
-        public Game(Transform playerPrefab, Transform gridPrefab)
-        {
-            _playerPrefab = playerPrefab;
-            _gridPrefab = gridPrefab;
-        }
+		int playerId;
+		_ip2playerId.TryGetValue (player.ipAddress, out playerId);
 
-		public void StartGame()
-		{
-			SpawnPlayer();
-		}
+		Network.RemoveRPCs(player);
+		Network.DestroyPlayerObjects(player);
+		// remove from player lists
+		_ip2playerId.Remove(player.ipAddress);
+		GetComponent<NetworkView>().RPC("SetPlayer", RPCMode.AllBuffered, null, playerId);
+	}
+	
+	public delegate void GameStarted();
+	public delegate void GameEnded();
 
-        private void SpawnPlayer()
-        {
-			Vector3 location;
-			Quaternion orientation;
-			mapStartLocation (PlayerID, out location, out orientation);
-
-            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
-            var cam = GameObject.Find("Main Camera");
-            cam.AddComponent<SmoothFollow>().target = player;
-
-            Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
-            Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
-        }
-
-		private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
-		{
-			// This is how players are arranged in a square, by id
-			// 4 0 6
-			// 3 * 2
-			// 7 1 5
-
-			// Orientations:
-			// 0,1,2,3 look towards the center * @(0/0/0)
-			// 4,5,6,7 look in clockwise direction
-
-            float dist = FieldBorderCoordinates/4;
-
-			switch (playerId) {
-			case 0: location = new Vector3(0, 0, -dist); 	 orientation = Quaternion.AngleAxis(0, Vector3.up); break;
-			case 1: location = new Vector3(0, 0,  dist); 	 orientation = Quaternion.AngleAxis(180, Vector3.up); break;
-			case 2:	location = new Vector3( dist, 0, 0); 	 orientation = Quaternion.AngleAxis(270, Vector3.up); break;
-			case 3:	location = new Vector3(-dist, 0, 0); 	 orientation = Quaternion.AngleAxis(90, Vector3.up); break;
-			case 4:	location = new Vector3(-dist, 0, -dist); orientation = Quaternion.AngleAxis(90, Vector3.up); break;
-			case 5:	location = new Vector3( dist, 0,  dist); orientation = Quaternion.AngleAxis(270, Vector3.up); break;
-			case 6:	location = new Vector3( dist, 0, -dist); orientation = Quaternion.AngleAxis(0, Vector3.up); break;
-			case 7:	location = new Vector3(-dist, 0,  dist); orientation = Quaternion.AngleAxis(180, Vector3.up); break;
-			default:location = new Vector3(); 				 orientation = new Quaternion(); break;
-			}
-		}
-    }
+	public GameStarted OnGameStarted;
+	public GameEnded OnGameEnded;
 
     [RPC]
     public void StartGame() {
-        Destroy(GameObject.Find("SplashScreenLight"));
-        Destroy(GameObject.Find("SplashScreen"));
-        if (Network.isServer)
-        {
-            InstantiateGameBorders();
-            InstantiateCubes();
-        }
-        var game = new Game(Resources.Load<Transform>("Player" + PlayerID), Resources.Load<Transform>("Lines"));
-        game.StartGame();
+		StopAnnouncingServer ();
+		Game.NewGame().StartGame (PlayerID);; //TODO move all direct interaction out of network control
+		if (OnGameStarted != null)
+			OnGameStarted ();
     }
+
+	[RPC]
+	public void StopGame() {
+		Disconnect ();
+		Game.Instance.StopGame ();
+		resetPreGameValues ();
+		if (OnGameEnded != null)
+			OnGameEnded ();
+	}
+
+
+	private void resetPreGameValues() {
+		PlayerID = 0;
+		StartListeningForNewServers ();
+		// TODO some more?
+	}
 }
