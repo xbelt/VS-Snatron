@@ -9,4 +9,9 @@ public class PowerUpDestroyer : MonoBehaviour {
 	    var ttl = random.Next(5, 15);
         Destroy(gameObject, ttl);
 	}
+
+    public void ConsumePowerUp()
+    {
+        Destroy(gameObject);
+    }
 }
