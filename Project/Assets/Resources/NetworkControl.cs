@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Generic;
 using Assets;
 using UnityEngine;
-using System.Collections;
 
 public class NetworkControl : MonoBehaviour {
 	// Local Player
     public int PlayerID;
 	public static string PlayerName = "Player";
 	private static readonly ServerDiscoverer Discoverer = new ServerDiscoverer ();
-	public static List<Server> Servers { get { return Discoverer.Servers; } }
+	public static IEnumerable<Server> Servers { get { return Discoverer.Servers; } }
 	// Hosting
 	public static string HostName{ get { return PlayerName + "'s Game"; } }
     public static int PlayerRank { get; set; }
@@ -22,7 +18,7 @@ public class NetworkControl : MonoBehaviour {
     public static readonly Dictionary<int, bool> ID2AliveState = new Dictionary<int, bool> ();
 	// Client
 
-   	private static int _currentPlayerID = 0;
+   	private static int _currentPlayerID;
 
     public static void StartListeningForNewServers() {
 		Discoverer.StartListeningForNewServers ();
@@ -47,13 +43,9 @@ public class NetworkControl : MonoBehaviour {
         Network.Connect(ip, port);
     }
 
-	public static void Disconnect() {
+    private static void Disconnect() {
 		Network.Disconnect ();
 	}
-
-    private static int NextPlayerID() {
-        return ++_currentPlayerID;
-    }
 
     [RPC]
 	private void SetPlayer(string playerName, int playerID)
@@ -107,7 +99,7 @@ public class NetworkControl : MonoBehaviour {
     [RPC]
     public void StartGame() {
 		StopAnnouncingServer ();
-		Game.NewGame().StartGame (PlayerID);; //TODO move all direct interaction out of network control
+		Game.NewGame().StartGame (PlayerID); //TODO move all direct interaction out of network control
         ID2AliveState.Add(PlayerID, true);
 		if (OnGameStarted != null)
 			OnGameStarted ();
