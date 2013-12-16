@@ -14,21 +14,13 @@ public class NetworkControl : MonoBehaviour {
 	public static List<Server> Servers { get { return discoverer.Servers; } }
 	// Hosting
 	public static string HostName{ get { return PlayerName + "'s Game"; } }
-	private readonly Dictionary<string,int> _ip2playerId = new Dictionary<string, int> ();
+    public static bool PlayerIsAlive { get; set; }
+
+    private readonly Dictionary<string,int> _ip2playerId = new Dictionary<string, int> ();
 
 	// Client
 
    	private static int _currentPlayerID = 0;
-
-    // Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
     public static void StartListeningForNewServers() {
 		discoverer.StartListeningForNewServers ();
