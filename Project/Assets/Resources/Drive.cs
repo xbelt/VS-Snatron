@@ -174,10 +174,12 @@ public class Drive : MonoBehaviour {
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         Network.Destroy(gameObject);
-		// call some RPC method which will kill the dude on all devices
-		// (must ?) also somehow display the info who has died and who wins...
-		// and return to the main menu to start a new game.
-		// or just start a new round when the last one has died
+        NetworkControl.PlayerIsAlive = false;
+        GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, Game.Instance.PlayerID);
+        // call some RPC method which will kill the dude on all devices
+        // (must ?) also somehow display the info who has died and who wins...
+        // and return to the main menu to start a new game.
+        // or just start a new round when the last one has died
 	}
 
     public CollisionPrediction CollisionPrediction { get; set; }
