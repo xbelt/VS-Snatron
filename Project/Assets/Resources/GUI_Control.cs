@@ -110,7 +110,6 @@ public class GUI_Control : MonoBehaviour
 	
 	private void joinGame(String ipAddress, int port){
 		state = State.Lobby;
-		//TODO: test new LINQ expression
 		NetworkControl.Connect(ipAddress, port);
 		NetworkControl.StopSearching();
 		NetworkControl.StopAnnouncingServer();
@@ -179,11 +178,11 @@ public class GUI_Control : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			switch(state){
-			case State.Lobby:
-			case State.Game:
-			default: StopGame (); break;
+			case State.Lobby: break;
+			case State.Game: PauseGame(); break;
 			case State.StartScreen: ExitApp(); break;
 			case State.GamePaused: ResumeGame(); break;
+			default: StopGame(); break;
 			}
 		}
 	}
@@ -237,32 +236,6 @@ public class GUI_Control : MonoBehaviour
         GUILayout.EndScrollView();
         GUILayout.EndArea();
     }
-	/*
-    private void HandleHostingGUI()
-    {
-        if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-            "Play", buttonGUIStyle))
-        {
-            _waitingScreenOn = true;
-            _hostServerGui = false;
-            NetworkControl.IsSearching = false;
-            NetworkControl.AnnounceServer();
-       }
-
-        GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "HostName",
-            labelGUIStyle);
-        NetworkControl.HostName =
-            GUI.TextField(new Rect(5 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-                NetworkControl.HostName, 20, textFieldGUIStyle);
-        GUI.Label(new Rect(1 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-            "# of opponents", labelGUIStyle);
-        Int32.TryParse(Regex.Replace(
-            GUI.TextField(new Rect(5 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-                NetworkControl.NumberOfPlayers.ToString(), textFieldGUIStyle), "[^.0-9]", ""),
-            out NetworkControl.NumberOfPlayers);
-    }*/
-
-
 
     private void HandleWaitingScreen()
     {
@@ -271,10 +244,10 @@ public class GUI_Control : MonoBehaviour
         GUILayout.BeginVertical(layoutGUIStyle);
 
 		for (int id = 0; id < Game.MaxPlayers; id++) {
-			string name = Game.Instance.getPlayerName(id);
-			if (name != null) {
+			var playerName = Game.Instance.getPlayerName(id);
+			if (playerName != null) {
 				// TODO fix ArgumentException
-				GUILayout.Label(id + ": " + name, labelGUIStyle, GUILayout.ExpandWidth(true));
+				GUILayout.Label(id + ": " + playerName, labelGUIStyle, GUILayout.ExpandWidth(true));
 			}
 		}
 
@@ -304,6 +277,11 @@ public class GUI_Control : MonoBehaviour
 
 	private void HandleGamePaused()
 	{
+        if (GUI.Button(new Rect(15 / 30f * WidthPixels, 10 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                "Exit", buttonGUIStyle))
+        {
+            Application.Quit();
+        }
 		// TODO Add menu for
 		// * settings?
 		// * Stop game
@@ -312,9 +290,6 @@ public class GUI_Control : MonoBehaviour
 
 	private void hideMenuBackground()
 	{
-		// Old impl
-		//Destroy (GameObject.Find ("SplashScreenLight"));
-		//Destroy (GameObject.Find ("SplashScreen"));
 		splashScreenLight.SetActive (false);
 		splashScreen.SetActive (false);
 		splashScreen.renderer.enabled = false;
