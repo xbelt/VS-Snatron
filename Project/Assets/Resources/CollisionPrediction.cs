@@ -28,6 +28,14 @@ public class CollisionPrediction : MonoBehaviour {
 				_drive.OnPredictedCollisionEnter ();
 			}
 		}
+	    if (other.gameObject.tag == "powerUp")
+	    {
+            other.gameObject.GetComponent<PowerUpDestroyer>().ConsumePowerUp();
+            if (_drive != null)
+            {
+                _drive.ConsumePowerup();
+            }
+	    }
 	}
 	
 	void OnTriggerExit(Collider other) {
