@@ -8,26 +8,26 @@ using System.Collections;
 
 public class NetworkControl : MonoBehaviour {
 	// Local Player
-	private int PlayerID;
+    public int PlayerID;
 	public static string PlayerName = "Player";
-	private static readonly ServerDiscoverer discoverer = new ServerDiscoverer ();
-	public static List<Server> Servers { get { return discoverer.Servers; } }
+	private static readonly ServerDiscoverer Discoverer = new ServerDiscoverer ();
+	public static List<Server> Servers { get { return Discoverer.Servers; } }
 	// Hosting
 	public static string HostName{ get { return PlayerName + "'s Game"; } }
-    public static bool PlayerIsAlive { get; set; }
+    public static bool PlayerIsAlive = true;
 
-    private readonly Dictionary<string,int> _ip2playerId = new Dictionary<string, int> ();
-
+    public static readonly Dictionary<string, int> _ip2playerId = new Dictionary<string, int> ();
+    public static readonly Dictionary<int, bool> ID2AliveState = new Dictionary<int, bool> ();
 	// Client
 
    	private static int _currentPlayerID = 0;
 
     public static void StartListeningForNewServers() {
-		discoverer.StartListeningForNewServers ();
+		Discoverer.StartListeningForNewServers ();
 	}
 	
 	public static void StopSearching() {
-		discoverer.StopSearching ();
+		Discoverer.StopSearching ();
 	}
 	
 	public static void AnnounceServer() {
@@ -49,12 +49,6 @@ public class NetworkControl : MonoBehaviour {
 		Network.Disconnect ();
 	}
 
-    void OnGUI()
-    {
-		// Marko: Is this necessary??
-        //GUI.Label(new Rect(100, 100, 150, 100), string.Join(", ", PlayerId2Username.Select((x) => x.Key + ": " + x.Value).ToArray()));
-    }
-
     private static int NextPlayerID() {
         return ++_currentPlayerID;
     }
@@ -64,6 +58,7 @@ public class NetworkControl : MonoBehaviour {
     {
         Debug.Log("Received SetPlayer RPC");
 		Game.Instance.setPlayer (playerID, playerName);
+        ID2AliveState.Add(playerID, true);
     }
 
     [RPC]
@@ -79,12 +74,13 @@ public class NetworkControl : MonoBehaviour {
     {
 		int playerId = Game.Instance.getFirstFreePlayerId ();
 		_ip2playerId.Add (player.ipAddress, playerId);
+        ID2AliveState.Add(playerId, true);
 
         GetComponent<NetworkView>().RPC("SetPlayerID", player, Game.Instance.getFirstFreePlayerId());
 		GetComponent<NetworkView>().RPC("SetPlayer", player, PlayerName, 0); //add the host, since he's not in the buffer since he is added by GUI_control which uses this via static functions which cannot do RPC </rant>
     }
 	
-	// Called on Server when a player disconnects : Destroy all objects from that player
+	// Called on Server when a player disconnects : Destroy all objects from that player (Why would we do that? isn't it crappy if the walls tdissapear if one loses connection)
 	void OnPlayerDisconnected(NetworkPlayer player)
 	{
 		if (!_ip2playerId.ContainsKey(player.ipAddress))
@@ -94,7 +90,7 @@ public class NetworkControl : MonoBehaviour {
 		_ip2playerId.TryGetValue (player.ipAddress, out playerId);
 
 		Network.RemoveRPCs(player);
-		Network.DestroyPlayerObjects(player);
+		//Network.DestroyPlayerObjects(player);
 		// remove from player lists
 		_ip2playerId.Remove(player.ipAddress);
 		GetComponent<NetworkView>().RPC("SetPlayer", RPCMode.AllBuffered, null, playerId);
@@ -110,6 +106,7 @@ public class NetworkControl : MonoBehaviour {
     public void StartGame() {
 		StopAnnouncingServer ();
 		Game.NewGame().StartGame (PlayerID);; //TODO move all direct interaction out of network control
+        ID2AliveState.Add(PlayerID, true);
 		if (OnGameStarted != null)
 			OnGameStarted ();
     }
@@ -118,13 +115,18 @@ public class NetworkControl : MonoBehaviour {
 	public void StopGame() {
 		Disconnect ();
 		Game.Instance.StopGame ();
-		resetPreGameValues ();
+		ResetPreGameValues ();
 		if (OnGameEnded != null)
 			OnGameEnded ();
 	}
 
+    [RPC]
+    public void KillPlayer(int id)
+    {
+        ID2AliveState[id] = false;
+    }
 
-	private void resetPreGameValues() {
+	private void ResetPreGameValues() {
 		PlayerID = 0;
 		StartListeningForNewServers ();
 		// TODO some more?
