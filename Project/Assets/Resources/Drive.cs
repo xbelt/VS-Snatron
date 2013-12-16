@@ -221,4 +221,9 @@ public class Drive : MonoBehaviour {
 	{
 		_numberOfWallsNear--;
 	}
+
+    public void ConsumePowerup()
+    {
+        _speed = MaxSpeed;
+    }
 }
