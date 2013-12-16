@@ -10,69 +10,63 @@ public class NetworkControl : MonoBehaviour {
 	public static IEnumerable<Server> Servers { get { return Discoverer.Servers; } }
 	// Hosting
 	public static string HostName{ get { return PlayerName + "'s Game"; } }
-    public static int PlayerRank { get; set; }
-
-    public static bool PlayerIsAlive = true;
-
-    public static readonly Dictionary<string, int> _ip2playerId = new Dictionary<string, int> ();
-    public static readonly Dictionary<int, bool> ID2AliveState = new Dictionary<int, bool> ();
 	// Client
+	public readonly Dictionary<string, int> _ip2playerId = new Dictionary<string, int> ();
 
-   	private static int _currentPlayerID;
+   	private int _currentPlayerID;
 
-    public static void StartListeningForNewServers() {
+    public void StartListeningForNewServers() {
 		Discoverer.StartListeningForNewServers ();
 	}
 	
-	public static void StopSearching() {
+	public void StopSearching() {
 		Discoverer.StopSearching ();
 	}
 	
-	public static void AnnounceServer() {
+	public void AnnounceServer() {
 		StopSearching ();
         ServerHoster.HostServer(HostName);
         Network.InitializeServer(Game.MaxPlayers, Protocol.GamePort, false);
         Network.sendRate = 30;
     }
 
-    public static void StopAnnouncingServer() {
+    public void StopAnnouncingServer() {
         ServerHoster.IsHosting = false;
     }
 
-    public static void Connect(string ip, int port) {
+    public void Connect(string ip, int port) {
         Network.Connect(ip, port);
     }
 
-    private static void Disconnect() {
+    private void Disconnect() {
 		Network.Disconnect ();
 	}
 
     [RPC]
-	private void SetPlayer(string playerName, int playerID)
+	private void SetPlayer(string playerName, int playerId)
     {
         Debug.Log("Received SetPlayer RPC");
-		Game.Instance.setPlayer (playerID, playerName);
-        ID2AliveState.Add(playerID, true);
+		Game.Instance.setPlayer (playerId, playerName);
     }
 
     [RPC]
-    private void SetPlayerID(int id)
+	private void SetPlayerID(int playerId)
     {
         Debug.Log("received RPC from server(hopefully from server)"); 
-        PlayerID = id;
-		GetComponent<NetworkView>().RPC("SetPlayer", RPCMode.AllBuffered, PlayerName, id);
+		PlayerID = playerId;
+		GetComponent<NetworkView>().RPC("SetPlayer", RPCMode.AllBuffered, PlayerName, playerId);
     }
+
+	public delegate void PlayerConnectedEvent();
 
 	// Called on Server when a player connects : Assign player id to connected player
     void OnPlayerConnected(NetworkPlayer player)
     {
 		int playerId = Game.Instance.getFirstFreePlayerId ();
-		_ip2playerId.Add (player.ipAddress, playerId);
-        ID2AliveState.Add(playerId, true);
-
         GetComponent<NetworkView>().RPC("SetPlayerID", player, Game.Instance.getFirstFreePlayerId());
 		GetComponent<NetworkView>().RPC("SetPlayer", player, PlayerName, 0); //add the host, since he's not in the buffer since he is added by GUI_control which uses this via static functions which cannot do RPC </rant>
-    }
+		_ip2playerId.Add (player.ipAddress, playerId);
+	}
 	
 	// Called on Server when a player disconnects : Destroy all objects from that player (Why would we do that? isn't it crappy if the walls tdissapear if one loses connection)
 	void OnPlayerDisconnected(NetworkPlayer player)
@@ -99,8 +93,7 @@ public class NetworkControl : MonoBehaviour {
     [RPC]
     public void StartGame() {
 		StopAnnouncingServer ();
-		Game.Instance.StartGame (PlayerID); //TODO move all direct interaction out of network control
-        ID2AliveState.Add(PlayerID, true);
+		Game.Instance.StartGame (PlayerID);
         if (OnGameStarted != null)
 			OnGameStarted (); 
     }

@@ -20,6 +20,7 @@ public class GUI_Control : MonoBehaviour
 
 	private GameObject _splashScreenLight;
 	private GameObject _splashScreen;
+	private GameObject _player;
 
     private Vector2 _scrollPosition = Vector2.zero;
 
@@ -38,11 +39,13 @@ public class GUI_Control : MonoBehaviour
         ReadScreenDimensionsAndroid();
         SetFontSize(HeightPixels / 50);
         SetTextColor(Color.white);
+
+		// Init NetworkControl
 		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();
 		_networkControl.OnGameEnded += StopGame;
 		_networkControl.OnGameStarted += StartGame;
-        NetworkControl.StartListeningForNewServers();
-		
+		_networkControl.StartListeningForNewServers();
+
 		_splashScreenLight = GameObject.Find ("SplashScreenLight");
 		_splashScreen = GameObject.Find ("SplashScreen");
     }
@@ -101,37 +104,39 @@ public class GUI_Control : MonoBehaviour
 	private void StartServer()
 	{
 		_state = State.Lobby;
-		NetworkControl.AnnounceServer ();
+		_networkControl.AnnounceServer ();
 	}
 	
 	private void JoinGame(String ipAddress, int port){
 		_state = State.Lobby;
-		NetworkControl.Connect(ipAddress, port);
-		NetworkControl.StopSearching();
-		NetworkControl.StopAnnouncingServer();
+		_networkControl.Connect(ipAddress, port);
+		_networkControl.StopSearching();
+		_networkControl.StopAnnouncingServer();
 	}
 	
 	private void StartNetworkGame()
 	{
-		StartGame ();
 		GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
 	}
 	
 	private void StartQuickGame()
 	{
-		StartGame ();
 		Network.InitializeServer(0, Protocol.GamePort, false);
 		GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
         Game.Instance.setPlayer(0, _playerName);
 		//this is so I don't have to bother with another, static, "StartGame" method
 	}
 
+	// This is indirectly called through RPC StartGame
 	private void StartGame()
 	{
 		HideMenuBackground ();
 		_state = State.Game;
-		NetworkControl.StopSearching();
-		NetworkControl.StopAnnouncingServer();
+		_networkControl.StopSearching();
+		_networkControl.StopAnnouncingServer();
+		
+		// int id = Game.Instance.PlayerID;
+		// TODO Game.Instance.get player To register event listener
 	}
 
     private void StopGame()
@@ -272,7 +277,7 @@ public class GUI_Control : MonoBehaviour
 			Game.Instance.setPlayer(0, NetworkControl.PlayerName);
 			if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
             {
-                NetworkControl.StopAnnouncingServer();
+				_networkControl.StopAnnouncingServer();
                 StartNetworkGame();
             }
         }
@@ -280,34 +285,51 @@ public class GUI_Control : MonoBehaviour
     }
 
 	private void HandleGame() {
-	    if (!NetworkControl.PlayerIsAlive && !Game.Instance.PlayerHasWon)
-	    {
-	        GUI.Label(new Rect(9/20f*WidthPixels, 19/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
-	            "You are dead!", labelGUIStyle);
-	    }
-	    if (!NetworkControl.PlayerIsAlive && Game.Instance.PlayerHasWon)
-	    {
-	        LeaveGame();
-	    }
-        var i = 0;
-        foreach (var id2Alive in NetworkControl.ID2AliveState)
-        {
-            GUI.Label(new Rect(1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.PlayerId2UserName[id2Alive.Key] + ": " + (id2Alive.Value ? "Alive" : "Dead"), labelGUIStyle);
-            i++;
-        }
+		Drive player = Game.Instance.LocalPlayer;
+		bool isAlive = Game.Instance.isAlive (Game.Instance.PlayerID);
+		bool hasWon = Game.Instance.hasWon (Game.Instance.PlayerID);
 
-	    if ((NetworkControl.ID2AliveState.Values.Where(x => x)).Count() == 1 && Network.maxConnections > 0)
+		if (!isAlive) {
+			if (!hasWon)
+			{
+				GUI.Label(new Rect(9/20f*WidthPixels, 19/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
+				          "You are dead!", labelGUIStyle);
+			}else
+			{
+				LeaveGame();
+			}
+		}
+
+        var i = 0;
+
+		for (int j = 0; j < Game.MaxPlayers; j++)
+		{
+			if (Game.Instance.isActivePlayer(j))
+			{
+				GUI.Label(new Rect(1 / 20f * WidthPixels,
+				                   (1 + 3 * i) / 40f * HeightPixels,
+				                   1 / 10f * WidthPixels,
+				                   1 / 20f * HeightPixels),
+				          Game.Instance.getPlayerName(j) + ": " 
+				          	+ (Game.Instance.isAlive(j) ? "Alive" : "Dead"),
+				          labelGUIStyle);
+				i++;
+			}
+		}
+
+		if (Game.Instance.countAlivePlayers() == 1 && Network.maxConnections > 0)
 	    {
-	        Game.Instance.PlayerHasWon = true;
+	        player.PlayerHasWon = true;
             GUI.Label(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You won!", labelGUIStyle);
 	        if (GUI.Button(new Rect(9/20f*WidthPixels, 20/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
 	            "Back to menu", buttonGUIStyle))
 	        {
+				// TODO restart game
 	            LeaveGame();
 	        }
 	    }
 
-	    if (Game.Instance.isIndestructible)
+	    if (player.isIndestructible)
 	    {
             GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
                 "Indestructible for " + Game.Instance.IndestructibleTimeLeft.ToString("0.0") + "s", labelGUIStyle);

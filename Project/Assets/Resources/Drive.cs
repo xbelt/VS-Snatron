@@ -23,6 +23,8 @@ public class Drive : MonoBehaviour {
 
     private System.Random random = new System.Random();
 
+	public bool isIndestructible;
+
     private bool _showPauseMenu;
     private GUIStyle buttonStyle = new GUIStyle();
 
@@ -106,7 +108,7 @@ public class Drive : MonoBehaviour {
 
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
-        if (_predictedCollisions > 0 && !Game.Instance.isIndestructible)
+        if (_predictedCollisions > 0 && !isIndestructible)
         {
 			Kill();
 			return;
@@ -185,15 +187,19 @@ public class Drive : MonoBehaviour {
 
 	// Collision Stuff
 
+	public delegate void KillEvent();
+	public KillEvent OnKillEvent;
+
     private void Kill()
 	{
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         Network.Destroy(gameObject);
-        NetworkControl.PlayerRank = (NetworkControl.ID2AliveState.Values.Where(x => x)).Count();
-        NetworkControl.PlayerIsAlive = false;
         GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, Game.Instance.PlayerID);
-        // call some RPC method which will kill the dude on all devices
+        if (OnKillEvent != null)
+			OnKillEvent ();
+
+		// call some RPC method which will kill the dude on all devices
         // (must ?) also somehow display the info who has died and who wins...
         // and return to the main menu to start a new game.
         // or just start a new round when the last one has died
@@ -235,13 +241,13 @@ public class Drive : MonoBehaviour {
     {
         (new Thread(() =>
         {
-            Game.Instance.isIndestructible = true;
+            isIndestructible = true;
             for (var i = 0; i < 10 * IndestructibleTime; i++)
             {
                 Game.Instance.IndestructibleTimeLeft = IndestructibleTime - 0.1*i;
                 Thread.Sleep(100);
             }
-            Game.Instance.isIndestructible = false;
+            isIndestructible = false;
         })).Start();
     }
 }
