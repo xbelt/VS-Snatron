@@ -16,8 +16,7 @@ public class NetworkControl : MonoBehaviour {
     public static string PlayerName = "Player";
     public static int NumberOfPlayers = 0;
     public static int NumberOfCubes = 5;
-    private const int FieldBorderCoordinates = 200;
-    private static Dictionary<int, Vector3> StartPositions = new Dictionary<int, Vector3>();  
+    private const int FieldBorderCoordinates = 200; 
 
     // Use this for initialization
 	void Start () {
@@ -54,15 +53,6 @@ public class NetworkControl : MonoBehaviour {
         ServerHoster.HostServer(HostName);
         Network.InitializeServer(NumberOfPlayers, Protocol.GamePort, false);
         Network.sendRate = 30;
-        InitializeStartPositions();
-    }
-
-    private static void InitializeStartPositions() {
-        for (int i = 0; i < NumberOfPlayers + 1; i++) {
-            double angle = 360/(i + 1) * Math.PI / 180;
-            //TODO: check calculations
-            StartPositions.Add(i, new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle)));
-        }
     }
 
     public static void StopAnnouncingServer() {
@@ -182,9 +172,9 @@ public class NetworkControl : MonoBehaviour {
 
         private void SpawnPlayer()
         {
-			Vector3 location = new Vector3();
-			Quaternion orientation = new Quaternion ();
-			mapStartLocation (PlayerID, ref location, ref orientation);
+			Vector3 location;
+			Quaternion orientation;
+			mapStartLocation (PlayerID, out location, out orientation);
 
             var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
             var cam = GameObject.Find("Main Camera");
@@ -194,7 +184,7 @@ public class NetworkControl : MonoBehaviour {
             Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
         }
 
-		private void mapStartLocation(int playerId,ref Vector3 location, ref Quaternion orientation)
+		private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
 		{
 			// This is how players are arranged in a square, by id
 			// 4 0 6
@@ -205,17 +195,18 @@ public class NetworkControl : MonoBehaviour {
 			// 0,1,2,3 look towards the center * @(0/0/0)
 			// 4,5,6,7 look in clockwise direction
 
-            float dist = FieldBorderCoordinates/2;
+            float dist = FieldBorderCoordinates/4;
 
 			switch (playerId) {
-			case 0: location.Set(0, 0, -dist); orientation.SetFromToRotation(Vector3.zero, location); break;
-            case 1: location.Set(0, 0, dist); orientation.SetFromToRotation(Vector3.zero, location); break;
-			case 2:	location.Set( dist, 0, 0); orientation.SetFromToRotation(Vector3.zero, location); break;
-			case 3:	location.Set(-dist, 0, 0); orientation.SetFromToRotation(Vector3.zero,location); break;
-			case 4:	location.Set(-dist, 0, -dist); orientation.SetFromToRotation(new Vector3(0, 0, -dist),location); break;
-			case 5:	location.Set( dist, 0,  dist); orientation.SetFromToRotation(new Vector3(0, 0, dist), location); break;
-			case 6:	location.Set( dist, 0, -dist); orientation.SetFromToRotation(new Vector3( dist, 0, 0), location); break;
-			case 7:	location.Set(-dist, 0,  dist); orientation.SetFromToRotation(new Vector3( -dist, 0, 0), location); break;
+			case 0: location = new Vector3(0, 0, -dist); 	 orientation = Quaternion.AngleAxis(0, Vector3.up); break;
+			case 1: location = new Vector3(0, 0,  dist); 	 orientation = Quaternion.AngleAxis(180, Vector3.up); break;
+			case 2:	location = new Vector3( dist, 0, 0); 	 orientation = Quaternion.AngleAxis(270, Vector3.up); break;
+			case 3:	location = new Vector3(-dist, 0, 0); 	 orientation = Quaternion.AngleAxis(90, Vector3.up); break;
+			case 4:	location = new Vector3(-dist, 0, -dist); orientation = Quaternion.AngleAxis(90, Vector3.up); break;
+			case 5:	location = new Vector3( dist, 0,  dist); orientation = Quaternion.AngleAxis(270, Vector3.up); break;
+			case 6:	location = new Vector3( dist, 0, -dist); orientation = Quaternion.AngleAxis(0, Vector3.up); break;
+			case 7:	location = new Vector3(-dist, 0,  dist); orientation = Quaternion.AngleAxis(180, Vector3.up); break;
+			default:location = new Vector3(); 				 orientation = new Quaternion(); break;
 			}
 		}
     }
