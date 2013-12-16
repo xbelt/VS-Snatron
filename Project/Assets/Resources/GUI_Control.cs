@@ -38,7 +38,8 @@ public class GUI_Control : MonoBehaviour
         ReadScreenDimensionsAndroid();
         SetFontSize(HeightPixels / 50);
         SetTextColor(Color.white);
-		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();		_networkControl.OnGameEnded += StopGame;
+		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();
+		_networkControl.OnGameEnded += StopGame;
 		_networkControl.OnGameStarted += StartGame;
         NetworkControl.StartListeningForNewServers();
 		
