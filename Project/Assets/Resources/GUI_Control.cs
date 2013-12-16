@@ -163,8 +163,22 @@ public class GUI_Control : MonoBehaviour
 		Application.Quit ();
 	}
 
-	
-	#endregion state transitions
+    private void LeaveGame()
+    {
+        Network.Disconnect();
+        Game.Instance.StopGame();
+        showMenuBackground();
+        ResetCamerPositionRotation();
+        state = State.StartScreen;
+
+    }
+    #endregion state transitions
+
+    private void ResetCamerPositionRotation()
+    {
+        GameObject.Find("Main Camera").transform.position = new Vector3(-7.621216f, -3.097347f, -11.66232f);
+        GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
+    }
 	
 	void OnConnectedToServer()
 	{
@@ -277,10 +291,15 @@ public class GUI_Control : MonoBehaviour
 
 	private void HandleGamePaused()
 	{
-        if (GUI.Button(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+        if (GUI.Button(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
                 "Exit", buttonGUIStyle))
         {
             Application.Quit();
+        }
+        if (GUI.Button(new Rect(9 / 20f * WidthPixels, 20 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+            Network.isServer ? "End game" : "Leave game", buttonGUIStyle))
+        {
+            LeaveGame();
         }
 		// TODO Add menu for
 		// * settings?
@@ -288,7 +307,7 @@ public class GUI_Control : MonoBehaviour
 		// * ...
 	}
 
-	private void hideMenuBackground()
+    private void hideMenuBackground()
 	{
 		splashScreenLight.SetActive (false);
 		splashScreen.SetActive (false);
