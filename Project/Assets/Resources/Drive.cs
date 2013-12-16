@@ -9,6 +9,7 @@ public class Drive : MonoBehaviour {
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
 	static readonly float PowerUpSpeed = 80;
+    private static readonly float IndestructibleTime = 5;
 
     private const float AccelerationRate = 10;
     private const float DecelerationRate = 5;
@@ -93,19 +94,20 @@ public class Drive : MonoBehaviour {
 				return;
 	    }
 
-	    if (Network.isServer && random.Next(0, 1000) < 5)
+	    if (Network.isServer && random.Next(0, 1000) < 7)
 	    {
             //TODO: Make dependent of framerate
             Debug.Log("Spawn powerUp");
             var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
             var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,0)), new Vector3(x, 0, z),
+            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,2)), new Vector3(x, 0, z),
                     Quaternion.identity, 0);
 	    }
 
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
-		if (_predictedCollisions > 0) {
+        if (_predictedCollisions > 0 && !Game.Instance.isIndestructible)
+        {
 			Kill();
 			return;
 		}
@@ -201,7 +203,7 @@ public class Drive : MonoBehaviour {
 
     private int _predictedCollisions;
 
-	public void OnPredictedCollisionEnter()
+    public void OnPredictedCollisionEnter()
 	{
 		_predictedCollisions++;
 	}
@@ -224,8 +226,22 @@ public class Drive : MonoBehaviour {
 		_numberOfWallsNear--;
 	}
 
-    public void ConsumePowerup()
+    public void ConsumeSpeedPowerup()
     {
         _speed = PowerUpSpeed;
+    }
+
+    public void ConsumeIndestructiblePowerup()
+    {
+        (new Thread(() =>
+        {
+            Game.Instance.isIndestructible = true;
+            for (var i = 0; i < 10 * IndestructibleTime; i++)
+            {
+                Game.Instance.IndestructibleTimeLeft = IndestructibleTime - 0.1*i;
+                Thread.Sleep(100);
+            }
+            Game.Instance.isIndestructible = false;
+        })).Start();
     }
 }

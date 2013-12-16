@@ -28,14 +28,22 @@ public class CollisionPrediction : MonoBehaviour {
 				_drive.OnPredictedCollisionEnter ();
 			}
 		}
-	    if (other.gameObject.tag == "powerUp")
-	    {
+        if (other.gameObject.tag == "powerUp0")
+        {
             other.gameObject.GetComponent<PowerUpDestroyer>().ConsumePowerUp();
             if (_drive != null)
             {
-                _drive.ConsumePowerup();
+                _drive.ConsumeSpeedPowerup();
             }
-	    }
+        }
+        if (other.gameObject.tag == "powerUp1")
+        {
+            other.gameObject.GetComponent<PowerUpDestroyer>().ConsumePowerUp();
+            if (_drive != null)
+            {
+                _drive.ConsumeIndestructiblePowerup();
+            }
+        }
 	}
 	
 	void OnTriggerExit(Collider other) {

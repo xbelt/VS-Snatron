@@ -306,6 +306,12 @@ public class GUI_Control : MonoBehaviour
 	            LeaveGame();
 	        }
 	    }
+
+	    if (Game.Instance.isIndestructible)
+	    {
+            GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                "Indestructible for " + Game.Instance.IndestructibleTimeLeft.ToString("0.0") + "s", labelGUIStyle);
+	    }
 		// TODO Draw Player info :
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
