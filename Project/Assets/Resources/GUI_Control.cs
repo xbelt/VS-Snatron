@@ -1,8 +1,4 @@
-﻿/*TODO:
- * make Padding of TextField dependent of screen resolution
- * Correctly send userID's
- * */
-using System;
+﻿using System;
 using System.Linq;
 using Assets;
 using UnityEngine;
@@ -95,6 +91,8 @@ public class GUI_Control : MonoBehaviour
         labelGUIStyle.fontSize = size < 12 ? 12 : size;
         layoutGUIStyle.fontSize = size < 12 ? 12 : size;
         textFieldGUIStyle.fontSize = size < 12 ? 12 : size;
+        textFieldGUIStyle.padding.top = ((int)(1/20f*HeightPixels) - buttonGUIStyle.fontSize)/2;
+        textFieldGUIStyle.padding.left = 6;
     }
 
 	#region state transitions
@@ -288,7 +286,7 @@ public class GUI_Control : MonoBehaviour
         var i = 0;
         foreach (var id2Alive in NetworkControl.ID2AliveState)
         {
-            GUI.Label(new Rect(1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.PlayerId2UserName[id2Alive.Key] + ": " + id2Alive.Value, labelGUIStyle);
+            GUI.Label(new Rect(1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.PlayerId2UserName[id2Alive.Key] + ": " + (id2Alive.Value ? "Alive" : "Dead"), labelGUIStyle);
             i++;
         }
 		// TODO Draw Player info :
