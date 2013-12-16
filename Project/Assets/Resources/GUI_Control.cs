@@ -285,6 +285,12 @@ public class GUI_Control : MonoBehaviour
 	    {
 	        GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You are dead!", labelGUIStyle);
 	    }
+        var i = 0;
+        foreach (var id2Alive in NetworkControl.ID2AliveState)
+        {
+            GUI.Label(new Rect(1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.PlayerId2UserName[id2Alive.Key] + ": " + id2Alive.Value, labelGUIStyle);
+            i++;
+        }
 		// TODO Draw Player info :
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
