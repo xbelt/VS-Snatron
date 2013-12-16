@@ -23,9 +23,9 @@ public class GUI_Control : MonoBehaviour
 
     private Vector2 _scrollPosition = Vector2.zero;
 
-    private enum State { StartScreen, Lobby, Game, GamePaused }
+    public enum State { StartScreen, Lobby, Game, GamePaused }
 
-	private State _state = State.StartScreen;
+    public State _state = State.StartScreen;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
