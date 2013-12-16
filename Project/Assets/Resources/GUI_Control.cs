@@ -123,6 +123,7 @@ public class GUI_Control : MonoBehaviour
 		StartGame ();
 		Network.InitializeServer(1, Protocol.GamePort, false);
 		GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
+        Game.Instance.setPlayer(0, _playerName);
 		//this is so I don't have to bother with another, static, "StartGame" method
 	}
 
@@ -280,6 +281,10 @@ public class GUI_Control : MonoBehaviour
     }
 
 	private void HandleGame() {
+	    if (!NetworkControl.PlayerIsAlive)
+	    {
+	        GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You are dead!", labelGUIStyle);
+	    }
 		// TODO Draw Player info :
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
