@@ -25,7 +25,7 @@ public class GUI_Control : MonoBehaviour
 
     public enum State { StartScreen, Lobby, Game, GamePaused }
 
-    public State _state = State.StartScreen;
+    private State _state = State.StartScreen;
 
     private int WidthPixels { get; set; }
     private int HeightPixels { get; set; }
