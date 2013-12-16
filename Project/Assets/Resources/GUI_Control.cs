@@ -279,7 +279,7 @@ public class GUI_Control : MonoBehaviour
 
     }
 
-	private void HandleGame(){
+	private void HandleGame() {
 		// TODO Draw Player info :
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
@@ -299,8 +299,6 @@ public class GUI_Control : MonoBehaviour
         {
             LeaveGame();
         }
-		// TODO Add menu for
-		// * settings?
 	}
 
     private void HideMenuBackground()
