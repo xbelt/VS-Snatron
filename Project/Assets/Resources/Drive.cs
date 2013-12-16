@@ -159,15 +159,6 @@ public class Drive : MonoBehaviour {
 		transform.Rotate(Vector3.up, degrees);
 		NewWall();
 	}
-
-    private void OnGUI() {
-        if (_showPauseMenu) {
-            if (GUI.Button(new Rect(15/30f*WidthPixels, 10/20f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
-                "Exit", buttonStyle)) {
-                Application.Quit();
-            }
-        }
-    }
 // ReSharper restore UnusedMember.Local
 
 	void NewWall() {
