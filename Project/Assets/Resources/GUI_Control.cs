@@ -277,7 +277,7 @@ public class GUI_Control : MonoBehaviour
 
 	private void HandleGamePaused()
 	{
-        if (GUI.Button(new Rect(15 / 30f * WidthPixels, 10 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+        if (GUI.Button(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
                 "Exit", buttonGUIStyle))
         {
             Application.Quit();
