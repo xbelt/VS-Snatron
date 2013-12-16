@@ -27,7 +27,10 @@ public class Game : MonoBehaviour
 
 	public int NumberOfCubes { get {return 5;} }
 	public int FieldBorderCoordinates { get { return 200; } }
+    public double IndestructibleTimeLeft { get; set; }
+
     public bool PlayerHasWon;
+    public bool isIndestructible;
 
     private Game() { }
 
