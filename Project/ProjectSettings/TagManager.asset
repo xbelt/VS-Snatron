@@ -13,6 +13,9 @@ TagManager:
   - line
   - 
   - lines
+  - powerUp0
+  - powerUp1
+  - 
   - powerUp
   - 
   Builtin Layer 0: Default
