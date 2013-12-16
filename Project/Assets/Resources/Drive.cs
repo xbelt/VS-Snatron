@@ -9,6 +9,7 @@ public class Drive : MonoBehaviour {
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
 	static readonly float PowerUpSpeed = 80;
+    private static readonly float IndestructibleTime = 5;
 
     private const float AccelerationRate = 10;
     private const float DecelerationRate = 5;
@@ -235,9 +236,9 @@ public class Drive : MonoBehaviour {
         (new Thread(() =>
         {
             Game.Instance.isIndestructible = true;
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10 * IndestructibleTime; i++)
             {
-                Game.Instance.IndestructibleTimeLeft = 5 - 0.1*i;
+                Game.Instance.IndestructibleTimeLeft = IndestructibleTime - 0.1*i;
                 Thread.Sleep(100);
             }
             Game.Instance.isIndestructible = false;
