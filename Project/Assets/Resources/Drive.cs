@@ -8,6 +8,7 @@ public class Drive : MonoBehaviour {
 
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
+	static readonly float PowerUpSpeed = 80;
 
     private const float AccelerationRate = 10;
     private const float DecelerationRate = 5;
@@ -98,7 +99,7 @@ public class Drive : MonoBehaviour {
             Debug.Log("Spawn powerUp");
             var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
             var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab"), new Vector3(x, 0, z),
+            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,0)), new Vector3(x, 0, z),
                     Quaternion.identity, 0);
 	    }
 
@@ -225,6 +226,6 @@ public class Drive : MonoBehaviour {
 
     public void ConsumePowerup()
     {
-        _speed = MaxSpeed;
+        _speed = PowerUpSpeed;
     }
 }
