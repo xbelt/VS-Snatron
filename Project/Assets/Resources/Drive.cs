@@ -92,8 +92,9 @@ public class Drive : MonoBehaviour {
 				return;
 	    }
 
-	    if (Network.isServer && random.Next(0, 1000) < 2)
+	    if (Network.isServer && random.Next(0, 1000) < 5)
 	    {
+            //TODO: Make dependent of framerate
             Debug.Log("Spawn powerUp");
             var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
             var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
