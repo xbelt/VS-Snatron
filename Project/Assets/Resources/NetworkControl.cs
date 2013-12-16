@@ -14,6 +14,8 @@ public class NetworkControl : MonoBehaviour {
 	public static List<Server> Servers { get { return Discoverer.Servers; } }
 	// Hosting
 	public static string HostName{ get { return PlayerName + "'s Game"; } }
+    public static int PlayerRank { get; set; }
+
     public static bool PlayerIsAlive = true;
 
     public static readonly Dictionary<string, int> _ip2playerId = new Dictionary<string, int> ();
