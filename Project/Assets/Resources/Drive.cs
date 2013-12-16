@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Drive : MonoBehaviour {
@@ -9,10 +8,10 @@ public class Drive : MonoBehaviour {
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
 
-	public float accelerationRate = 10;
-	public float decelerationRate = 5;
-	
-	float _speed = MinSpeed;
+    private const float AccelerationRate = 10;
+    private const float DecelerationRate = 5;
+
+    float _speed = MinSpeed;
 
 	int _numberOfWallsNear = 0;
 
@@ -93,7 +92,7 @@ public class Drive : MonoBehaviour {
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
 		if (_predictedCollisions > 0) {
-			kill();
+			Kill();
 			return;
 		}
 
@@ -133,9 +132,9 @@ public class Drive : MonoBehaviour {
 	void AdjustSpeed ()
 	{
 		if (_numberOfWallsNear > 0) {
-			_speed = Mathf.MoveTowards (_speed, MaxSpeed, accelerationRate * Time.deltaTime);
+			_speed = Mathf.MoveTowards (_speed, MaxSpeed, AccelerationRate * Time.deltaTime);
 		} else {
-			_speed = Mathf.MoveTowards (_speed, MinSpeed, decelerationRate * Time.deltaTime);
+			_speed = Mathf.MoveTowards (_speed, MinSpeed, DecelerationRate * Time.deltaTime);
 		}
 		
 		if (CollisionPrediction != null)
@@ -170,7 +169,7 @@ public class Drive : MonoBehaviour {
 
 	// Collision Stuff
 
-	public void kill()
+    private void Kill()
 	{
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
@@ -181,18 +180,9 @@ public class Drive : MonoBehaviour {
 		// or just start a new round when the last one has died
 	}
 
-	private CollisionPrediction _collisionPrediction;
+    public CollisionPrediction CollisionPrediction { get; set; }
 
-	public CollisionPrediction CollisionPrediction{
-		get {
-			return _collisionPrediction;
-		}
-		set{
-			_collisionPrediction = value;
-		}
-	}
-
-	private int _predictedCollisions;
+    private int _predictedCollisions;
 
 	public void OnPredictedCollisionEnter()
 	{
