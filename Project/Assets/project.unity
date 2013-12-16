@@ -804,7 +804,7 @@ GameObject:
   - 4: {fileID: 1550956982}
   - 114: {fileID: 1550956981}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GUIObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -860,9 +860,9 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     m_Padding:
-      m_Left: 0
+      m_Left: 5
       m_Right: 0
-      m_Top: 0
+      m_Top: 2
       m_Bottom: 0
     m_Overflow:
       m_Left: 0
@@ -1037,9 +1037,9 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     m_Padding:
-      m_Left: 0
+      m_Left: 5
       m_Right: 0
-      m_Top: 0
+      m_Top: 2
       m_Bottom: 0
     m_Overflow:
       m_Left: 0
