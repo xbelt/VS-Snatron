@@ -102,7 +102,7 @@ public class NetworkControl : MonoBehaviour {
 		Game.NewGame().StartGame (PlayerID); //TODO move all direct interaction out of network control
         ID2AliveState.Add(PlayerID, true);
 		if (OnGameStarted != null)
-			OnGameStarted ();
+			OnGameStarted (); 
     }
 
 	[RPC]
@@ -123,6 +123,7 @@ public class NetworkControl : MonoBehaviour {
 	private void ResetPreGameValues() {
 		PlayerID = 0;
 		StartListeningForNewServers ();
-		// TODO some more?
+	    PlayerIsAlive = true;
+	    // TODO some more?
 	}
 }
