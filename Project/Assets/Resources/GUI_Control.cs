@@ -119,7 +119,7 @@ public class GUI_Control : MonoBehaviour
 	private void StartQuickGame()
 	{
 		StartGame ();
-		Network.InitializeServer(1, Protocol.GamePort, false);
+		Network.InitializeServer(0, Protocol.GamePort, false);
 		GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
         Game.Instance.setPlayer(0, _playerName);
 		//this is so I don't have to bother with another, static, "StartGame" method
@@ -279,9 +279,14 @@ public class GUI_Control : MonoBehaviour
     }
 
 	private void HandleGame() {
-	    if (!NetworkControl.PlayerIsAlive)
+	    if (!NetworkControl.PlayerIsAlive && !Game.Instance.PlayerHasWon)
 	    {
-	        GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You are dead!", labelGUIStyle);
+	        GUI.Label(new Rect(9/20f*WidthPixels, 19/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
+	            "You are dead!", labelGUIStyle);
+	    }
+	    if (!NetworkControl.PlayerIsAlive && Game.Instance.PlayerHasWon)
+	    {
+	        LeaveGame();
 	    }
         var i = 0;
         foreach (var id2Alive in NetworkControl.ID2AliveState)
@@ -289,6 +294,17 @@ public class GUI_Control : MonoBehaviour
             GUI.Label(new Rect(1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.PlayerId2UserName[id2Alive.Key] + ": " + (id2Alive.Value ? "Alive" : "Dead"), labelGUIStyle);
             i++;
         }
+
+	    if ((NetworkControl.ID2AliveState.Values.Where(x => x)).Count() == 1 && Network.maxConnections > 0)
+	    {
+	        Game.Instance.PlayerHasWon = true;
+            GUI.Label(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You won!", labelGUIStyle);
+	        if (GUI.Button(new Rect(9/20f*WidthPixels, 20/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
+	            "Back to menu", buttonGUIStyle))
+	        {
+	            LeaveGame();
+	        }
+	    }
 		// TODO Draw Player info :
 		// * who's still alive?
 		// * "YOU WERE KILLED (BY ...?)"
