@@ -174,6 +174,7 @@ public class Drive : MonoBehaviour {
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         Network.Destroy(gameObject);
+        NetworkControl.PlayerRank = (NetworkControl.ID2AliveState.Values.Where(x => x)).Count();
         NetworkControl.PlayerIsAlive = false;
         GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, Game.Instance.PlayerID);
         // call some RPC method which will kill the dude on all devices
