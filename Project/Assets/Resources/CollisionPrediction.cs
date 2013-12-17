@@ -22,10 +22,13 @@ public class CollisionPrediction : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 		//Debug.Log ("Predict Collision enter: " + other.name + " " + name);
-        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube")
+        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall")
         {
 			if (_drive != null) {
 				_drive.OnPredictedCollisionEnter ();
+			    if (other.gameObject.tag == "gameWall") {
+			        _drive.OnPredictedGameWallCollisionEnter();
+			    }
 			}
 		}
         if (other.gameObject.tag == "powerUp0")
@@ -48,9 +51,13 @@ public class CollisionPrediction : MonoBehaviour {
 	
 	void OnTriggerExit(Collider other) {
 		//Debug.Log ("Predict Collision exit: " + other.name + " " + name);
-        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube")
+        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall")
         {
 			_drive.OnPredictedCollisionExit ();
+            if (other.gameObject.tag == "gameWall")
+            {
+                _drive.OnPredictedGameWallCollisionExit();
+            }
 		}
 	}
 
