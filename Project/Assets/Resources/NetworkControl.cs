@@ -115,6 +115,12 @@ public class NetworkControl : MonoBehaviour {
 			OnConnectionError (e.ToString());
 	}
 
+	void OnConnectedToServer()
+	{
+		print("Connected");
+		//update server list?
+	}
+
 	#endregion
 
 	public void broadCastStartGame(int rounds)

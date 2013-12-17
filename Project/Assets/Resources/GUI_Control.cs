@@ -96,7 +96,7 @@ public class GUI_Control : MonoBehaviour
         textFieldGUIStyle.padding.left = 6;
     }
 
-	#region Network Control
+	#region Network Control event listeners<
 	
 	private void initNetworkControl()
 	{
@@ -104,8 +104,8 @@ public class GUI_Control : MonoBehaviour
 		_networkControl.OnServerStarted += OnServerStarted;
 		_networkControl.OnConnectedToRemoteServer += OnConnectedToRemoteServer;
 		_networkControl.OnConnectionError += OnConnectionError;
-		_networkControl.OnGameEnded += OnStopGame;
-		_networkControl.OnGameStarted += OnStartGame;
+		_networkControl.OnGameEnded += OnGameEnded;
+		_networkControl.OnGameStarted += OnGameStarted;
 		_networkControl.OnRoundStarted += OnRoundStarted;
 		_networkControl.OnRoundEnded += OnRoundEnded;
 		_networkControl.OnPlayerJoined += OnPlayerJoined;
@@ -137,6 +137,25 @@ public class GUI_Control : MonoBehaviour
 		_networkControl.Disconnect (); // TODO is it a problem when we are not connected?
 		_state = State.StartScreen;
 		// TODO show some error message
+	}
+	
+	// This is indirectly called through RPC StartGame event
+	private void OnGameStarted(int rounds)
+	{
+		print ("GUI:OnGameStarted()");
+		HideMenuBackground ();
+		_state = State.Game;
+		Game.Instance.StartGame (_networkControl.PlayerID, rounds);
+	}
+	
+	private void OnGameEnded()
+	{
+		print ("GUI:OnGameEnded()");
+		// TODO make sure all players are disconnected
+		// and they all show the main menu
+		
+		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
+		_state = State.StartScreen;
 	}
 	
 	private void OnRoundStarted(int round) // TODO probably not necessary
@@ -176,16 +195,17 @@ public class GUI_Control : MonoBehaviour
 	private void StartServer()
 	{
 		print ("GUI,Server:StartServer()");
-		_state = State.Lobby;
+		//_state = State.Lobby;
 		_networkControl.AnnounceServer ();
 	}
 	
 	private void JoinGame(String ipAddress, int port){
 		print ("GUI,Client:StartNetworkGame()");
-		_state = State.Lobby;
+		//_state = State.Lobby;
 		_networkControl.JoinGame(ipAddress, port);
 	}
-	
+
+	// Called by server host
 	private void StartNetworkGame()
 	{
 		print ("GUI,Server:StartNetworkGame()");
@@ -205,26 +225,6 @@ public class GUI_Control : MonoBehaviour
 		//GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
 	}
 
-	// This is indirectly called through RPC StartGame event
-	private void OnStartGame(int rounds)
-	{
-		print ("GUI:OnStartGame()");
-		HideMenuBackground ();
-		_state = State.Game;
-		Game.Instance.StartGame (_networkControl.PlayerID, rounds);
-		// TODO Game.Instance.get player To register event listener
-	}
-
-    private void OnStopGame()
-	{
-		print ("GUI:OnStopGame()");
-		// TODO make sure all players are disconnected
-		// and they all show the main menu
-		
-		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
-		_state = State.StartScreen;
-	}
-
 	// Disconnect from a running game
 	private void LeaveGame()
 	{
@@ -237,15 +237,9 @@ public class GUI_Control : MonoBehaviour
 
     private void ExitApp()
 	{
+		_networkControl.StopAnnouncingServer ();
 		_networkControl.Disconnect ();
 		Application.Quit ();
-	}	
-
-	// ReSharper disable UnusedMember.Local
-	void OnConnectedToServer()
-	{
-		print("Connected");
-		//update server list?
 	}
 
     #endregion state transitions
