@@ -18,7 +18,7 @@ public class Game
 	private int _localPlayerId;
 	public int PlayerID { get {return _localPlayerId;} }
 
-	private _gameStarted;
+	private bool _gameStarted;
 
 	private Drive _localPlayer;
 	public Drive LocalPlayer { get {return _localPlayer;} }
@@ -83,8 +83,8 @@ public class Game
 		var cam = GameObject.Find("Main Camera");
 		cam.AddComponent<SmoothFollow>().target = player;
 		
-		Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
-		Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
+		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
+        MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 		
 		_localPlayer = player.GetComponent<Drive> ();
 		if (OnLocalPlayerSpawn != null)
@@ -93,14 +93,14 @@ public class Game
 	
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName) {
-		print ("Game:SetPlayer()");
+        MonoBehaviour.print("Game:SetPlayer()");
 		_players [playerId] = new PlayerModel (playerId, playerName);
 		_nOfActivePlayers++;
 		_nOfLivingPlayers++; // TODO probably not necessary
 	}
 
 	public void removePlayer(int playerId) {
-		print ("Game:removePlayer()");
+        MonoBehaviour.print("Game:removePlayer()");
 		if (_players [playerId].isAlive)
 			_nOfLivingPlayers--;
 		_nOfActivePlayers--;
@@ -263,22 +263,22 @@ public class Game
 		var walls = GameObject.FindGameObjectsWithTag("wall");
 		foreach (var wall in walls)
 		{
-			Destroy(wall);
+            MonoBehaviour.Destroy(wall);
 		}
 		var lines = GameObject.FindGameObjectsWithTag("line");
 		foreach (var line in lines)
 		{
-			Destroy(line);
+            MonoBehaviour.Destroy(line);
 		}
 		var cubes = GameObject.FindGameObjectsWithTag("cube");
 		foreach (var cube in cubes)
 		{
-			Destroy(cube);
+            MonoBehaviour.Destroy(cube);
 		}
 		var players = GameObject.FindGameObjectsWithTag("tron");
 		foreach (var player in players)
 		{
-			Destroy(player);
+            MonoBehaviour.Destroy(player);
 		}
 	}
 	

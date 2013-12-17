@@ -109,7 +109,7 @@ public class Drive : MonoBehaviour {
 
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
-        if (_predictedCollisions > 0 && !Game.Instance.isIndestructible || _predictedWallCollisions > 0)
+        if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
         {
 			Kill();
 			return;
@@ -246,7 +246,7 @@ public class Drive : MonoBehaviour {
             isIndestructible = true;
             for (var i = 0; i < 10 * IndestructibleTime; i++)
             {
-                if (!NetworkControl.PlayerIsAlive) {
+                if (!Game.Instance.isAlive(Game.Instance.PlayerID)) {
                     break;
                 }
                 Game.Instance.IndestructibleTimeLeft = IndestructibleTime - 0.1*i;
