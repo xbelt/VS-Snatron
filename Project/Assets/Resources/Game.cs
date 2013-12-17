@@ -72,6 +72,15 @@ public class Game
 		{
 			_players[i] = null;
 		}
+		
+		_gameStarted = true;
+	}
+
+
+    public void StopGame()
+	{
+		clearGameObjects ();
+		NewGame ();
 	}
 
 	#region game initialization
@@ -181,12 +190,11 @@ public class Game
 		}
 
 		SpawnPlayer();
-        if (Network.isServer)
-        {
-            InstantiateGameBorders();
-            InstantiateCubes();
-            SpawnKI();
-        }
+		
+		if (Network.isServer)
+		{
+		    SpawnKI();
+		}
 	}
 
 	/// <summary>
