@@ -76,13 +76,6 @@ public class Game
 		_gameStarted = true;
 	}
 
-
-    public void StopGame()
-	{
-		clearGameObjects ();
-		NewGame ();
-	}
-
 	#region game initialization
 
 	public delegate void LocalPlayerSpawn(Drive player);
@@ -93,11 +86,19 @@ public class Game
 		Vector3 location;
 		Quaternion orientation;
 		mapStartLocation (PlayerID, out location, out orientation);
-		
+
+        if (_playerPrefab == null)
+        {
+            _playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
+        }
 		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
 		var cam = GameObject.Find("Main Camera");
 		cam.AddComponent<SmoothFollow>().target = player;
-		
+
+        if (_gridPrefab == null)
+        {
+            _gridPrefab = Resources.Load<Transform>("Lines");
+        }
 		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
         MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 		
@@ -108,12 +109,12 @@ public class Game
 	
     private void SpawnKI() {
         for (int i = PlayerID + 1; i < PlayerID + 1 + numberOfKIPlayers; i++) {
-            _playerPrefab = Resources.Load<Transform>("Player" + i);
+            var temp = Resources.Load<Transform>("Player" + i);
             Vector3 location;
             Quaternion orientation;
             mapStartLocation(i, out location, out orientation);
 
-            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
+            var player = Network.Instantiate(temp, location, orientation, 0) as Transform;
             MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
             player.gameObject.AddComponent<KIControler>();
             player.gameObject.GetComponent<KIControler>().KIId = i;
@@ -193,6 +194,7 @@ public class Game
 		
 		if (Network.isServer)
 		{
+            InstantiateGameBorders();
 		    SpawnKI();
 		}
 	}
