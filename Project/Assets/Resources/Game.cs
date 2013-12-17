@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour
+public class Game
 {
 	public static readonly int MaxPlayers = 8;
 	// TODO put into game config
