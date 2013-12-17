@@ -25,7 +25,7 @@ public class GUI_Control : MonoBehaviour
 
     private Vector2 _scrollPosition = Vector2.zero;
 
-    public enum State { StartScreen, Lobby, Game, GamePaused }
+    public enum State { StartScreen, Lobby, Game, GamePaused, RoundEnded, GameEnded, StartGame, Dead }
 
     private State _state = State.StartScreen;
 
@@ -45,6 +45,7 @@ public class GUI_Control : MonoBehaviour
 		_splashScreen = GameObject.Find ("SplashScreen");
 		
 		initNetworkControl ();
+		initGameListeners ();
     }
 
     private void ChangeWifiSettingsAndroid() { }
@@ -96,7 +97,46 @@ public class GUI_Control : MonoBehaviour
         textFieldGUIStyle.padding.left = 6;
     }
 
-	#region Network Control event listeners<
+	#region Game event listeners
+
+	/// <summary>
+	/// Register event listeners to the Game :
+	/// 	these are received in case we are the server
+	/// 	corresponding commands are forwarded to the network control
+	/// </summary>
+	private void initGameListeners()
+	{
+		Game game = Game.Instance;
+		game.OnGameStart += OnGameStart;
+		game.OnGameEnd += OnGameEnd;
+		game.OnRoundStart += OnRoundStart;
+		game.OnRoundEnd += OnRoundEnd;
+	}
+
+	private void OnGameStart(int rounds)
+	{
+		// Do nothing .. for now
+	}
+	
+	private void OnGameEnd()
+	{
+		_networkControl.broadCastStopGame ();
+	}
+	
+	private void OnRoundStart(int round)
+	{
+		_networkControl.broadCastStartRound (round);
+	}
+	
+	private void OnRoundEnd(int round)
+	{
+		_networkControl.broadCastEndRound(round);
+	}
+
+	#endregion
+
+
+	#region Network Control event listeners
 	
 	private void initNetworkControl()
 	{
@@ -133,7 +173,7 @@ public class GUI_Control : MonoBehaviour
 	private void OnConnectionError(String message)
 	{
 		Debug.Log ("GUI:OnConnectionError: " + message);
-		Game.Instance.NewGame ();
+		Game.Instance.StopGame ();
 		_networkControl.Disconnect (); // TODO is it a problem when we are not connected?
 		_state = State.StartScreen;
 		// TODO show some error message
@@ -144,30 +184,30 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI:OnGameStarted()");
 		HideMenuBackground ();
-		_state = State.Game;
+		_state = State.StartGame;
 		Game.Instance.StartGame (_networkControl.PlayerID, rounds);
 	}
 	
 	private void OnGameEnded()
 	{
 		print ("GUI:OnGameEnded()");
-		// TODO make sure all players are disconnected
-		// and they all show the main menu
-		
-		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
-		_state = State.StartScreen;
+		_networkControl.Disconnect ();
+		Game.Instance.StopGame ();
+		_state = State.GameEnded;
 	}
 	
-	private void OnRoundStarted(int round) // TODO probably not necessary
+	private void OnRoundStarted(int round)
 	{
 		Debug.Log ("GUI:OnRoundStarted");
-		//Game.Instance.NewRound ();
+		Game.Instance.StartRound (round);
+		_state = State.Game;
 	}
 	
-	private void OnRoundEnded(int round) // TODO probably not necessary
+	private void OnRoundEnded(int round)
 	{
 		Debug.Log ("GUI:OnRoundEnded");
-		//Game.Instance.NewRound ();
+		Game.Instance.StopRound (round);
+		_state = State.RoundEnded;
 	}
 	
 	private void OnPlayerJoined(int id, String name)
@@ -221,7 +261,7 @@ public class GUI_Control : MonoBehaviour
 		print ("GUI:StartQuickGame()");
 		Game.Instance.setPlayer(0, _playerName);
 		_networkControl.InitServer (0);
-		_networkControl.broadCastStartGame (1);
+		_networkControl.broadCastStartGame (3);
 		//GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
 	}
 
@@ -264,19 +304,15 @@ public class GUI_Control : MonoBehaviour
     private void OnGUI()
     {
 		switch (_state) {
-				case State.StartScreen:
-						HandleStartScreenGUI ();
-						break;
-				case State.Lobby:
-						HandleWaitingScreen ();
-						break;
-				case State.Game:
-						HandleGame ();
-						break;
-				case State.GamePaused:
-						HandleGamePaused ();
-						break;
-				}
+			case State.StartScreen: HandleStartScreenGUI (); break;
+			case State.Lobby: HandleWaitingScreen (); break;
+			case State.StartGame: HandleStartGame(); break;
+			case State.Game: HandleGame ();	break;
+			case State.RoundEnded: HandleRoundEnded(); break;
+			case State.GameEnded: HandleGameEnded(); break;
+			case State.GamePaused: HandleGamePaused ();	break;
+			case State.Dead: HandleDead(); break;
+		}
     }
 
     private void HandleStartScreenGUI()
@@ -342,28 +378,75 @@ public class GUI_Control : MonoBehaviour
             GUI.Label(new Rect(25, 125, 100, 30), "IP: " + Network.player.ipAddress, labelGUIStyle);
         }
 
-
-
     }
+	
+	private void HandleStartGame()
+	{
 
-	private void HandleGame() {
-		Drive player = Game.Instance.LocalPlayer;
-		bool isAlive = Game.Instance.isAlive (Game.Instance.PlayerID);
-		bool hasWon = Game.Instance.hasWon (Game.Instance.PlayerID);
+	}
 
-		if (!isAlive) {
-			if (!hasWon)
-			{
-				GUI.Label(new Rect(9/20f*WidthPixels, 19/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
-				          "You are dead!", labelGUIStyle);
-			}else
-			{
-				LeaveGame();
-			}
+	private void HandleRoundEnded()
+	{
+
+	}
+
+	private void HandleGameEnded()
+	{
+		if (Game.Instance.HasLocalPlayerWon()) {
+			GUI.Label(new Rect(9 / 20f * WidthPixels,
+			                   17 / 40f * HeightPixels,
+			                   1 / 10f * WidthPixels,
+			                   1 / 20f * HeightPixels),
+			          "You won!",
+			          labelGUIStyle);
+		}else if (Game.Instance.HasLocalPlayerWon()) {
+			GUI.Label(new Rect(9 / 20f * WidthPixels,
+			                   17 / 40f * HeightPixels,
+			                   1 / 10f * WidthPixels,
+			                   1 / 20f * HeightPixels),
+			          "Loser!",
+			          labelGUIStyle);
 		}
+		
+		if (GUI.Button(new Rect(9/20f*WidthPixels,
+		                        20/40f*HeightPixels,
+		                        1/10f*WidthPixels,
+		                        1/20f*HeightPixels),
+		               "Back to menu",
+		               buttonGUIStyle))
+		{
+			// TODO restart game
+			LeaveGame();
+		}
+	}
 
-        var i = 0;
+	private void HandleDead()
+	{
+		GUI.Label(new Rect(9/20f*WidthPixels,
+		                   19/40f*HeightPixels,
+		                   1/10f*WidthPixels,
+		                   1/20f*HeightPixels),
+		          "You are dead!",
+		          labelGUIStyle);
+	}
 
+	private void HandleGame()
+	{
+		showPlayerAliveList ();
+
+		Drive player = Game.Instance.LocalPlayer ();
+	    if (player != null && player.isIndestructible)
+	    {
+            GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                "Indestructible for " + Game.Instance.IndestructibleTimeLeft.ToString("0.0") + "s", labelGUIStyle);
+	    }
+
+	}
+	
+	private void showPlayerAliveList()
+	{
+		var i = 0;
+		
 		for (int j = 0; j < Game.MaxPlayers; j++)
 		{
 			if (Game.Instance.isActivePlayer(j))
@@ -373,42 +456,11 @@ public class GUI_Control : MonoBehaviour
 				                   1 / 10f * WidthPixels,
 				                   1 / 20f * HeightPixels),
 				          Game.Instance.getPlayerName(j) + ": " 
-				          	+ (Game.Instance.isAlive(j) ? "Alive" : "Dead"),
+				          + (Game.Instance.isAlive(j) ? "Alive" : "Dead"),
 				          labelGUIStyle);
 				i++;
 			}
 		}
-
-		if (Game.Instance.HasLocalPlayerWon() )
-	    {
-	        GUI.Label(new Rect(9 / 20f * WidthPixels,
-			                   17 / 40f * HeightPixels,
-			                   1 / 10f * WidthPixels,
-			                   1 / 20f * HeightPixels),
-			          "You won!",
-			          labelGUIStyle);
-	        if (GUI.Button(new Rect(9/20f*WidthPixels,
-			                        20/40f*HeightPixels,
-			                        1/10f*WidthPixels,
-			                        1/20f*HeightPixels),
-			               "Back to menu",
-			               buttonGUIStyle))
-	        {
-				// TODO restart game
-	            LeaveGame();
-	        }
-	    }
-
-	    if (player.isIndestructible)
-	    {
-            GUI.Label(new Rect(9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-                "Indestructible for " + Game.Instance.IndestructibleTimeLeft.ToString("0.0") + "s", labelGUIStyle);
-	    }
-		// TODO Draw Player info :
-		// * who's still alive?
-		// * "YOU WERE KILLED (BY ...?)"
-		// * YOU HAVE WON
-		// * PAUSE BUTTON? -> no since pause makes no sense in multiplayer
 	}
 
 	private void HandleGamePaused()

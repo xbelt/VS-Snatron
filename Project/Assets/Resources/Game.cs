@@ -35,37 +35,40 @@ public class Game
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
 
+	private int _currentRound;
+
 	public int NumberOfCubes { get {return 5;} }
 	public int FieldBorderCoordinates { get { return 200; } }
     public double IndestructibleTimeLeft { get; set; } // TODO move to somewhere else
 
-    private Game() { 
-		NewGame ();
-	}
+	// Game Control Events fired by server
+	public delegate void RoundStartEvent(int round);
+	public delegate void RoundEndEvent(int round);
+	public delegate void GameStartEvent(int rounds);
+	public delegate void GameEndEvent();
 
-	// Start the game and give the local player control of the tron with localPlayerId
-	// rounds tells how many rounds one game last
-	public void StartGame(int localPlayerId, int rounds)
-	{
-		_roundsToPlay = rounds;
-		if (Network.isServer)
-		{
-			InstantiateGameBorders();
-			InstantiateCubes();
-		}
-		
-		_localPlayerId = localPlayerId;
-		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
-		_gridPrefab = Resources.Load<Transform>("Lines");
-		
-		SpawnPlayer();
-		_gameStarted = true;
+	public RoundStartEvent OnRoundStart;
+	public RoundEndEvent OnRoundEnd;
+	public GameStartEvent OnGameStart;
+	public GameEndEvent OnGameEnd;
+
+    private Game() { 
+		InitGame ();
 	}
 	
-	public void StopGame()
+	// Reset the game instance
+	private void InitGame()
 	{
-		clearGameObjects ();
-		NewGame ();
+		_nOfActivePlayers = 0;
+		_nOfLivingPlayers = 0;
+		_roundsToPlay = GAME_LENGTH;
+		_currentRound = 0;
+		_gameStarted = false;
+		
+		for (int i = 0; i < MaxPlayers; i++)
+		{
+			_players[i] = null;
+		}
 	}
 
 	#region game initialization
@@ -122,23 +125,38 @@ public class Game
 
 	#region game and round logic
 
-	// Reset the game instance
-	public void NewGame()
+	/// <summary>
+	/// Set local player's id and number of rounds.
+	/// If we are the server, instantiate borders and cube, and fire OnRoundStart() event
+	/// </summary>
+	/// <param name="localPlayerId">Local player identifier.</param>
+	/// <param name="rounds">Rounds.</param>
+	public void StartGame(int localPlayerId, int rounds)
 	{
-		_nOfActivePlayers = 0;
-		_nOfLivingPlayers = 0;
-		_roundsToPlay = GAME_LENGTH;
-		_gameStarted = false;
+		_roundsToPlay = rounds;
+		_localPlayerId = localPlayerId;
+		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
+		_gridPrefab = Resources.Load<Transform>("Lines");
+		_gameStarted = true;
 		
-		for (int i = 0; i < MaxPlayers; i++)
+		if (Network.isServer)
 		{
-			_players[i] = null;
+			InstantiateGameBorders();
+			InstantiateCubes();
+			// Fire event that the first round should start
+			OnRoundStart(1);
 		}
 	}
 	
-	public void NewRound()
+	public void StopGame()
 	{
-		_roundsToPlay--;
+		clearGameObjects ();
+		InitGame ();
+	}
+	
+	public void StartRound(int round)
+	{
+		_currentRound++;
 		_nOfLivingPlayers = _nOfActivePlayers;
 		for (int i = 0; i < MaxPlayers; i++)
 		{
@@ -147,52 +165,79 @@ public class Game
 			_players[i].score += _nOfActivePlayers - _players[i].rank;
 			_players[i].startRound();
 		}
+
+		SpawnPlayer();
 	}
 
+	/// <summary>
+	/// Clean up objects of current round, apply player scores.
+	/// If we are the server, we proceed with either starting the new round or end the game.
+	/// </summary>
+	/// <param name="round">Round.</param>
+	public void StopRound(int round)
+	{
+		clearGameObjects ();
+
+		for (int i = 0; i < MaxPlayers; i++)
+		{
+			if (_players[i] == null)
+				continue;
+			_players[i].score += calculateScore(_nOfActivePlayers, _players[i].rank);
+			_players[i].rank = 1;
+		}
+
+		// If we are the server, check whether game is over and fire event
+		if (Network.isServer) {
+			if (isGameOver () && OnGameEnd != null)
+				OnGameEnd();
+			else
+				OnRoundStart(_currentRound+1);
+		}
+	}
+
+	private int calculateScore(int nOfPlayers, int rank)
+	{
+		return nOfPlayers - rank;
+	}
+
+	/// <summary>
+	/// Mark the player dead and assign it a rank for this round.
+	/// If we are the server and the last players has died, notify round has ended
+	/// </summary>
+	/// <param name="playerId">Player identifier.</param>
 	public void playerDied(int playerId)
 	{
+		Debug.Log ("Game:PlayerDied");
 		PlayerModel player = _players [playerId];
 		if (player == null)
 			return;
 		player.rank = _nOfLivingPlayers;
 		player.isAlive = false;
 		_nOfLivingPlayers--;
-		
-		if (isRoundOver ()) {
-			EndRound();
-		}
-	}
 
-	private void EndRound()
-	{
-		// TODO something else?
-		clearGameObjects ();
-
-		if (isGameOver ()) {
-			EndGame ();
+		if (Network.isServer && isRoundOver ()) {
+			OnRoundEnd (_currentRound);
 		}
-	}
-	
-	private void EndGame()
-	{
-		StopGame ();
 	}
 
 	public bool isRoundOver()
 	{
+		Debug.Log ("Game:is round over?");
 		if (!_gameStarted)
 			return false;
-		if (_nOfActivePlayers > 1)
+		if (_nOfActivePlayers > 1) {
+			Debug.Log (_nOfLivingPlayers <= 1);
 			return _nOfLivingPlayers <= 1;
-		else
-			return isAlive (PlayerID);
+		} else {
+			Debug.Log (!isAlive (PlayerID));
+			return !isAlive (PlayerID);
+		}
 	}
 	
 	public bool isGameOver()
 	{
-		if (!_gameStarted)
-			return false;
-		return isRoundOver () && RoundsToPlay == 0;
+		Debug.Log ("Game:is round over? - " + (_gameStarted && isRoundOver () && _currentRound == RoundsToPlay));
+		return _gameStarted && isRoundOver () && _currentRound == RoundsToPlay;
 	}
 	
 	// Does the player have the highest score?
@@ -260,7 +305,12 @@ public class Game
 
 	private void clearGameObjects()
 	{
-		var walls = GameObject.FindGameObjectsWithTag("wall");
+		var walls = GameObject.FindGameObjectsWithTag("gameWall");
+		foreach (var wall in walls)
+		{
+			MonoBehaviour.Destroy(wall);
+		}
+		walls = GameObject.FindGameObjectsWithTag("wall");
 		foreach (var wall in walls)
 		{
             MonoBehaviour.Destroy(wall);
