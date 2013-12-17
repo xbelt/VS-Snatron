@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	//public Transform wallTemplate;
-    private Transform _latestWallGameObject;
+    internal Transform _latestWallGameObject;
 
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
 	static readonly float PowerUpSpeed = 80;
-    private static readonly float IndestructibleTime = 5;
+    internal static readonly float IndestructibleTime = 5;
 
-    private const float AccelerationRate = 10;
-    private const float DecelerationRate = 5;
+    internal const float AccelerationRate = 10;
+    internal const float DecelerationRate = 5;
 
-    float _speed = MinSpeed;
+    internal float _speed = MinSpeed;
 
 	int _numberOfWallsNear = 0;
 
-    private int HeightPixels;
-	private int WidthPixels;
+    internal int HeightPixels;
+	internal int WidthPixels;
 
 	public bool isIndestructible;
-
-    private bool _showPauseMenu;
-    private GUIStyle buttonStyle = new GUIStyle();
+    
+    internal bool _showPauseMenu;
+    internal GUIStyle buttonStyle = new GUIStyle();
 
     Vector3 Offset {
         get {
@@ -37,7 +37,7 @@ public class Drive : MonoBehaviour {
         }
     }
 
-	Vector3 CurrentWallEnd {
+    internal Vector3 CurrentWallEnd {
 		get {
 		    if (_latestWallGameObject == null) return transform.position - WallOffset;
             if (Vector3.SqrMagnitude(_latestWallGameObject.GetComponent<WallBehaviour>().end - _latestWallGameObject.GetComponent<WallBehaviour>().start) > 20)
@@ -114,7 +114,7 @@ public class Drive : MonoBehaviour {
 		AdjustSpeed ();
 	}
 
-	bool ApplyUserCommands ()
+    internal bool ApplyUserCommands ()
 	{
 		//Handling touch input
 		foreach (var touch in Input.touches.Where (touch => touch.phase == TouchPhase.Began)) {
@@ -135,7 +135,7 @@ public class Drive : MonoBehaviour {
 	    return true;
 	}
 
-	void AdjustSpeed ()
+    internal void AdjustSpeed ()
 	{
 		if (_numberOfWallsNear > 0) {
 			_speed = Mathf.MoveTowards (_speed, MaxSpeed, AccelerationRate * Time.deltaTime);
@@ -146,13 +146,13 @@ public class Drive : MonoBehaviour {
 		if (CollisionPrediction != null)
 			CollisionPrediction.Length = _speed*transform.localScale.z;
 	}
-	
-    void TurnLeft()
+
+    internal void TurnLeft()
 	{
 		Turn (270f);
     }
 
-    void TurnRight()
+    internal void TurnRight()
     {
 		Turn (90f);
     }
@@ -166,7 +166,7 @@ public class Drive : MonoBehaviour {
 	}
 // ReSharper restore UnusedMember.Local
 
-	void NewWall() {
+    internal void NewWall() {
 	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+ Game.Instance.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
@@ -178,7 +178,7 @@ public class Drive : MonoBehaviour {
 	public delegate void KillEvent();
 	public KillEvent OnKillEvent;
 
-    private void Kill()
+    internal void Kill()
 	{
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
@@ -195,8 +195,8 @@ public class Drive : MonoBehaviour {
 
     public CollisionPrediction CollisionPrediction { get; set; }
 
-    private int _predictedCollisions;
-    private int _predictedWallCollisions;
+    internal int _predictedCollisions;
+    internal int _predictedWallCollisions;
 
     public void OnPredictedCollisionEnter()
 	{
