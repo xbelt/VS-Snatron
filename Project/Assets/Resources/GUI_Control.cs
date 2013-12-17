@@ -296,7 +296,7 @@ public class GUI_Control : MonoBehaviour
         GUI.Label(new Rect(17 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Server IP:", labelGUIStyle);
         _serverIP = GUI.TextField(new Rect(21 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _serverIP, textFieldGUIStyle);
 
-        if (GUI.Button(new Rect(17/30f*WidthPixels, 5/20f*HeightPixels, 3/10f*WidthPixels, 1/20f*HeightPixels), "Join",
+        if (GUI.Button(new Rect(21/30f*WidthPixels, 5/20f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels), "Join",
             buttonGUIStyle)) {
             JoinGame(_serverIP, Protocol.GamePort);
         }
