@@ -71,13 +71,14 @@ public class NetworkControl : MonoBehaviour {
 	public void InitServer(int maxPlayers)
 	{
 		print ("NET:InitServer()");
-		Network.InitializeServer(0, Protocol.GamePort, false);
+		Network.InitializeServer(maxPlayers, Protocol.GamePort, false);
 		Network.sendRate = 30;
 	}
 
 	// Called on Server when a player connects : Assign player id to connected player
     void OnPlayerConnected(NetworkPlayer player)
     {
+        Debug.Log("Player connected");
 		int playerId = Game.Instance.getFirstFreePlayerId ();
 		// Assign the new player a unique id
 		AssignPlayerID (playerId, player);
