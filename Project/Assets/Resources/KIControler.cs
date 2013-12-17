@@ -6,6 +6,7 @@ namespace Assets.Resources
     class KIControler : Drive
     {
         private System.Random random = new Random();
+        private bool lastFrameTurned = false;
         public int KIId;
         void Start() {
             transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
@@ -24,14 +25,17 @@ namespace Assets.Resources
                 // predict the collision. Therefore we return if there was some user input
                 bool applied = ApplyUserCommands();
                 if (applied)
+                {
+                    lastFrameTurned = true;
                     return;
+                }
             }
 
             // The tron would keep moving straight
             // But are there any obstacles in front?
             if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
             {
-                if (random.Next(0, 100) < 98) {
+                if (random.Next(0, 100) < 98 && !lastFrameTurned) {
                     if (random.Next(0, 100) < 50) {
                         TurnLeft();
                     }
@@ -40,12 +44,12 @@ namespace Assets.Resources
                     }
                 }
                 else {
-                    Debug.Log("KI" + KIId + " died");
                     Kill();
                 }
+                lastFrameTurned = true;
                 return;
             }
-
+            lastFrameTurned = false;
             // move forward
             transform.Translate(Vector3.forward * _speed * Time.deltaTime);
             if (_latestWallGameObject != null)
