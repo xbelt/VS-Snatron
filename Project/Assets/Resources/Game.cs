@@ -20,6 +20,7 @@ public class Game
 	public int PlayerID { get {return _localPlayerId;} }
 
 	private bool _gameStarted;
+    public bool GameStarted {get { return _gameStarted; }}
 
 	private Drive _localPlayer;
 	public Drive LocalPlayer { get {return _localPlayer;} }
