@@ -220,9 +220,9 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI:StartQuickGame()");
 		Game.Instance.setPlayer(0, _playerName);
-		_networkControl.InitServer (0);
+	    Game.Instance.numberOfKIPlayers = 4;
+        _networkControl.InitServer (0);
 		_networkControl.broadCastStartGame (1);
-		//GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
 	}
 
 	// Disconnect from a running game
