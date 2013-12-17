@@ -347,9 +347,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27c04a95291308144ba9664a9d539615, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0564dcfb5b8c6499e005a75ceaf796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeToLive: 10000
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
