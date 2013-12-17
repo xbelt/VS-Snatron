@@ -1,3 +1,4 @@
+using Assets.Resources;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ public class Game
 	
 	private int _nOfLivingPlayers;
 	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
+    public int numberOfKIPlayers;
 
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
@@ -47,22 +49,24 @@ public class Game
 	// rounds tells how many rounds one game last
 	public void StartGame(int localPlayerId, int rounds)
 	{
+		_localPlayerId = localPlayerId;
+		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
+		_gridPrefab = Resources.Load<Transform>("Lines");
 		_roundsToPlay = rounds;
+		SpawnPlayer();
 		if (Network.isServer)
 		{
 			InstantiateGameBorders();
 			InstantiateCubes();
+		    SpawnKI();
 		}
 		
-		_localPlayerId = localPlayerId;
-		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
-		_gridPrefab = Resources.Load<Transform>("Lines");
 		
-		SpawnPlayer();
 		_gameStarted = true;
 	}
-	
-	public void StopGame()
+
+
+    public void StopGame()
 	{
 		clearGameObjects ();
 		NewGame ();
@@ -72,8 +76,8 @@ public class Game
 
 	public delegate void LocalPlayerSpawn(Drive player);
 	public LocalPlayerSpawn OnLocalPlayerSpawn;
-	
-	private void SpawnPlayer()
+
+    private void SpawnPlayer()
 	{
 		Vector3 location;
 		Quaternion orientation;
@@ -91,6 +95,19 @@ public class Game
 			OnLocalPlayerSpawn (_localPlayer);
 	}
 	
+    private void SpawnKI() {
+        for (int i = PlayerID + 1; i < PlayerID + 1 + numberOfKIPlayers; i++) {
+            _playerPrefab = Resources.Load<Transform>("Player" + i);
+            Vector3 location;
+            Quaternion orientation;
+            mapStartLocation(i, out location, out orientation);
+
+            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
+            MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
+            player.gameObject.AddComponent<KIControler>();
+            player.gameObject.GetComponent<KIControler>().KIId = i;
+        }
+    }
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName) {
         MonoBehaviour.print("Game:SetPlayer()");
