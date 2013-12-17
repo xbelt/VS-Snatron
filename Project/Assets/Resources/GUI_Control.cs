@@ -40,14 +40,10 @@ public class GUI_Control : MonoBehaviour
         SetFontSize(HeightPixels / 50);
         SetTextColor(Color.white);
 
-		// Init NetworkControl
-		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();
-		_networkControl.OnGameEnded += StopGame;
-		_networkControl.OnGameStarted += StartGame;
-		_networkControl.StartListeningForNewServers();
-
 		_splashScreenLight = GameObject.Find ("SplashScreenLight");
 		_splashScreen = GameObject.Find ("SplashScreen");
+		
+		initNetworkControl ();
     }
 
     private void ChangeWifiSettingsAndroid() { }
@@ -99,48 +95,128 @@ public class GUI_Control : MonoBehaviour
         textFieldGUIStyle.padding.left = 6;
     }
 
+	#region Network Control
+	
+	private void initNetworkControl()
+	{
+		_networkControl = GameObject.Find("Network").GetComponent<NetworkControl> ();
+		_networkControl.OnServerStarted += OnServerStarted;
+		_networkControl.OnConnectedToRemoteServer += OnConnectedToRemoteServer;
+		_networkControl.OnConnectionError += OnConnectionError;
+		_networkControl.OnGameEnded += OnStopGame;
+		_networkControl.OnGameStarted += OnStartGame;
+		_networkControl.OnRoundStarted += OnRoundStarted;
+		_networkControl.OnRoundEnded += OnRoundEnded;
+		_networkControl.OnPlayerJoined += OnPlayerJoined;
+		_networkControl.OnPlayerLeft += OnPlayerLeft;
+		_networkControl.OnPlayerKilled += OnPlayerKilled;
+		
+		_networkControl.StartListeningForNewServers();
+	}
+
+	private void OnServerStarted()
+	{
+		Debug.Log ("GUI:OnServerStarted");
+		Game.Instance.setPlayer(0, NetworkControl.PlayerName);
+		_state = State.Lobby;
+	}
+
+	private void OnConnectedToRemoteServer(int id)
+	{
+		Debug.Log ("GUI:OnConnectedToRemoteServer");
+		_state = State.Lobby;
+		// id:That's us!
+		// needed only when game starts for now
+	}
+	
+	private void OnConnectionError(String message)
+	{
+		Debug.Log ("GUI:OnConnectionError: " + message);
+		Game.Instance.NewGame ();
+		_networkControl.Disconnect (); // TODO is it a problem when we are not connected?
+		_state = State.StartScreen;
+		// TODO show some error message
+	}
+	
+	private void OnRoundStarted(int round) // TODO probably not necessary
+	{
+		Debug.Log ("GUI:OnRoundStarted");
+		//Game.Instance.NewRound ();
+	}
+	
+	private void OnRoundEnded(int round) // TODO probably not necessary
+	{
+		Debug.Log ("GUI:OnRoundEnded");
+		//Game.Instance.NewRound ();
+	}
+	
+	private void OnPlayerJoined(int id, String name)
+	{
+		Debug.Log ("GUI:OnPlayerJoined");
+		Game.Instance.setPlayer (id, name);
+	}
+	
+	private void OnPlayerLeft(int id)
+	{
+		Debug.Log ("GUI:OnPlayerLeft");
+		Game.Instance.removePlayer (id);
+	}
+	
+	private void OnPlayerKilled(int id)
+	{
+		Debug.Log ("GUI:OnPlayerKilled");
+		Game.Instance.playerDied (id);
+	}
+
+	#endregion
+
 	#region state transitions
 	
 	private void StartServer()
 	{
+		print ("GUI,Server:StartServer()");
 		_state = State.Lobby;
 		_networkControl.AnnounceServer ();
 	}
 	
 	private void JoinGame(String ipAddress, int port){
+		print ("GUI,Client:StartNetworkGame()");
 		_state = State.Lobby;
-		_networkControl.Connect(ipAddress, port);
-		_networkControl.StopSearching();
-		_networkControl.StopAnnouncingServer();
+		_networkControl.JoinGame(ipAddress, port);
 	}
 	
 	private void StartNetworkGame()
 	{
-		GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
-	}
-	
-	private void StartQuickGame()
-	{
-		Network.InitializeServer(0, Protocol.GamePort, false);
-		GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
-        Game.Instance.setPlayer(0, _playerName);
-		//this is so I don't have to bother with another, static, "StartGame" method
+		print ("GUI,Server:StartNetworkGame()");
+		_networkControl.StopAnnouncingServer();
+		int rounds = 5; // TODO take from GameConfig
+		_networkControl.broadCastStartGame (rounds);
+		//GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
 	}
 
-	// This is indirectly called through RPC StartGame
-	private void StartGame()
+	// A QuickGame is a normal "NetworkGame" with only the server playing, which is only 1 round
+	private void StartQuickGame()
 	{
+		print ("GUI:StartQuickGame()");
+		Game.Instance.setPlayer(0, _playerName);
+		_networkControl.InitServer (0);
+		_networkControl.broadCastStartGame (1);
+		//GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
+	}
+
+	// This is indirectly called through RPC StartGame event
+	private void OnStartGame(int rounds)
+	{
+		print ("GUI:OnStartGame()");
 		HideMenuBackground ();
 		_state = State.Game;
-		_networkControl.StopSearching();
-		_networkControl.StopAnnouncingServer();
-		
-		// int id = Game.Instance.PlayerID;
+		Game.Instance.StartGame (_networkControl.PlayerID, rounds);
 		// TODO Game.Instance.get player To register event listener
 	}
 
-    private void StopGame()
+    private void OnStopGame()
 	{
+		print ("GUI:OnStopGame()");
 		// TODO make sure all players are disconnected
 		// and they all show the main menu
 		
@@ -148,57 +224,40 @@ public class GUI_Control : MonoBehaviour
 		_state = State.StartScreen;
 	}
 
-    private void PauseGame()
+	// Disconnect from a running game
+	private void LeaveGame()
 	{
-		// TODO
-		_state = State.GamePaused;
-	}
-
-    private void ResumeGame()
-	{
-		// TODO
-		_state = State.Game;
+		_networkControl.Disconnect ();
+		Game.Instance.StopGame ();
+		ShowMenuBackground ();
+		ResetCamera();
+		_state = State.StartScreen;
 	}
 
     private void ExitApp()
 	{
+		_networkControl.Disconnect ();
 		Application.Quit ();
-	}
+	}	
 
-    private void LeaveGame()
-    {
-        Network.Disconnect();
-        Game.Instance.StopGame();
-        ShowMenuBackground();
-        ResetCamerPositionRotation();
-        _state = State.StartScreen;
-
-    }
-    #endregion state transitions
-
-    private void ResetCamerPositionRotation()
-    {
-        GameObject.Find("Main Camera").transform.position = new Vector3(-7.621216f, -3.097347f, -11.66232f);
-        GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
-    }
-	
-// ReSharper disable UnusedMember.Local
+	// ReSharper disable UnusedMember.Local
 	void OnConnectedToServer()
 	{
 		print("Connected");
 		//update server list?
 	}
-		
+
+    #endregion state transitions
+
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			switch(_state){
-			case State.Lobby: break;
-			case State.Game: PauseGame(); break;
 			case State.StartScreen: ExitApp(); break;
-			case State.GamePaused: ResumeGame(); break;
-			default: StopGame(); break;
+			case State.Game:
+			case State.Lobby:
+			default: LeaveGame(); break;
 			}
 		}
 	}
@@ -244,7 +303,7 @@ public class GUI_Control : MonoBehaviour
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
 
-        foreach (var item in NetworkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
+        foreach (var item in _networkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
         {
 			JoinGame(item.Ip.ToString(), Protocol.GamePort);
         }
@@ -274,10 +333,8 @@ public class GUI_Control : MonoBehaviour
 
         if (Network.isServer)
 		{
-			Game.Instance.setPlayer(0, NetworkControl.PlayerName);
 			if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
             {
-				_networkControl.StopAnnouncingServer();
                 StartNetworkGame();
             }
         }
@@ -317,12 +374,20 @@ public class GUI_Control : MonoBehaviour
 			}
 		}
 
-		if (Game.Instance.countAlivePlayers() == 1 && Network.maxConnections > 0)
+		if (Game.Instance.HasLocalPlayerWon() )
 	    {
-	        player.PlayerHasWon = true;
-            GUI.Label(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You won!", labelGUIStyle);
-	        if (GUI.Button(new Rect(9/20f*WidthPixels, 20/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
-	            "Back to menu", buttonGUIStyle))
+	        GUI.Label(new Rect(9 / 20f * WidthPixels,
+			                   17 / 40f * HeightPixels,
+			                   1 / 10f * WidthPixels,
+			                   1 / 20f * HeightPixels),
+			          "You won!",
+			          labelGUIStyle);
+	        if (GUI.Button(new Rect(9/20f*WidthPixels,
+			                        20/40f*HeightPixels,
+			                        1/10f*WidthPixels,
+			                        1/20f*HeightPixels),
+			               "Back to menu",
+			               buttonGUIStyle))
 	        {
 				// TODO restart game
 	            LeaveGame();
@@ -367,6 +432,12 @@ public class GUI_Control : MonoBehaviour
 		_splashScreenLight.SetActive (true);
 		_splashScreen.SetActive (true);
 		_splashScreen.renderer.enabled = true;
+	}
+
+	private void ResetCamera()
+	{
+		GameObject.Find("Main Camera").transform.position = new Vector3(-7.621216f, -3.097347f, -11.66232f);
+		GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
 	}
 	
     #endregion

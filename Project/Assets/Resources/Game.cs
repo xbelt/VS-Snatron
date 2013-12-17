@@ -5,38 +5,12 @@ using System.Collections.Generic;
 public class Game : MonoBehaviour
 {
 	public static readonly int MaxPlayers = 8;
+	// TODO put into game config
+	private static readonly int GAME_LENGTH = 5;
+
 	// The only game instance
 	private static Game _instance = new Game();
 	public static Game Instance { get { return _instance; } }
-
-	public class PlayerModel
-	{
-		public readonly int id;
-		public readonly string name;
-		public int rank; // for one round
-		public int score; // for a series of rounds
-		public bool isAlive;
-
-		public PlayerModel(int id, string name)
-		{
-			this.id = id;
-			this.name = name;
-			startGame ();
-		}
-
-		public void startGame()
-		{
-			isAlive = true;
-			score = 0;
-			rank = 0;
-		}
-
-		public void startRound()
-		{
-			isAlive = true;
-			rank = 1;
-		}
-	}
 
 	private Transform _playerPrefab;
 	private Transform _gridPrefab;
@@ -44,69 +18,36 @@ public class Game : MonoBehaviour
 	private int _localPlayerId;
 	public int PlayerID { get {return _localPlayerId;} }
 
+	private _gameStarted;
+
 	private Drive _localPlayer;
 	public Drive LocalPlayer { get {return _localPlayer;} }
 
-	public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
+	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
 	private PlayerModel[] _players = new PlayerModel[MaxPlayers];
 
-	//private readonly string[] userNames = new string[MaxPlayers];
-	//private readonly bool[] aliveStates = new bool[MaxPlayers];
-
-	private int _nOfLivingPlayers;
 	private int _nOfActivePlayers;
+	public int NofActivePlayers { get {	return _nOfActivePlayers; }	}
+	
+	private int _nOfLivingPlayers;
+	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
 
-	// 0 if player id is not active
-	// Ranks 1 - MaxPlayer for active players
-	//private readonly int[] _ranks = new int[MaxPlayers];
-	//public int[] Ranks { get {return _ranks;} }
-
-	//private readonly int[] _scores = new int[MaxPlayers];
-	//public int[] Scores { get {return _ranks;} }
-
-	// TODO put into game config
-	private static readonly int GAME_LENGTH = 5;
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
 
 	public int NumberOfCubes { get {return 5;} }
 	public int FieldBorderCoordinates { get { return 200; } }
-    public double IndestructibleTimeLeft { get; set; }
-
+    public double IndestructibleTimeLeft { get; set; } // TODO move to somewhere else
 
     private Game() { 
 		NewGame ();
 	}
-	
-	// Reset the game instance
-	public void NewGame()
-	{
-		_nOfActivePlayers = 0;
-		_nOfLivingPlayers = 0;
-		_roundsToPlay = GAME_LENGTH;
-
-		for (int i = 0; i < MaxPlayers; i++)
-		{
-			_players[i] = null;
-		}
-	}
-
-	public void NewRound()
-	{
-		_roundsToPlay--;
-		_nOfLivingPlayers = _nOfActivePlayers;
-		for (int i = 0; i < MaxPlayers; i++)
-		{
-			if (_players[i] == null)
-				continue;
-			_players[i].score += _nOfActivePlayers - _players[i].rank;
-			_players[i].startRound();
-		}
-	}
 
 	// Start the game and give the local player control of the tron with localPlayerId
-	public void StartGame(int localPlayerId)
+	// rounds tells how many rounds one game last
+	public void StartGame(int localPlayerId, int rounds)
 	{
+		_roundsToPlay = rounds;
 		if (Network.isServer)
 		{
 			InstantiateGameBorders();
@@ -118,33 +59,16 @@ public class Game : MonoBehaviour
 		_gridPrefab = Resources.Load<Transform>("Lines");
 		
 		SpawnPlayer();
+		_gameStarted = true;
 	}
 	
 	public void StopGame()
 	{
-	    var walls = GameObject.FindGameObjectsWithTag("wall");
-	    foreach (var wall in walls)
-	    {
-	        Destroy(wall);
-	    }
-	    var lines = GameObject.FindGameObjectsWithTag("line");
-	    foreach (var line in lines)
-	    {
-	        Destroy(line);
-	    }
-	    var cubes = GameObject.FindGameObjectsWithTag("cube");
-	    foreach (var cube in cubes)
-	    {
-	        Destroy(cube);
-	    }
-	    var players = GameObject.FindGameObjectsWithTag("tron");
-	    foreach (var player in players)
-	    {
-	        Destroy(player);
-	    }
-
+		clearGameObjects ();
 		NewGame ();
 	}
+
+	#region game initialization
 
 	public delegate void LocalPlayerSpawn(Drive player);
 	public LocalPlayerSpawn OnLocalPlayerSpawn;
@@ -158,44 +82,79 @@ public class Game : MonoBehaviour
 		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
 		var cam = GameObject.Find("Main Camera");
 		cam.AddComponent<SmoothFollow>().target = player;
-
+		
 		Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
 		Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
-	
+		
 		_localPlayer = player.GetComponent<Drive> ();
 		if (OnLocalPlayerSpawn != null)
 			OnLocalPlayerSpawn (_localPlayer);
 	}
-
-	public bool isActivePlayer(int playerId)
-	{
-		return _players [playerId] != null;
+	
+	// Called when both local player and remote player was spawned? TODO really?
+	public void setPlayer(int playerId, string playerName) {
+		print ("Game:SetPlayer()");
+		_players [playerId] = new PlayerModel (playerId, playerName);
+		_nOfActivePlayers++;
+		_nOfLivingPlayers++; // TODO probably not necessary
 	}
 
-	public int countActivePlayers()
-	{
-		return _nOfActivePlayers;
+	public void removePlayer(int playerId) {
+		print ("Game:removePlayer()");
+		if (_players [playerId].isAlive)
+			_nOfLivingPlayers--;
+		_nOfActivePlayers--;
+		_players [playerId] = null;
 	}
 
-	// Note: indices do not correspond to playerId
-	public int countAlivePlayers()
-	{
-		return _nOfLivingPlayers;
+	// Called by server to assign ids to joining players
+	public int getFirstFreePlayerId() {
+		int res = -1;
+		foreach (PlayerModel player in _players) {
+			res++;
+			if (player == null)
+				break;
+		}
+		return res;
 	}
 
-	public bool isAlive(int playerId)
+	#endregion
+
+	#region game and round logic
+
+	// Reset the game instance
+	public void NewGame()
 	{
-		if (!isActivePlayer(playerId))
-			return false;
-		return _players[playerId].isAlive;
+		_nOfActivePlayers = 0;
+		_nOfLivingPlayers = 0;
+		_roundsToPlay = GAME_LENGTH;
+		_gameStarted = false;
+		
+		for (int i = 0; i < MaxPlayers; i++)
+		{
+			_players[i] = null;
+		}
 	}
 	
+	public void NewRound()
+	{
+		_roundsToPlay--;
+		_nOfLivingPlayers = _nOfActivePlayers;
+		for (int i = 0; i < MaxPlayers; i++)
+		{
+			if (_players[i] == null)
+				continue;
+			_players[i].score += _nOfActivePlayers - _players[i].rank;
+			_players[i].startRound();
+		}
+	}
+
 	public void playerDied(int playerId)
 	{
 		PlayerModel player = _players [playerId];
 		if (player == null)
 			return;
-		player.rank = countAlivePlayers ();
+		player.rank = _nOfLivingPlayers;
 		player.isAlive = false;
 		_nOfLivingPlayers--;
 		
@@ -206,40 +165,67 @@ public class Game : MonoBehaviour
 
 	private void EndRound()
 	{
+		// TODO something else?
+		clearGameObjects ();
+
 		if (isGameOver ()) {
 			EndGame ();
 		}
 	}
-
+	
 	private void EndGame()
 	{
 		StopGame ();
 	}
 
-	// TODO not really necessary?
-	public bool hasWon(int playerId)
-	{
-		return isAlive (playerId) && countAlivePlayers () == 1; 
-	}
-
 	public bool isRoundOver()
 	{
+		if (!_gameStarted)
+			return false;
 		if (_nOfActivePlayers > 1)
 			return _nOfLivingPlayers <= 1;
 		else
 			return isAlive (PlayerID);
 	}
-
+	
 	public bool isGameOver()
 	{
-		return isRoundOver () && RoundsToPlay;
+		if (!_gameStarted)
+			return false;
+		return isRoundOver () && RoundsToPlay == 0;
+	}
+	
+	// Does the player have the highest score?
+	// Condition: for this to become true, the game must be over
+	// => nobody wins until the end of the game
+	public bool hasWon(int playerId)
+	{
+		if (!isGameOver ())
+			return false;
+
+		int score = _players [playerId].score;
+		for (int i = 0; i < MaxPlayers; i++) {
+			if (_players[i] == null)
+				continue;
+			if (_players[i].score > score)
+				return false;
+		}
+		return true;
+	}
+	
+	// Does he have the highest score?
+	public bool HasLocalPlayerWon()
+	{
+		return hasWon (PlayerID);
 	}
 
-	// Called when both local player and remote player was spawned? TODO really?
-	public void setPlayer(int playerId, string playerName) {
-		_players [playerId] = new PlayerModel (playerId, playerName);
-		_nOfActivePlayers++;
-		_nOfLivingPlayers++; // TODO probably not necessary
+	#endregion
+
+	#region player accessors
+
+	public bool isActivePlayer(int playerId)
+	{
+		return _players [playerId] != null;
 	}
 
 	public string getPlayerName(int playerId) {
@@ -249,14 +235,51 @@ public class Game : MonoBehaviour
 		return player.name;
 	}
 
-	public int getFirstFreePlayerId() {
-		int res = -1;
-		foreach (PlayerModel player in _players) {
-			res++;
-			if (player == null)
-				break;
+	public bool isAlive(int playerId)
+	{
+		if (!isActivePlayer(playerId))
+			return false;
+		return _players[playerId].isAlive;
+	}
+
+	public int Rank(int playerId)
+	{
+		if (!isActivePlayer(playerId))
+			return 0;
+		return _players[playerId].rank;
+	}
+
+	public int Score(int playerId)
+	{
+		if (!isActivePlayer(playerId))
+			return 0;
+		return _players[playerId].score;
+	}
+
+	#endregion
+
+	private void clearGameObjects()
+	{
+		var walls = GameObject.FindGameObjectsWithTag("wall");
+		foreach (var wall in walls)
+		{
+			Destroy(wall);
 		}
-		return res;
+		var lines = GameObject.FindGameObjectsWithTag("line");
+		foreach (var line in lines)
+		{
+			Destroy(line);
+		}
+		var cubes = GameObject.FindGameObjectsWithTag("cube");
+		foreach (var cube in cubes)
+		{
+			Destroy(cube);
+		}
+		var players = GameObject.FindGameObjectsWithTag("tron");
+		foreach (var player in players)
+		{
+			Destroy(player);
+		}
 	}
 	
 	private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
@@ -335,6 +358,35 @@ public class Game : MonoBehaviour
 			var z = random.Next(-FieldBorderCoordinates, FieldBorderCoordinates);
 			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3(x, 1.5f, z), Quaternion.identity, 0) as Transform);
 			cubes[i].renderer.material.shader = shader;
+		}
+	}
+
+	private class PlayerModel
+	{
+		public readonly int id;
+		public readonly string name;
+		public int rank; // for one round
+		public int score; // for a series of rounds
+		public bool isAlive;
+		
+		public PlayerModel(int id, string name)
+		{
+			this.id = id;
+			this.name = name;
+			startGame ();
+		}
+		
+		public void startGame()
+		{
+			isAlive = true;
+			score = 0;
+			rank = 0;
+		}
+		
+		public void startRound()
+		{
+			isAlive = true;
+			rank = 1;
 		}
 	}
 }
