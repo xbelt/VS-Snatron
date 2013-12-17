@@ -321,10 +321,8 @@ public class GUI_Control : MonoBehaviour
 
 		for (int id = 0; id < Game.MaxPlayers; id++) {
 			var playerName = Game.Instance.getPlayerName(id);
-			if (playerName != null) {
-				// TODO fix ArgumentException
-				GUILayout.Label(id + ": " + playerName, labelGUIStyle, GUILayout.ExpandWidth(true));
-			}
+    		// TODO fix ArgumentException
+			GUILayout.Label(id + ": " + playerName, labelGUIStyle, GUILayout.ExpandWidth(true));
 		}
 
         GUILayout.EndVertical();
