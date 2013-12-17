@@ -21,8 +21,6 @@ public class Drive : MonoBehaviour {
     private int HeightPixels;
 	private int WidthPixels;
 
-    private System.Random random = new System.Random();
-
 	public bool isIndestructible;
 
     private bool _showPauseMenu;
@@ -94,17 +92,6 @@ public class Drive : MonoBehaviour {
 	        bool applied = ApplyUserCommands ();
 			if (applied)
 				return;
-	    }
-
-	    if (Network.isServer && random.Next(0, 1000) < 7)
-	    {
-            //TODO: Make dependent of framerate
-            Debug.Log("Spawn powerUp");
-            var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            var powerUp = Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,2)), new Vector3(x, 0, z),
-                    Quaternion.identity, 0) as Transform;
-            powerUp.gameObject.GetComponent<PowerUpDestroyer>().DestroyTimed(random.Next(5, 20));
 	    }
 
 		// The tron would keep moving straight
