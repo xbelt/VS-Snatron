@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CollisionPrediction : MonoBehaviour {
 
-	private Drive _drive;
+	public Drive _drive;
 	private BoxCollider _collider;
 
 	// Use this for initialization
@@ -16,13 +16,12 @@ public class CollisionPrediction : MonoBehaviour {
 		}
 
 		_collider = GetComponent<BoxCollider> ();
-		_drive = transform.parent.gameObject.GetComponent<Drive>();
+		//_drive = transform.parent.gameObject.GetComponent<Drive>();
 		_drive.CollisionPrediction = this;
 	}
-
 	void OnTriggerEnter(Collider other) {
 		//Debug.Log ("Predict Collision enter: " + other.name + " " + name);
-        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall")
+        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall" || other.gameObject.tag == "tron")
         {
 			if (_drive != null) {
 				_drive.OnPredictedCollisionEnter ();
@@ -51,7 +50,7 @@ public class CollisionPrediction : MonoBehaviour {
 	
 	void OnTriggerExit(Collider other) {
 		//Debug.Log ("Predict Collision exit: " + other.name + " " + name);
-        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall")
+        if (other.gameObject.tag == "wall" || other.gameObject.tag == "cube" || other.gameObject.tag == "gameWall" || other.gameObject.tag == "tron")
         {
 			_drive.OnPredictedCollisionExit ();
             if (other.gameObject.tag == "gameWall")

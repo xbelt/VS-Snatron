@@ -2,12 +2,13 @@
 using System.Collections;
 
 public class PowerUpDestroyer : MonoBehaviour {
-    public void ConsumePowerUp()
-    {
-        Destroy(gameObject);
+    public int timeToLive = 10000;
+
+    private void Start() {
+        Destroy(gameObject, timeToLive);
     }
 
-    public void DestroyTimed(int time) {
-        Destroy(gameObject, time);
+    public void ConsumePowerUp() {
+        Destroy(gameObject);
     }
 }

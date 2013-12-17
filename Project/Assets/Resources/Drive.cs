@@ -4,29 +4,27 @@ using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	//public Transform wallTemplate;
-    private Transform _latestWallGameObject;
+    protected Transform _latestWallGameObject;
 
 	static readonly float MinSpeed = 25;
 	static readonly float MaxSpeed = 50;
 	static readonly float PowerUpSpeed = 80;
-    private static readonly float IndestructibleTime = 5;
+    protected static readonly float IndestructibleTime = 5;
 
-    private const float AccelerationRate = 10;
-    private const float DecelerationRate = 5;
+    protected const float AccelerationRate = 10;
+    protected const float DecelerationRate = 5;
 
-    float _speed = MinSpeed;
+    protected float _speed = MinSpeed;
 
 	int _numberOfWallsNear = 0;
 
-    private int HeightPixels;
-	private int WidthPixels;
-
-    private System.Random random = new System.Random();
+    protected int HeightPixels;
+	protected int WidthPixels;
 
 	public bool isIndestructible;
-
-    private bool _showPauseMenu;
-    private GUIStyle buttonStyle = new GUIStyle();
+    
+    protected bool _showPauseMenu;
+    protected GUIStyle buttonStyle = new GUIStyle();
 
     Vector3 Offset {
         get {
@@ -39,7 +37,7 @@ public class Drive : MonoBehaviour {
         }
     }
 
-	Vector3 CurrentWallEnd {
+    protected Vector3 CurrentWallEnd {
 		get {
 		    if (_latestWallGameObject == null) return transform.position - WallOffset;
             if (Vector3.SqrMagnitude(_latestWallGameObject.GetComponent<WallBehaviour>().end - _latestWallGameObject.GetComponent<WallBehaviour>().start) > 20)
@@ -52,6 +50,7 @@ public class Drive : MonoBehaviour {
 
 // ReSharper disable once UnusedMember.Local
 	void Start () {
+        transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
 	    buttonStyle.normal.background = Resources.Load<Texture2D>("TextBox");
 	    buttonStyle.normal.textColor = Color.white;
 	    var size = HeightPixels/50;
@@ -96,17 +95,6 @@ public class Drive : MonoBehaviour {
 				return;
 	    }
 
-	    if (Network.isServer && random.Next(0, 1000) < 7)
-	    {
-            //TODO: Make dependent of framerate
-            Debug.Log("Spawn powerUp");
-            var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            var powerUp = Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,2)), new Vector3(x, 0, z),
-                    Quaternion.identity, 0) as Transform;
-            powerUp.gameObject.GetComponent<PowerUpDestroyer>().DestroyTimed(random.Next(5, 20));
-	    }
-
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
         if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
@@ -127,7 +115,7 @@ public class Drive : MonoBehaviour {
 		AdjustSpeed ();
 	}
 
-	bool ApplyUserCommands ()
+    protected bool ApplyUserCommands ()
 	{
 		//Handling touch input
 		foreach (var touch in Input.touches.Where (touch => touch.phase == TouchPhase.Began)) {
@@ -148,8 +136,7 @@ public class Drive : MonoBehaviour {
 	    return true;
 	}
 
-	void AdjustSpeed ()
-	{
+    protected void AdjustSpeed () {
 		if (_numberOfWallsNear > 0) {
 			_speed = Mathf.MoveTowards (_speed, MaxSpeed, AccelerationRate * Time.deltaTime);
 		} else {
@@ -159,13 +146,13 @@ public class Drive : MonoBehaviour {
 		if (CollisionPrediction != null)
 			CollisionPrediction.Length = _speed*transform.localScale.z;
 	}
-	
-    void TurnLeft()
+
+    protected void TurnLeft()
 	{
 		Turn (270f);
     }
 
-    void TurnRight()
+    protected void TurnRight()
     {
 		Turn (90f);
     }
@@ -179,7 +166,7 @@ public class Drive : MonoBehaviour {
 	}
 // ReSharper restore UnusedMember.Local
 
-	void NewWall() {
+    protected virtual void NewWall() {
 	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+ Game.Instance.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
@@ -191,7 +178,7 @@ public class Drive : MonoBehaviour {
 	public delegate void KillEvent();
 	public KillEvent OnKillEvent;
 
-    private void Kill()
+    protected virtual void Kill()
 	{
 		Debug.Log ("player is dead.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
@@ -208,8 +195,8 @@ public class Drive : MonoBehaviour {
 
     public CollisionPrediction CollisionPrediction { get; set; }
 
-    private int _predictedCollisions;
-    private int _predictedWallCollisions;
+    protected int _predictedCollisions;
+    protected int _predictedWallCollisions;
 
     public void OnPredictedCollisionEnter()
 	{

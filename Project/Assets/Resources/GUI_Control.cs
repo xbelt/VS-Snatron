@@ -38,7 +38,7 @@ public class GUI_Control : MonoBehaviour
     {
         ChangeWifiSettingsAndroid();
         ReadScreenDimensionsAndroid();
-        SetFontSize(HeightPixels / 50);
+        SetFontSize(HeightPixels / 25);
         SetTextColor(Color.white);
 
 		_splashScreenLight = GameObject.Find ("SplashScreenLight");
@@ -260,9 +260,10 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI:StartQuickGame()");
 		Game.Instance.setPlayer(0, _playerName);
+
+	    Game.Instance.numberOfKIPlayers = 4;
 		_networkControl.InitServer (0);
 		_networkControl.broadCastStartGame (3);
-		//GameObject.Find("Network").networkView.RPC("StartGame", RPCMode.All); //TODO avoiding RPCMode.all
 	}
 
 	// Disconnect from a running game
@@ -343,7 +344,7 @@ public class GUI_Control : MonoBehaviour
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
 
-        foreach (var item in _networkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true))))
+        foreach (var item in _networkControl.Servers.Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true), GUILayout.Height(1 / 15f * HeightPixels))))
         {
 			JoinGame(item.Ip.ToString(), Protocol.GamePort);
         }
@@ -355,14 +356,14 @@ public class GUI_Control : MonoBehaviour
 
     private void HandleWaitingScreen()
     {
-        GUILayout.BeginArea(new Rect(150f, 25f, 300f, 200f), layoutGUIStyle);
+        GUILayout.BeginArea(new Rect(10 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
         GUILayout.BeginVertical(layoutGUIStyle);
 
 		for (int id = 0; id < Game.MaxPlayers; id++) {
 			var playerName = Game.Instance.getPlayerName(id);
     		// TODO fix ArgumentException
-			GUILayout.Label(id + ": " + playerName, labelGUIStyle, GUILayout.ExpandWidth(true));
+            GUILayout.Label(id + 1 + ": " + playerName, labelGUIStyle, GUILayout.ExpandWidth(true), GUILayout.Height(1 / 15f * HeightPixels));
 		}
 
         GUILayout.EndVertical();
@@ -371,11 +372,11 @@ public class GUI_Control : MonoBehaviour
 
         if (Network.isServer)
 		{
-			if (GUI.Button(new Rect(25, 75, 100, 30), "Start", buttonGUIStyle))
+            if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Start", buttonGUIStyle))
             {
                 StartNetworkGame();
             }
-            GUI.Label(new Rect(25, 125, 100, 30), "IP: " + Network.player.ipAddress, labelGUIStyle);
+            GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "IP: " + Network.player.ipAddress, labelGUIStyle);
         }
 
     }

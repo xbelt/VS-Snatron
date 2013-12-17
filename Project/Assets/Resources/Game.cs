@@ -1,3 +1,4 @@
+using Assets.Resources;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ public class Game
 	public int PlayerID { get {return _localPlayerId;} }
 
 	private bool _gameStarted;
+    public bool GameStarted {get { return _gameStarted; }}
 
 	private Drive _localPlayer;
 	public Drive LocalPlayer { get {return _localPlayer;} }
@@ -31,6 +33,7 @@ public class Game
 	
 	private int _nOfLivingPlayers;
 	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
+    public int numberOfKIPlayers;
 
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
@@ -69,14 +72,23 @@ public class Game
 		{
 			_players[i] = null;
 		}
+		
+		_gameStarted = true;
+	}
+
+
+    public void StopGame()
+	{
+		clearGameObjects ();
+		NewGame ();
 	}
 
 	#region game initialization
 
 	public delegate void LocalPlayerSpawn(Drive player);
 	public LocalPlayerSpawn OnLocalPlayerSpawn;
-	
-	private void SpawnPlayer()
+
+    private void SpawnPlayer()
 	{
 		Vector3 location;
 		Quaternion orientation;
@@ -94,6 +106,19 @@ public class Game
 			OnLocalPlayerSpawn (_localPlayer);
 	}
 	
+    private void SpawnKI() {
+        for (int i = PlayerID + 1; i < PlayerID + 1 + numberOfKIPlayers; i++) {
+            _playerPrefab = Resources.Load<Transform>("Player" + i);
+            Vector3 location;
+            Quaternion orientation;
+            mapStartLocation(i, out location, out orientation);
+
+            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
+            MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
+            player.gameObject.AddComponent<KIControler>();
+            player.gameObject.GetComponent<KIControler>().KIId = i;
+        }
+    }
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName) {
         MonoBehaviour.print("Game:SetPlayer()");
@@ -167,6 +192,11 @@ public class Game
 		}
 
 		SpawnPlayer();
+		
+		if (Network.isServer)
+		{
+		    SpawnKI();
+		}
 	}
 
 	/// <summary>
