@@ -102,8 +102,9 @@ public class Drive : MonoBehaviour {
             Debug.Log("Spawn powerUp");
             var x = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
             var z = random.Next(-Game.Instance.FieldBorderCoordinates, Game.Instance.FieldBorderCoordinates);
-            Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,2)), new Vector3(x, 0, z),
-                    Quaternion.identity, 0);
+            var powerUp = Network.Instantiate(Resources.Load<Transform>("PowerUpPrefab" + random.Next(0,2)), new Vector3(x, 0, z),
+                    Quaternion.identity, 0) as Transform;
+            powerUp.gameObject.GetComponent<PowerUpDestroyer>().DestroyTimed(random.Next(5, 20));
 	    }
 
 		// The tron would keep moving straight
