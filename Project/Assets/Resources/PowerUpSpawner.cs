@@ -10,7 +10,7 @@ public class PowerUpSpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Network.isServer && random.Next(0, 1000) < 7)
+        if (random.Next(0, 1000) < 7 && Game.Instance.GameStarted)
         {
             //TODO: Make dependent of framerate
             Debug.Log("Spawn powerUp");
