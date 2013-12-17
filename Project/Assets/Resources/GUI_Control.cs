@@ -7,6 +7,7 @@ using UnityEngine;
 public class GUI_Control : MonoBehaviour
 {
    	private string _playerName = "Player";
+    private string _serverIP = "0.0.0.0";
 
 	private NetworkControl _networkControl;
 
@@ -297,6 +298,15 @@ public class GUI_Control : MonoBehaviour
 
         GUI.Label(new Rect(17 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Player Name:", labelGUIStyle);
         _playerName = GUI.TextField(new Rect(21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName, textFieldGUIStyle);
+
+        GUI.Label(new Rect(17 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Server IP:", labelGUIStyle);
+        _serverIP = GUI.TextField(new Rect(21 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _serverIP, textFieldGUIStyle);
+
+        if (GUI.Button(new Rect(17/30f*WidthPixels, 5/20f*HeightPixels, 3/10f*WidthPixels, 1/20f*HeightPixels), "Join",
+            buttonGUIStyle)) {
+            JoinGame(_serverIP, Protocol.GamePort);
+        }
+        
         NetworkControl.PlayerName = _playerName;
 
         GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
@@ -335,7 +345,10 @@ public class GUI_Control : MonoBehaviour
             {
                 StartNetworkGame();
             }
+            GUI.Label(new Rect(25, 125, 100, 30), "IP: " + Network.player.ipAddress, labelGUIStyle);
         }
+
+
 
     }
 
