@@ -231,7 +231,7 @@ public class Drive : MonoBehaviour {
         if (!(Game.Instance.IndestructibleTimeLeft > IndestructibleTime)) {
             (new Thread(() => {
                 isIndestructible = true;
-                while (Game.Instance.IndestructibleTimeLeft > 0 && Game.Instance.isAlive(Game.Instance.PlayerID)) {
+                while (Game.Instance.IndestructibleTimeLeft > 0.1 && Game.Instance.isAlive(Game.Instance.PlayerID)) {
                     Game.Instance.IndestructibleTimeLeft -= 0.1;
                     Thread.Sleep(100);
                 }
