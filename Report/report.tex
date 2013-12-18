@@ -160,36 +160,43 @@
 
 \begin{abstract}
 We present a cross-platform game that allows up to eight players (who can be using different platforms)to play together via local network, 
-or alternatively allows non-networked singleplayer against AI opponents.
+or alternatively allows singleplayer matches against AI opponents.
 >> The game is inspired by the "light cycle" scene from the 1982 film "Tron". <<
 >> The game is implemented using the Unity Engine, which is a high-level framework for game development << 
-The game supports Windows, Linux and Mac OS on the x86 and x86\_64 plattforms as well as iOS, Windows Phone 8 and Android.
-For this submission, we only feature the Windows x86/x86\_64 and Android versions.
+The game supports Windows x86/x86\_64 and Android with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity engine.
 
 \end{abstract}
 
 \section{Introduction + Prior Work}
 
-We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron.
+We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron. 
+In section <<2 we will look at Armagetron Advanced and other games inspired by "Tron" <<and android ports>>.
+In section <<3, we will explain the gameplay and game mechanics that we decided to implement for our game, and in  section <<4 we will introduce Unity with a focus on its networking concepts. In section <<5 we will show how we use these concepts in our game in order to ensure <<what??>>.
+In section <<6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are "long" in comparison to the high in-game speeds.
+In section <<7 we introduce the AI that we use in the singleplayer mode as well as our own extension to the game,  randomly roaming obstacles.
+In the last section, we will give our conclusions on our game working both with Unity as well as with a larger group.
 
-Armagetron is one of two open source projects that try to recreate the light cycle scene, the other being GLTron by Andreas Umbach.
-GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original visually and offers a wide variety of gamemodes that go far beyond what is seen in the film.
+\section{Existing "Tron"-like games}
+
+Armagetron Advanced is one of two open source projects that try to recreate the light cycle scene, the other being GLTron by Andreas Umbach.
+GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original visually and offers a wide variety of gamemodes that go far beyond what is seen in the film as well as heavy customization, with parameters like base speed, arena size, number of players, etc.
 We were aiming more to recreate the enjoyment of playing Armagetron Advanced rather than to be faithful to the original scene.
 Since the scope of this project was very limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
-but rather focused on implementing the "core" game mode with fixed parameters. (Parameters being base speed, arena size, number of players, etc)
->> put param stuff in earlier, when desc. AA  <<
+but rather focused on implementing the "core" game mode with fixed parameters. 
 Our game is visually very dissimilar to both the original scene as well as both games. Instead, we were inspired by the aesthetics from the 2010 film "Tron Legacy" which also features a light cycle scene, which does not, however, in terms of "game mechanics", bear much resemblance to the original. >>un-nest last sntc<<
 
+\subsection{Existing mobile solutions}
+Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port.
 Armagetron Advanced offers local (split-screen), local network and internet multiplayer for up to >>????<< players. 
-Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port. There exists an android game called Androgetron developed by a member of the Armagetron Advanced community, however this is a much simplified clone  which features only split-screen multiplayer. On the official Google Play Store >>TM!!<< there are a few more games >>list??<< that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
+ There exists an android game called Androgetron developed by a member of the Armagetron Advanced community, however this is a much simplified clone  which features only split-screen multiplayer. On the official Google Play Store >>TM!!<< there are a few more games >>list??<< that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
 
 Split screen is a viable option on a full size laptop or desktop monitor, however it feels very cramped even on larger tablets and is essentially unusable on smartphones.
 Our goal was therefore to implement a true (networked) multiplayer experience on mobile devices.
 Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
 >>Mention OpenGL being waaay too complex?<<
-We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in section 3), to implement the following game:
+We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in section 3), to implement the following game mechanics:
 
-\section{The game (explaining) }
+\section{Gameplay and game mechanics }
 We simplified AA to a single game mode, with fixed speed, arena size, etc.
 We did, however, also extend the game to new concepts not present in any of the other versions. Specifically, we introduced collectible powerups and moving obstacles that roam the arena.
 
@@ -264,8 +271,11 @@ Sch... simple aber effektiv.
 ---
 
 \section{Conclusion}
+ Working in a larger group was an interesting change and while our intra team communication was good there were considerable efficiency losses when e.g. bugfixes for one component affected code that was concurrently being refactored.
 
-Give an overall conclusion that summarizes the main challenges you encountered and your lessons learned.
+ Wir glauben dass wir unser goal eine enjoyable networked multiplayer version zu builden gut erfüllt haben. Unity allowed us to very quickly create the visual aspects of the game and allowed <<doppel allowed>> us to focus on the distributed networking component of the game.
+
+Eine naheliegender next step would be allowing the  player to customize the parameters of the game. Another interessante extension wäre Internet multiplayer,however additional work for NAT and higher latencies might be necessary.
 
 % The following two commands are all you need in the
 % initial runs of your .tex file to
