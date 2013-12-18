@@ -79,9 +79,6 @@ public class Game
 
 	#region game initialization
 
-	public delegate void LocalPlayerSpawn(Drive player);
-	public LocalPlayerSpawn OnLocalPlayerSpawn;
-
     private void SpawnPlayer()
 	{
 		Vector3 location;
@@ -96,8 +93,6 @@ public class Game
         MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 		
 		_localPlayer = player.GetComponent<Drive> ();
-		if (OnLocalPlayerSpawn != null)
-			OnLocalPlayerSpawn (_localPlayer);
 	}
 	
     private void SpawnKI() {
