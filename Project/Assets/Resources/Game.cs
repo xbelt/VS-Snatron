@@ -20,9 +20,12 @@ public class Game
 	public int PlayerID { get {return _localPlayerId;} }
 
 	private bool _gameStarted;
-    public bool GameStarted {get { return _gameStarted; }}
+    public bool GameStarted {
+        get { return _gameStarted; }
+        set { _gameStarted = value; }
+    }
 
-	private Drive _localPlayer;
+    private Drive _localPlayer;
 	public Drive LocalPlayer { get {return _localPlayer;} }
 
 	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
@@ -276,6 +279,10 @@ public class Game
 		{
             MonoBehaviour.Destroy(wall);
 		}
+	    var gameWalls = GameObject.FindGameObjectsWithTag("gameWall");
+	    foreach (var gameWall in gameWalls) {
+	        MonoBehaviour.Destroy(gameWall);
+	    }
 		var lines = GameObject.FindGameObjectsWithTag("line");
 		foreach (var line in lines)
 		{
@@ -291,6 +298,14 @@ public class Game
 		{
             MonoBehaviour.Destroy(player);
 		}
+	    var powerUp0s = GameObject.FindGameObjectsWithTag("powerUp0");
+	    foreach (var powerUp0 in powerUp0s) {
+	        MonoBehaviour.Destroy(powerUp0);
+	    }
+	    var powerUp1s = GameObject.FindGameObjectsWithTag("powerUp1");
+	    foreach (var powerUp1 in powerUp1s) {
+	        MonoBehaviour.Destroy(powerUp1);
+	    }
 	}
 	
 	private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
