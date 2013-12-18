@@ -187,7 +187,23 @@ Split screen is a viable option on a full size laptop or desktop monitor, howeve
 Our goal was therefore to implement a true (networked) multiplayer experience on mobile devices.
 Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
 >>Mention OpenGL being waaay too complex?<<
-We decided to use Unity, a high level game engine and Integrated Development Engine (IDE).
+We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in section 3), to implement the following game:
+
+\section{The game (explaining) }
+We simplified AA to a single game mode, with fixed speed, arena size, etc.
+We did, however, also extend the game to new concepts not present in any of the other versions. Specifically, we introduced collectible powerups and moving obstacles that roam the arena.
+
+\begin{enumerate}
+  \item you drive around in an arena
+  \item the bike moves constantly and you can steer only by turning left or right at 90\textdegree \ angles.
+  \item you leave a solid trail that is like a wall (and will be referred to as wall from now on)
+  \item colliding with your own or another player's wall results in your death
+  \item the aim is to be the last player alive
+  \item being close to another wall increases your speed, allowing you to e.g. overtake other players.
+  \item There are two different types of "power ups", which are randomly spawned items that will either increase your speed or make you invincible (you will be able to go through walls) for a short amount of time
+  \item there are (optional?) obstacles in the form of large cubes that slowly "roll" around the arena, collisions with these also result in death.
+ 
+\end{enumerate}
 
 
 \section{Unity}
@@ -211,45 +227,17 @@ Synchronization allows for high-frequency, low-cost updates  of GOs. It can howe
 
 RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
 
-Our game combines (as will most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for state transitions and general control, as described in the next section. >>Need to swap sections<<
+Our game combines (as will most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for state transitions and general control, as described in the next section. 
 
+Unity does not have a high-level concept representing the current application insth-level concept representing the current application instance in its entirety, instead every script has to be attacance in its entirety, instead every script has to be attached to a GameObject and each instance (client?) will execute the same code for a given GameObject (the code will usually have a currentObject.isMine() or Network.isServer type switch)
+It is therefore 
+DESCRIBE HERE HOW IN-GAME SYNCH WORKS
 
-%\begin{figure}
-%	\centering
-%	\subfigure[One Activity]{
-%	    \includegraphics[height=6cm]{screenshot1}
-%	    \lfig{screenshot1}   
-%	}
-%	\hfill
-%	\subfigure[Another Activity]{
-%	    \includegraphics[height=6cm]{screenshot2}
-%	    \lfig{screenshot2}
-%	}
-%	\caption{Pack portrait screenshot next to each other and make them referable through the subfigure package. When next to each other, make them the same height.}
-%\end{figure}
-
-
-
-\section{The game (explaining) }
-
-\begin{enumerate}
-  \item you drive around in an arena
-  \item the bike moves constantly and you can steer only by turning left or right at 90\textdegree \ angles.
-  \item you leave a solid trail that is like a wall (and will be referred to as wall from now on)
-  \item colliding with your own or another player's wall results in your death
-  \item the aim is to be the last player alive
-  \item being close to another wall increases your speed, allowing you to e.g. overtake other players.
-  \item There are two different types of "power ups", which are randomly spawned items that will either increase your speed or make you invincible (you will be able to go through walls) for a short amount of time
-  \item there are (optional?) obstacles in the form of large cubes that slowly "roll" around the arena, collisions with these also result in death.
-
-  
-  \item Explain rules and game principles
-  \item Explain 
-\end{enumerate}
-
-
+While most of the networking during a round of the game is done via Unity's synchronization, the actual round (or game) start and end, server joining and other state transitions are done via RPC and event based programming.
 
 \section{State/Control flow: network start game/next round}
+Their is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
+
 
 \begin{enumerate}
   \item DiscoverServer
