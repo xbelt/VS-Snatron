@@ -220,19 +220,8 @@ public class Game
 	// Does the player have the highest score?
 	// Condition: for this to become true, the game must be over
 	// => nobody wins until the end of the game
-	public bool hasWon(int playerId)
-	{
-		if (!isGameOver ())
-			return false;
-
-		int score = _players [playerId].score;
-		for (int i = 0; i < MaxPlayers; i++) {
-			if (_players[i] == null)
-				continue;
-			if (_players[i].score > score)
-				return false;
-		}
-		return true;
+	public bool hasWon(int playerId) {
+	    return NofLivingPlayers <= 1 && numberOfLivingKIPlayers <= 0;
 	}
 	
 	// Does he have the highest score?
