@@ -10,6 +10,7 @@
 \usepackage{enumitem}
 \usepackage{url}
 \usepackage[utf8]{inputenc}
+\usepackage{textcomp} %for the degree symbol. yes. overkill
 
 \usepackage{color}
 \definecolor{orange}{rgb}{1,0.5,0}
@@ -105,7 +106,7 @@
 
 % General information
 
-\title{Distributed Systems -- Assignment 1}
+\title{Distributed Systems -- Final Project}
 
 % Use the \alignauthor commands to handle the names
 % and affiliations for an 'aesthetic maximum' of six authors.
@@ -135,8 +136,8 @@
  	\email{amaximov@student.ethz.ch}
 %% 3rd. author
  	\alignauthor Thomas Müller\\
- 	\affaddr{ETH ID XX-XXX-XXX}\\
- 	\email{tom@student.ethz.ch} 
+ 	\affaddr{ETH ID 11-946-936}\\
+ 	\email{muelltho@student.ethz.ch} 
 \and  % use '\and' if you need 'another row' of author names	
 %% 4th. author
 \alignauthor Christian Vonrüti\\
@@ -158,27 +159,60 @@
 \maketitle
 
 \begin{abstract}
-Concisely state (i) which Android device you used, (ii) which tasks you completed and which are working correctly or limited, and (iii) what your specific enhancements are.
+We present a cross-platform game that allows up to eight players (who can be using different platforms)to play together via local network, 
+or alternatively allows non-networked singleplayer against AI opponents.
+>> The game is inspired by the "light cycle" scene from the 1982 film "Tron". <<
+>> The game is implemented using the Unity Engine, which is a high-level framework for game development << 
+The game supports Windows, Linux and Mac OS on the x86 and x86\_64 plattforms as well as iOS, Windows Phone 8 and Android.
+For this submission, we only feature the Windows x86/x86\_64 and Android versions.
+
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction + Prior Work}
 
-Use the introduction for background information on the assignment.
-See your assignment sheet for specific questions on the topic that you have to answer in this section.
-Use references such as books \cite{hello}, papers and theses \cite{REST}, or specifications \cite{RFC2616} whenever available.
-Web sites for documentation \cite{devServices}, tutorials, etc. are a special case.
-In a thesis, you would put them as footnotes. At this stage, however, you will only have a few ``real references,'' so we put the Web sites into the bibliography.
-Cite every source you used throughout the assignment.
+We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron.
+
+Armagetron is one of two open source projects that try to recreate the light cycle scene, the other being GLTron by Andreas Umbach.
+GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original visually and offers a wide variety of gamemodes that go far beyond what is seen in the film.
+We were aiming more to recreate the enjoyment of playing Armagetron Advanced rather than to be faithful to the original scene.
+Since the scope of this project was very limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
+but rather focused on implementing the "core" game mode with fixed parameters. (Parameters being base speed, arena size, number of players, etc)
+>> put param stuff in earlier, when desc. AA  <<
+Our game is visually very dissimilar to both the original scene as well as both games. Instead, we were inspired by the aesthetics from the 2010 film "Tron Legacy" which also features a light cycle scene, which does not, however, in terms of "game mechanics", bear much resemblance to the original. >>un-nest last sntc<<
+
+Armagetron Advanced offers local (split-screen), local network and internet multiplayer for up to >>????<< players. 
+Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port. There exists an android game called Androgetron developed by a member of the Armagetron Advanced community, however this is a much simplified clone  which features only split-screen multiplayer. On the official Google Play Store >>TM!!<< there are a few more games >>list??<< that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
+
+Split screen is a viable option on a full size laptop or desktop monitor, however it feels very cramped even on larger tablets and is essentially unusable on smartphones.
+Our goal was therefore to implement a true (networked) multiplayer experience on mobile devices.
+Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
+>>Mention OpenGL being waaay too complex?<<
+We decided to use Unity, a high level game engine and Integrated Development Engine (IDE).
+
 
 \section{Unity}
+Unity, which is developed by Unity Technologies, is a relatively new game engine that is designed "to make game dev more democratic" >>find cit<<.
+Unity includes the core engine which is used through an IDE that offers an editor >>fig<< that allows manipulation of 3D environments, game assets and live debugging.
+Unity is based on Mono (an open source .NET-compatible framework) and allows development in JavaScript, Boo or C\#. 
+We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE.
+Unity supports a large number of plattforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
+The support for native x86 versions greately reduced the time needed for testing and debugging during development.
 
-\begin{enumerate}
+Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObjects".
+"GameObjects" are containers that contain "Components" (which can also be GameObjects, allowing for nesting).
+>>containers containing containers contained in ...<<
+All "GO"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GO". There are many other types of components, including "Lights", "Cameras" and "Materials" as well as Scripts.
 
-  \item What is Unity (IDE, Engine)
-  \item How do we combine android and unity (code sample if android)
-  \item Screenshot editor?
-  \item Unity networking: RPC and Synching
- \end{enumerate}
+Unity offers to very different methods for networking.
+A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
+Both require a GO to have a "NetworkView" component which makes them visible to the network in Unity.
+
+Synchronization allows for high-frequency, low-cost updates  of GOs. It can however only be used to synchronize certain properties of the GO, e.g. the transform (pos,rot,vel) component.
+
+RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
+
+Our game combines (as will most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for state transitions and general control, as described in the next section. >>Need to swap sections<<
+
 
 %\begin{figure}
 %	\centering
@@ -199,6 +233,16 @@ Cite every source you used throughout the assignment.
 \section{The game (explaining) }
 
 \begin{enumerate}
+  \item you drive around in an arena
+  \item the bike moves constantly and you can steer only by turning left or right at 90\textdegree \ angles.
+  \item you leave a solid trail that is like a wall (and will be referred to as wall from now on)
+  \item colliding with your own or another player's wall results in your death
+  \item the aim is to be the last player alive
+  \item being close to another wall increases your speed, allowing you to e.g. overtake other players.
+  \item There are two different types of "power ups", which are randomly spawned items that will either increase your speed or make you invincible (you will be able to go through walls) for a short amount of time
+  \item there are (optional?) obstacles in the form of large cubes that slowly "roll" around the arena, collisions with these also result in death.
+
+  
   \item Explain rules and game principles
   \item Explain 
 \end{enumerate}
@@ -216,7 +260,7 @@ Cite every source you used throughout the assignment.
 
 \section{Collisons/Powerups/Prediction}
 
-\section{AI}
+\section{ Opponents: AI + cubes}
 
 \section{Conclusion}
 
