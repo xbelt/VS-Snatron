@@ -210,6 +210,7 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
+        Game.Instance.numberOfKIPlayers = 0;
 		int rounds = 5; // TODO take from GameConfig
 		_networkControl.broadCastStartGame (rounds);
 		//GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
@@ -387,9 +388,9 @@ public class GUI_Control : MonoBehaviour
 			                   1 / 20f * HeightPixels),
 			          "You won!",
 			          labelGUIStyle);
-	        if (GUI.Button(new Rect(9/20f*WidthPixels,
+	        if (GUI.Button(new Rect(8/20f*WidthPixels,
 			                        20/40f*HeightPixels,
-			                        1/10f*WidthPixels,
+			                        2/10f*WidthPixels,
 			                        1/20f*HeightPixels),
 			               "Back to menu",
 			               buttonGUIStyle))
