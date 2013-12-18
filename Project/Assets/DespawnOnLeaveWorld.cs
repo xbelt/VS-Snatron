@@ -10,7 +10,7 @@ public class DespawnOnLeaveWorld : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	    if (transform.position.magnitude > Game.Instance.FieldBorderCoordinates + 100) {
+	    if (transform.position.magnitude > Game.Instance.Level.FieldBorderCoordinates + 100) {
 	        Destroy(gameObject);
 	    }	
     }

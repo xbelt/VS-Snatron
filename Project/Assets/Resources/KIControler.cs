@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Random = System.Random;
 
 namespace Assets.Resources
@@ -44,7 +44,7 @@ namespace Assets.Resources
                     }
                 }
                 else {
-                    Kill();
+                    DeadlyCollide();
                 }
                 lastFrameTurned = true;
                 return;
@@ -76,10 +76,12 @@ namespace Assets.Resources
             return false;
         }
 
-        protected override void Kill() {
+        protected override void DeadlyCollide() {
             _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
             Network.Destroy(gameObject);
             Game.Instance.KillKI(KIId);
+			if (OnDeadlyCollision != null)
+				OnDeadlyCollision (playerId);
         }
 
         protected override void NewWall() {

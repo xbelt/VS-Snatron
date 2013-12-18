@@ -13,6 +13,12 @@ public class Game
 	private static Game _instance = new Game();
 	public static Game Instance { get { return _instance; } }
 
+	private Level _level;
+	public Level Level { get {return _level;} }
+	
+	private Spawner _spawner;
+	public Spawner Spawner { get { return _spawner; } }
+
 	private Transform _playerPrefab;
 	private Transform _gridPrefab;
 
@@ -22,14 +28,12 @@ public class Game
 	private bool _gameStarted;
     public bool GameStarted {
         get { return _gameStarted; }
-        set { _gameStarted = value; }
+        set { _gameStarted = value; } // TODO remove this! The game decides itself when it ends!
     }
-
-    private Drive _localPlayer;
-	public Drive LocalPlayer { get {return _localPlayer;} }
 
 	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
 	private PlayerModel[] _players = new PlayerModel[MaxPlayers];
+	public PlayerModel[] Players { get { return _players; } }
 
 	private int _nOfActivePlayers;
 	public int NofActivePlayers { get {	return _nOfActivePlayers; }	}
@@ -42,11 +46,11 @@ public class Game
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
 
-	public int NumberOfCubes { get {return 5;} }
-	public int FieldBorderCoordinates { get { return 200; } }
     public double IndestructibleTimeLeft { get; set; } // TODO move to somewhere else
 
-    private Game() { 
+    private Game() {
+		_level = new BasicLevelModel ();
+		_spawner = new Spawner (_level);
 		NewGame ();
 	}
 
@@ -54,16 +58,20 @@ public class Game
 	// rounds tells how many rounds one game last
 	public void StartGame(int localPlayerId, int rounds)
 	{
-		_localPlayerId = localPlayerId;
-		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
-		_gridPrefab = Resources.Load<Transform>("Lines");
 		_roundsToPlay = rounds;
-		SpawnPlayer();
+		_localPlayerId = localPlayerId;
+		_spawner.LocalPlayerId = localPlayerId;
+		// TODO make sure local player and all human players are contained in _players
+
+		_spawner.SpawnLocalPlayer(OnLocalKill);
+
 		if (Network.isServer)
 		{
-			InstantiateGameBorders();
-			InstantiateCubes();
-		    SpawnKI();
+			_spawner.InstantiateLevelObjects();
+			for (int i = 0; i < numberOfKIPlayers; i++) {
+				int id = getFirstFreePlayerId();
+				_spawner.SpawnAI(id);
+			}
 		}
 		
 		
@@ -79,6 +87,24 @@ public class Game
 
 	#region game initialization
 
+	//public delegate void SpawnEvent(int playerId);
+	//public SpawnEvent OnSpawned;
+	
+	//public delegate void KillEvent (int playerId);
+	//public KillEvent OnKilled;
+
+	private void OnLocalKill(int playerId)
+	{
+		_players [playerId].isAlive = true;
+		_spawner.Kill (playerId);
+	}
+
+	private void OnRemoteKill(int playerId)
+	{
+		// TODO ?
+	}
+
+	/*
     private void SpawnPlayer()
 	{
 		Vector3 location;
@@ -93,6 +119,24 @@ public class Game
         MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 		
 		_localPlayer = player.GetComponent<Drive> ();
+		_localPlayer.playerId = _localPlayerId;
+		_localPlayer.OnDeadlyCollision += Kill;
+
+		if (OnSpawned != null)
+			OnSpawned (_localPlayerId);
+	}
+
+	private void Kill(int playerId)
+	{
+		if (playerId == _localPlayerId) {
+			// TODO move this up?
+			Network.Destroy (_localPlayer.gameObject);
+			_localPlayer = null;
+			// Logically destroy the player
+			if (OnKilled != null)
+				OnKilled(playerId);
+			GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, playerId);
+		}
 	}
 	
     private void SpawnKI() {
@@ -106,9 +150,12 @@ public class Game
             var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
             MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
             player.gameObject.AddComponent<KIControler>();
-            player.gameObject.GetComponent<KIControler>().KIId = i;
+			KIControler ai = player.gameObject.GetComponent<KIControler>();
+			ai.KIId = i; // TODO instead register event as normal and assign it the next free id
         }
-    }
+    }*/
+
+
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName) {
         MonoBehaviour.print("Game:SetPlayer()");
@@ -302,7 +349,8 @@ public class Game
 	        MonoBehaviour.Destroy(powerUp1);
 	    }
 	}
-	
+	// TODO remove the following commented code
+	/*
 	private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
 	{
 		// This is how players are arranged in a square, by id
@@ -380,36 +428,7 @@ public class Game
 			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3(x, 1.5f, z), Quaternion.identity, 0) as Transform);
 			cubes[i].renderer.material.shader = shader;
 		}
-	}
-
-	private class PlayerModel
-	{
-		public readonly int id;
-		public readonly string name;
-		public int rank; // for one round
-		public int score; // for a series of rounds
-		public bool isAlive;
-		
-		public PlayerModel(int id, string name)
-		{
-			this.id = id;
-			this.name = name;
-			startGame ();
-		}
-		
-		public void startGame()
-		{
-			isAlive = true;
-			score = 0;
-			rank = 0;
-		}
-		
-		public void startRound()
-		{
-			isAlive = true;
-			rank = 1;
-		}
-	}
+	}*/
 
     public void KillKI(int kiId) {
         numberOfLivingKIPlayers--;

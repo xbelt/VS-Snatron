@@ -74,15 +74,22 @@ public class Grid : MonoBehaviour
 	}
 
 	void Update () {
-        foreach(var player in GameObject.FindGameObjectsWithTag("tron").Where(obj => obj.networkView.isMine))
-	    {
-	        int playerX = (int) player.transform.position.x;
-	        int playerZ = (int) player.transform.position.z;
+		GameObject player = Game.Instance.Spawner.LocalPlayer;
+		if (player == null)
+			return;
+
+		Vector3 playerPos = player.transform.position;
+
+		// TODO remove commented code
+        //foreach(var player in GameObject.FindGameObjectsWithTag("tron").Where(obj => obj.networkView.isMine))
+	    //{
+			int playerX = (int) playerPos.x;
+			int playerZ = (int) playerPos.z;
 
 	        // Round down to Resolution
 	        int newGridX = (int) (playerX/Resolution)*Resolution;
 	        int newGridZ = (int) (playerZ/Resolution)*Resolution;
 	        transform.position = new Vector3(newGridX, 0, newGridZ);
-	    }
+	    //}
 	}
 }
