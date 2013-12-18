@@ -34,6 +34,7 @@ public class Game
 	private int _nOfLivingPlayers;
 	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
     public int numberOfKIPlayers;
+    public int numberOfLivingKIPlayers;
 
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
@@ -97,6 +98,7 @@ public class Game
 	}
 	
     private void SpawnKI() {
+        numberOfLivingKIPlayers = numberOfKIPlayers;
         for (int i = PlayerID + 1; i < PlayerID + 1 + numberOfKIPlayers; i++) {
             _playerPrefab = Resources.Load<Transform>("Player" + i);
             Vector3 location;
@@ -202,8 +204,10 @@ public class Game
 			return false;
 		if (_nOfActivePlayers > 1)
 			return _nOfLivingPlayers <= 1;
-		else
-			return isAlive (PlayerID);
+	    if (numberOfKIPlayers > 0) {
+	        return numberOfLivingKIPlayers <= 0;
+	    }
+	    return isAlive (PlayerID);
 	}
 	
 	public bool isGameOver()
@@ -311,7 +315,7 @@ public class Game
 		// 0,1,2,3 look towards the center * @(0/0/0)
 		// 4,5,6,7 look in clockwise direction
 		
-		float dist = FieldBorderCoordinates/4;
+		float dist = FieldBorderCoordinates/2;
 		
 		switch (playerId) {
 		case 0: location = new Vector3(0, 0, -dist); 	 orientation = Quaternion.AngleAxis(0, Vector3.up); break;
@@ -407,5 +411,13 @@ public class Game
 			rank = 1;
 		}
 	}
+
+    public void KillKI(int kiId) {
+        numberOfLivingKIPlayers--;
+        if (isRoundOver())
+        {
+            EndRound();
+        }
+    }
 }
 

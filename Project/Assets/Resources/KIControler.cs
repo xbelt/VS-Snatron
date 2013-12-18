@@ -79,6 +79,7 @@ namespace Assets.Resources
         protected override void Kill() {
             _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
             Network.Destroy(gameObject);
+            Game.Instance.KillKI(KIId);
         }
 
         protected override void NewWall() {
