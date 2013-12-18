@@ -226,21 +226,19 @@ public class Drive : MonoBehaviour {
         _speed = PowerUpSpeed;
     }
 
-    public void ConsumeIndestructiblePowerup()
-    {
-        (new Thread(() =>
-        {
-            isIndestructible = true;
-            for (var i = 0; i < 10 * IndestructibleTime; i++)
-            {
-                if (!Game.Instance.isAlive(Game.Instance.PlayerID)) {
-                    break;
+    public void ConsumeIndestructiblePowerup() {
+        Game.Instance.IndestructibleTimeLeft += IndestructibleTime;
+        if (!(Game.Instance.IndestructibleTimeLeft > IndestructibleTime)) {
+            (new Thread(() => {
+                isIndestructible = true;
+                while (Game.Instance.IndestructibleTimeLeft > 0 && Game.Instance.isAlive(Game.Instance.PlayerID)) {
+                    Game.Instance.IndestructibleTimeLeft -= 0.1;
+                    Thread.Sleep(100);
                 }
-                Game.Instance.IndestructibleTimeLeft = IndestructibleTime - 0.1*i;
-                Thread.Sleep(100);
-            }
-            isIndestructible = false;
-        })).Start();
+
+                isIndestructible = false;
+            })).Start();
+        }
     }
 
     public void OnPredictedGameWallCollisionEnter() {
