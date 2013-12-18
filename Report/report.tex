@@ -132,7 +132,7 @@
 	\email{haelukas@student.ethz.ch}
 % 2nd. author
 \alignauthor Alexandra Maximova\\
- 	\affaddr{ETH ID 09-913-53}\\
+ 	\affaddr{ETH ID 09-913-534}\\
  	\email{amaximov@student.ethz.ch}
 %% 3rd. author
  	\alignauthor Thomas Müller\\
@@ -219,7 +219,7 @@ Unity's core concept is that of a "scene" which is an abstraction of a 3D space 
 >>containers containing containers contained in ...<<
 All "GO"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GO". There are many other types of components, including "Lights", "Cameras" and "Materials" as well as Scripts.
 
-Unity offers to very different methods for networking.
+Unity offers two very different methods for networking.
 A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
 Both require a GO to have a "NetworkView" component which makes them visible to the network in Unity.
 
@@ -227,7 +227,7 @@ Synchronization allows for high-frequency, low-cost updates  of GOs. It can howe
 
 RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
 
-Our game combines (as will most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for state transitions and general control, as described in the next section. 
+Our game combines (as >> will << most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for state transitions and general control, as described in the next section. 
 
 Unity does not have a high-level concept representing the current application insth-level concept representing the current application instance in its entirety, instead every script has to be attacance in its entirety, instead every script has to be attached to a GameObject and each instance (client?) will execute the same code for a given GameObject (the code will usually have a currentObject.isMine() or Network.isServer type switch)
 It is therefore 
@@ -236,6 +236,7 @@ DESCRIBE HERE HOW IN-GAME SYNCH WORKS
 While most of the networking during a round of the game is done via Unity's synchronization, the actual round (or game) start and end, server joining and other state transitions are done via RPC and event based programming.
 
 \section{State/Control flow: network start game/next round}
+
 Their is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
 
 
@@ -249,6 +250,18 @@ Their is an "empty" (i.e. code-only) GameObject that contains the "MainControlle
 \section{Collisons/Powerups/Prediction}
 
 \section{ Opponents: AI + cubes}
+In local singleplayer, there 
+wenn KI stirbt hat sie 99% wkeit dass sie nochmal dreht.
+50/50 links/rechts.
+
+Nur jedes 2te frame darf sie sich drehen (sonst geht es auf der stelle)
+
+0.005% links  0.000% rechts in jedem frame
+
+Sch... simple aber effektiv.
+
+
+---
 
 \section{Conclusion}
 
