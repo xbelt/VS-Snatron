@@ -16,35 +16,26 @@ public class NetworkControl : MonoBehaviour {
 
 	// Server Events
 	public delegate void ServerStartedEvent(); // OK
-
 	public ServerStartedEvent OnServerStarted;
-
-	// Client Events
-	public delegate void ConnectedToRemoteServerEvent(int id); // OK
-	public delegate void ConnectionErrorEvent(string msg); // ok
-
-	public ConnectedToRemoteServerEvent OnConnectedToRemoteServer;
-	public ConnectionErrorEvent OnConnectionError;
+	public delegate void MessageEvent(string msg); // ok
+	public MessageEvent OnConnectionError;
 
 	// Game/Round Events
-	public delegate void GameStartedEvent(int nOfRounds); // ok
+	public delegate void GameEvent(int round); // ok
+	public GameEvent OnGameStarted;
+	public GameEvent OnRoundStarted;
+	public GameEvent OnRoundEnded;
 	public delegate void GameEndedEvent(); // ok
-	public delegate void RoundStartedEvent(int round); // ok
-	public delegate void RoundEndedEvent(int round); // ok
-	
-	public GameStartedEvent OnGameStarted;
 	public GameEndedEvent OnGameEnded;
-	public RoundStartedEvent OnRoundStarted;
-	public RoundEndedEvent OnRoundEnded;
 	
 	// Player List Events
 	public delegate void PlayerJoinedEvent (int id, string name); // ok
-	public delegate void PlayerLeftEvent(int id); // ok
-	public delegate void PlayerKilledEvent(int id); // ok
-
 	public PlayerJoinedEvent OnPlayerJoined;
-	public PlayerLeftEvent OnPlayerLeft;
-	public PlayerKilledEvent OnPlayerKilled;
+	public delegate void PlayerChangeEvent(int id); // ok
+	public PlayerChangeEvent OnConnectedToRemoteServer;
+	public PlayerChangeEvent OnPlayerLeft;
+	public PlayerChangeEvent OnPlayerSpawned;
+	public PlayerChangeEvent OnPlayerKilled;
 
 	#region Server Code
 
@@ -183,6 +174,21 @@ public class NetworkControl : MonoBehaviour {
 		Debug.Log ("RPC:EndRound()");
 		if (OnRoundEnded != null)
 			OnRoundEnded (round);
+	}
+	
+	public void broadCastSpawnPlayer(int playerId)
+	{
+		Debug.Log ("NET:broadCastSpawnPlayer()");
+		GetComponent<NetworkView>().RPC("SpawnPlayer", RPCMode.AllBuffered, playerId);
+	}
+	
+	[RPC]
+	public void SpawnPlayer(int playerId)
+	{
+		Debug.Log ("RPC:SpawnPlayer()");
+		//Game.Instance.playerDied(playerId);
+		if (OnPlayerSpawned != null)
+			OnPlayerSpawned (playerId);
 	}
 	
 	public void broadCastKillPlayer(int playerId)

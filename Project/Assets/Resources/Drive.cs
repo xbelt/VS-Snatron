@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Drive : MonoBehaviour {
 	//public Transform wallTemplate;
+	public int playerId;
+
     protected Transform _latestWallGameObject;
 
 	static readonly float MinSpeed = 25;
@@ -99,7 +101,7 @@ public class Drive : MonoBehaviour {
 		// But are there any obstacles in front?
         if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
         {
-			Kill();
+			DeadlyCollide();
 			return;
 		}
 
@@ -175,22 +177,18 @@ public class Drive : MonoBehaviour {
 
 	// Collision Stuff
 
-	public delegate void KillEvent();
-	public KillEvent OnKillEvent;
+	public delegate void DeadlyCollisionEvent(int playerId);
+	public DeadlyCollisionEvent OnDeadlyCollision;
 
-    protected virtual void Kill()
+	/// <summary>
+	/// Earlier, this was called Kill()
+	/// </summary>
+    protected virtual void DeadlyCollide()
 	{
-		Debug.Log ("player is dead.");
+		Debug.Log ("DeadlyCollision.");
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
-        Network.Destroy(gameObject);
-        GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, Game.Instance.PlayerID);
-        if (OnKillEvent != null)
-			OnKillEvent ();
-
-		// call some RPC method which will kill the dude on all devices
-        // (must ?) also somehow display the info who has died and who wins...
-        // and return to the main menu to start a new game.
-        // or just start a new round when the last one has died
+        if (OnDeadlyCollision != null)
+			OnDeadlyCollision (playerId);
 	}
 
     public CollisionPrediction CollisionPrediction { get; set; }
