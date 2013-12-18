@@ -380,8 +380,8 @@ public class GUI_Control : MonoBehaviour
 			}
 		}
 
-		if (Game.Instance.HasLocalPlayerWon() )
-	    {
+		if (Game.Instance.HasLocalPlayerWon() ) {
+		    Game.Instance.GameStarted = false;
 	        GUI.Label(new Rect(9 / 20f * WidthPixels,
 			                   17 / 40f * HeightPixels,
 			                   1 / 10f * WidthPixels,
