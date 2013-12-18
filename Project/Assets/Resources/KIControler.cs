@@ -35,7 +35,7 @@ namespace Assets.Resources
             // But are there any obstacles in front?
             if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
             {
-                if (random.Next(0, 100) < 98 && !lastFrameTurned) {
+                if (!lastFrameTurned) {
                     if (random.Next(0, 100) < 50) {
                         TurnLeft();
                     }
