@@ -60,6 +60,7 @@ public class Game
 		_localPlayerId = localPlayerId;
 		_spawner.LocalPlayerId = localPlayerId;
 		// TODO make sure local player and all other human players are contained in _players
+		// And alive!
 
 		Debug.Log ("Players starting game: " + _players.ToString());
 		_spawner.SpawnLocalPlayer(OnLocalKill);
@@ -71,6 +72,10 @@ public class Game
 		}
 		
 		_gameStarted = true;
+		if (HasLocalPlayerWon()) { // that is, when the player is alone
+			Game.Instance.GameStarted = false;
+			EndGame();
+		}
 	}
 
 	void AddAIPlayers ()
