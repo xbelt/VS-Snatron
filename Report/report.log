@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.17)  18 DEC 2013 22:58
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.17)  19 DEC 2013 01:07
 entering extended mode
 **report.tex
 (C:\Users\Alexander\Desktop\VS-Snatron\Report\report.tex
@@ -740,71 +740,72 @@ Overfull \hbox (3.46208pt too wide) in paragraph at lines 159--159
  []
 
 
-Overfull \hbox (5.92789pt too wide) in paragraph at lines 189--192
+Overfull \hbox (5.92789pt too wide) in paragraph at lines 190--193
 []\T1/aer/m/n/9 Armagetron Ad-vanced it-self is avail-able for Win-dows, Linux
  []
 
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 205.
+<tron_four.png, id=1, 407.121pt x 304.7385pt>
+File: tron_four.png Graphic file (type png)
+ <use tron_four.png>
+Package pdftex.def Info: tron_four.png used on input line 201.
+(pdftex.def)             Requested size: 228.07318pt x 170.71652pt.
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 212.
 
-LaTeX Font Info:    No file TS1aer.fd. on input line 205.
+LaTeX Font Info:    No file TS1aer.fd. on input line 212.
+
 
 LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 (Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textdegree' on input line 205.
+(Font)              for symbol `textdegree' on input line 212.
 
 [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
-]
-Overfull \hbox (15.95398pt too wide) in paragraph at lines 224--228
+ <C:/Users/Alexander/Desktop/VS-Snatron/Report/tron_four.png>]
+Overfull \hbox (15.95398pt too wide) in paragraph at lines 231--235
 \T1/aer/m/n/9 strac-tion of a 3D space that con-tains "GameOb-jects". "GameOb-
  []
 
 
-Overfull \hbox (6.96434pt too wide) in paragraph at lines 239--242
-\T1/aer/m/n/9 will usu-ally have a cur-ren-tO-b-ject.isMine() or Net-work.isSer
-ver
+Overfull \hbox (2.7799pt too wide) in paragraph at lines 251--252
+[]\T1/aer/m/n/9 Authorative servers have the ad-van-tage of pre-vent-ing many
  []
 
 
-Overfull \hbox (30.35698pt too wide) in paragraph at lines 245--245
-[]\secfnt STATE/CONTROL FLOW: NET-WORK START
- []
-
-
-Overfull \hbox (1.40186pt too wide) in paragraph at lines 257--257
+Overfull \hbox (1.40186pt too wide) in paragraph at lines 278--278
 []\secfnt COLLISONS/POWERUPS/PREDICTION 
  []
 
-(C:\Users\Alexander\Desktop\VS-Snatron\Report\report.bbl
+[2] (C:\Users\Alexander\Desktop\VS-Snatron\Report\report.bbl
 LaTeX Font Info:    Try loading font information for T1+aett on input line 6.
 
 ("F:\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)) [2]
+)) [3]
 (C:\Users\Alexander\Desktop\VS-Snatron\Report\report.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 5478 strings out of 493921
- 69268 string characters out of 3147269
- 137110 words of memory out of 3000000
- 8658 multiletter control sequences out of 15000+200000
- 45350 words of font info for 62 fonts, out of 3000000 for 9000
+ 5490 strings out of 493921
+ 69401 string characters out of 3147269
+ 135110 words of memory out of 3000000
+ 8663 multiletter control sequences out of 15000+200000
+ 48140 words of font info for 67 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 41i,11n,32p,456b,252s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,11n,32p,502b,252s stack positions out of 5000i,500n,10000p,200000b,50000s
 {F:/MiKTeX 2.9/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{F:/MiKTeX 2.9/fonts
-/enc/dvips/fontname/8r.enc}<F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.p
-fb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb><F:/MiKTeX 2.9/fonts
-/type1/public/amsfonts/cm/cmtt9.pfb><F:/MiKTeX 2.9/fonts/type1/public/cm-super/
-sfrm0900.pfb><F:/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvb8a.pfb><F:/MiKTeX 2.9/
-fonts/type1/urw/helvetic/uhvr8a.pfb><F:/MiKTeX 2.9/fonts/type1/urw/times/utmb8a
-.pfb>
-Output written on report.pdf (2 pages, 99988 bytes).
+/enc/dvips/fontname/8r.enc}<F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.
+pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb><F:/MiKTeX 2.9/fonts
+/type1/public/amsfonts/cm/cmsy9.pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmti9.pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt9.pfb><F:/MiKTeX
+ 2.9/fonts/type1/public/cm-super/sfrm0900.pfb><F:/MiKTeX 2.9/fonts/type1/urw/he
+lvetic/uhvb8a.pfb><F:/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr8a.pfb><F:/MiKTeX
+ 2.9/fonts/type1/urw/times/utmb8a.pfb>
+Output written on report.pdf (3 pages, 431884 bytes).
 PDF statistics:
- 39 PDF objects out of 1000 (max. 8388607)
+ 51 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
