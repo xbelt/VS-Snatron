@@ -88,14 +88,14 @@ public class Game
 
     public void StopGame()
 	{
-		clearGameObjects ();
+		_spawner.ClearMyObjects ();
 		NewGame ();
 	}
 
 	private void EndRound()
 	{
 		// TODO something else?
-		clearGameObjects ();
+		_spawner.ClearMyObjects ();
 		
 		if (isGameOver ()) {
 			EndGame ();
@@ -264,41 +264,5 @@ public class Game
 	}
 
 	#endregion
-
-	private void clearGameObjects()
-	{
-		var walls = GameObject.FindGameObjectsWithTag("wall");
-		foreach (var wall in walls)
-		{
-            MonoBehaviour.Destroy(wall);
-		}
-	    var gameWalls = GameObject.FindGameObjectsWithTag("gameWall");
-	    foreach (var gameWall in gameWalls) {
-	        MonoBehaviour.Destroy(gameWall);
-	    }
-		var lines = GameObject.FindGameObjectsWithTag("line");
-		foreach (var line in lines)
-		{
-            MonoBehaviour.Destroy(line);
-		}
-		var cubes = GameObject.FindGameObjectsWithTag("cube");
-		foreach (var cube in cubes)
-		{
-            MonoBehaviour.Destroy(cube);
-		}
-		var players = GameObject.FindGameObjectsWithTag("tron");
-		foreach (var player in players)
-		{
-            MonoBehaviour.Destroy(player);
-		}
-	    var powerUp0s = GameObject.FindGameObjectsWithTag("powerUp0");
-	    foreach (var powerUp0 in powerUp0s) {
-	        MonoBehaviour.Destroy(powerUp0);
-	    }
-	    var powerUp1s = GameObject.FindGameObjectsWithTag("powerUp1");
-	    foreach (var powerUp1 in powerUp1s) {
-	        MonoBehaviour.Destroy(powerUp1);
-	    }
-	}
 }
 
