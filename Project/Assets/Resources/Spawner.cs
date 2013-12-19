@@ -179,7 +179,7 @@ public class Spawner
 		}
 	}
 
-	private void ClearMyObjects()
+	public void ClearMyObjects()
 	{
 		var walls = GameObject.FindGameObjectsWithTag("wall");
 		foreach (var wall in walls)
