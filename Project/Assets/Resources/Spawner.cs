@@ -60,14 +60,15 @@ public class Spawner
 	}
 	
 	public void SpawnAI(int playerId, KillEvent onKilled) {
+		Debug.Log ("Spawner: Spawn AI Player " + LocalPlayerId);
 		_playerPrefab = Resources.Load<Transform>("Player" + playerId);
 		Vector3 location;
 		Quaternion orientation;
 		_level.MapStartLocation(playerId, out location, out orientation);
 
 		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
-		MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
 		player.gameObject.AddComponent<KIControler>();
+		MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
 		ai.OnDeadlyCollision += (int id) => onKilled (id);
 		ai.playerId = playerId;
@@ -173,6 +174,8 @@ public class Spawner
 
 	public void ClearMyObjects()
 	{
+		ClearAllObjects ();
+		return;
 		var walls = GameObject.FindGameObjectsWithTag("wall");
 		foreach (var wall in walls)
 		{
