@@ -182,7 +182,7 @@ public class UserInterface : MonoBehaviour
 			OnJoinGameRequest(_serverIP);
 		}
 		
-		NetworkControl.PlayerName = _playerName; // TODO remove this shit static fuck players the died
+		NetworkInterface.PlayerName = _playerName; // TODO remove this shit static fuck players the died
 		
 		GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
 		_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);

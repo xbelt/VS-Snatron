@@ -7,7 +7,7 @@ using UnityEngine;
 public class MainController : MonoBehaviour
 {
 	public UserInterface _gui;
-	public NetworkControl _networkControl;
+	public NetworkInterface _networkControl;
 
 	public GUIStyle buttonGUIStyle;
 	public GUIStyle labelGUIStyle;
@@ -124,7 +124,7 @@ public class MainController : MonoBehaviour
 	private void OnServerStarted()
 	{
 		Debug.Log ("GUI:OnServerStarted");
-		Game.Instance.setPlayer(0, NetworkControl.PlayerName, false);
+		Game.Instance.setPlayer(0, NetworkInterface.PlayerName, false);
 		_gui.ShowLobby (() => {return Game.Instance.Players; });
 	}
 
