@@ -87,6 +87,7 @@ public class MainController : MonoBehaviour
 	private void StartQuickGame()
 	{
 		print ("GUI:StartQuickGame()");
+		_networkControl.StopSearching ();
 		_game.setPlayer(0, _gui.PlayerName, false);
 		_game.numberOfAIPlayers = _game.Level.MaxPlayers - 1;
 		_networkControl.InitServer (0);
@@ -106,7 +107,7 @@ public class MainController : MonoBehaviour
 	private void LeaveGame()
 	{
 		_networkControl.Disconnect ();
-		_game.StopGame ();
+		_game.LeaveGame ();
 		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
 	}
 	
@@ -146,7 +147,7 @@ public class MainController : MonoBehaviour
 	private void OnConnectionError(String message)
 	{
 		Debug.Log ("GUI:OnConnectionError: " + message);
-		_game.NewGame ();
+		_game.InitGame ();
 		_networkControl.Disconnect ();
 		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
 		// TODO show some error message?
@@ -198,7 +199,7 @@ public class MainController : MonoBehaviour
 	private void OnPlayerKilled(int id)
 	{
 		Debug.Log ("GUI:OnPlayerKilled");
-		_game.playerDied (id);
+		_game.OnGlobalKill (id);
 	}
 
 	#endregion
