@@ -29,7 +29,7 @@ public class NetworkInterface : MonoBehaviour {
 	public GameEndedEvent OnGameEnded;
 	
 	// Player List Events
-	public delegate void PlayerJoinedEvent (int id, string name); // ok
+	public delegate void PlayerJoinedEvent (int id, string name, bool isAI); // ok
 	public PlayerJoinedEvent OnPlayerJoined;
 	public delegate void PlayerChangeEvent(int id); // ok
 	public PlayerChangeEvent OnConnectedToRemoteServer;
@@ -219,30 +219,30 @@ public class NetworkInterface : MonoBehaviour {
 		Debug.Log("RPC: AssignLocalPlayerID()"); 
 		_localPlayerID = playerId;
 		// Tell everybody who we are
-		broadCastPlayerJoined (PlayerName, playerId);
+		broadCastPlayerJoined (PlayerName, playerId, false);
 		if (OnConnectedToRemoteServer != null)
 			OnConnectedToRemoteServer (playerId);
 	}
 	
-	private void broadCastPlayerJoined(string playerName, int playerId)
+	private void broadCastPlayerJoined(string playerName, int playerId, bool isAI)
 	{
 		Debug.Log("NET: broadCastPlayerJoined()"); 
-		GetComponent<NetworkView>().RPC("PlayerJoined", RPCMode.AllBuffered, playerName, playerId);
+		GetComponent<NetworkView>().RPC("PlayerJoined", RPCMode.AllBuffered, playerName, playerId, isAI);
 	}
 
 	private void sendServerName(NetworkPlayer target)
 	{
 		Debug.Log("NET: sendServerName()"); 
-		GetComponent<NetworkView>().RPC("PlayerJoined", target, PlayerName, PlayerID);
+		GetComponent<NetworkView>().RPC("PlayerJoined", target, PlayerName, PlayerID, false);
 	}
 	
 	[RPC]
-	private void PlayerJoined(string playerName, int playerId)
+	private void PlayerJoined(string playerName, int playerId, bool isAI)
 	{
 		Debug.Log("RPC:PlayerJoined");
 		//Game.Instance.setPlayer (playerId, playerName);
 		if (OnPlayerJoined != null)
-			OnPlayerJoined (playerId, playerName);
+			OnPlayerJoined (playerId, playerName, isAI);
 	}
 	
 	public void broadCastPlayerLeft(int playerId)
