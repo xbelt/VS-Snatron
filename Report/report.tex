@@ -405,7 +405,40 @@ Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the 
 \caption{Control flow diagrams}
 \end{figure}
 
+\begin{figure}
+\centering
+\begin{tikzpicture}[->,>=stealth']
 
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,text width=2cm] (SG) 
+ {\small{StartGame}};
+
+ % Next node: WS (no idea what these letters should mean)
+ \node[state,       % layout (defined above)
+ node distance=3cm,     % distance to SG
+ text width=2cm,        % max text width
+ right of=SG](WS)       % Position is to the right of SG
+ {\small{Waiting screen}};
+
+ % STATE Game
+ \node[state,
+ below of=SG,
+ node distance=2cm,
+ text width=2cm] (Game) 
+ {\small{Game}};
+
+ % draw the paths and and print some Text below/above the graph
+ \path (SG) edge [bend left] node [anchor=south] {\scriptsize{host}} (WS)
+ (WS) edge [bend left] node [anchor=north] {\scriptsize{esc}} (SG)
+       (SG)  edge [bend right] node [anchor=east]{\scriptsize{join}}  (Game)
+       (Game) edge [bend right] node [anchor=west] {\scriptsize{esc}} (SG)
+ ;
+\end{tikzpicture}
+\caption{Control flow}
+\end{figure}
 
 \section{Collisons/Powerups/Prediction}
 If (drove into wall) \{
