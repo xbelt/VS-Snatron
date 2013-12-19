@@ -48,7 +48,7 @@ public class Game
 		_level = new BasicLevelModel ();
 		_spawner = new Spawner (_level);
 		_players = new PlayerModel[_level.MaxPlayers];
-		NewGame ();
+		InitGame ();
 	}
 
 
@@ -68,49 +68,51 @@ public class Game
 		// And alive!
 
 		Debug.Log ("Players starting game: " + _players.ToString());
-		_spawner.SpawnLocalPlayer(OnLocalKill);
+		
+		_gameStarted = true;
 
+		if (HasLocalPlayerWon()) { // that is, when the player is alone
+			EndGame();
+		}
+	}
+	
+	public delegate void GameEvent();
+	public GameEvent OnGameEnded;
+	public delegate void RoundEvent(int round);
+	public RoundEvent OnRoundStarted;
+	public RoundEvent OnRoundEnded;
+
+	public void BeginRound()
+	{
 		if (Network.isServer)
 		{
 			_spawner.InstantiateLevelObjects();
 			SpawnAIPlayers ();
 		}
-		
-		_gameStarted = true;
-		if (HasLocalPlayerWon()) { // that is, when the player is alone
-			_gameStarted = false;
-			EndGame();
-		}
-	}
-
-	public void BeginRound()
-	{
-
+		_spawner.SpawnLocalPlayer (OnLocalKill);
 	}
 
 	public void EndRound()
 	{
-		// TODO something else?
 		_spawner.ClearMyObjects ();
 		
-		if (isGameOver ()) {
-			EndGame ();
+		if (Network.isServer && isGameOver ()) {
+			OnGameEnded();
 		}
 	}
 	
 	private void EndGame()
 	{
-		StopGame ();
+		_ranking = getRanking ();
 	}
 	
-	public void StopGame()
+	public void LeaveGame()
 	{
-		_spawner.ClearMyObjects ();
-		NewGame ();
+		InitGame ();
 	}
 
 	// Reset the game instance
-	public void NewGame()
+	public void InitGame()
 	{
 		_nOfActivePlayers = 0;
 		_nOfLivingPlayers = 0;
@@ -136,19 +138,16 @@ public class Game
 		}
 	}
 
+	// This event is triggered by locally spawned objects : need to inform all others about kill
 	private void OnLocalKill(int playerId)
 	{
 		_players [playerId].isAlive = false;
 		_spawner.Kill (playerId);
+		// TODO either fire here another event using a delegate, or let MainController listen to Spawner events
 	}
-	
-	private void OnRemoteKill(int playerId)
-	{
-		// TODO necessary? (not yet called)
-		_players [playerId].isAlive = false;
-	}
-	
-	public void playerDied(int playerId)
+
+	// This is in response to the broadcast message fired after a OnLocalKill : everybody executes this.
+	public void OnGlobalKill(int playerId)
 	{
 		PlayerModel player = _players [playerId];
 		if (player == null)
@@ -158,7 +157,7 @@ public class Game
 		_nOfLivingPlayers--;
 		
 		if (isRoundOver ()) {
-			EndRound();
+			OnGameEnded();
 		}
 	}
 
@@ -272,6 +271,24 @@ public class Game
 		if (!isActivePlayer(playerId))
 			return 0;
 		return _players[playerId].score;
+	}
+
+	public class ScoreComparer : IComparer<PlayerModel>
+	{
+		public int Compare(PlayerModel a, PlayerModel b)
+		{
+			return a.score.CompareTo(b.score);
+		}
+	}
+
+	private PlayerModel[] _ranking;
+	public PlayerModel[] Ranking { get { return _ranking; } }
+
+	private PlayerModel[] getRanking()
+	{
+		PlayerModel[] sorted = (PlayerModel[]) _players.Clone();
+		System.Array.Sort<PlayerModel> (sorted, new ScoreComparer ());
+		return sorted;
 	}
 
 	#endregion
