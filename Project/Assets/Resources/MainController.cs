@@ -9,12 +9,6 @@ public class MainController : MonoBehaviour
 	public UserInterface _gui;
 	public NetworkInterface _networkControl;
 
-	public GUIStyle buttonGUIStyle;
-	public GUIStyle labelGUIStyle;
-	public GUIStyle layoutGUIStyle;
-	public GUIStyle textFieldGUIStyle;
-	public GUIStyle horizontalScrollbarGUIStyle;
-
     // ReSharper disable once UnusedMember.Local
     private void Start()
     {
@@ -25,7 +19,7 @@ public class MainController : MonoBehaviour
 		initGui ();
     }
 
-    private void ChangeWifiSettingsAndroid() { }
+    private void ChangeWifiSettingsAndroid() { } // TODO what was this for?
 
 	private void initGui()
 	{
