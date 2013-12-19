@@ -8,6 +8,8 @@ public class PlayerModel
 	public int rank; // for one round
 	public int score; // for a series of rounds
 	public bool isAlive;
+	public bool isAI;
+	public bool isIndestructible;
 	
 	public PlayerModel(int id, string name)
 	{

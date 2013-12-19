@@ -61,8 +61,9 @@ public class Game
 		_roundsToPlay = rounds;
 		_localPlayerId = localPlayerId;
 		_spawner.LocalPlayerId = localPlayerId;
-		// TODO make sure local player and all human players are contained in _players
+		// TODO make sure local player and all other human players are contained in _players
 
+		Debug.Log ("Players starting game: " + _players.ToString());
 		_spawner.SpawnLocalPlayer(OnLocalKill);
 
 		if (Network.isServer)
@@ -70,10 +71,10 @@ public class Game
 			_spawner.InstantiateLevelObjects();
 			for (int i = 0; i < numberOfKIPlayers; i++) {
 				int id = getFirstFreePlayerId();
+				setPlayer(id, "AI " + (i+1), true);
 				_spawner.SpawnAI(id);
 			}
 		}
-		
 		
 		_gameStarted = true;
 	}
@@ -157,9 +158,11 @@ public class Game
 
 
 	// Called when both local player and remote player was spawned? TODO really?
-	public void setPlayer(int playerId, string playerName) {
+	public void setPlayer(int playerId, string playerName, bool isAI) {
         MonoBehaviour.print("Game:SetPlayer()");
-		_players [playerId] = new PlayerModel (playerId, playerName);
+		PlayerModel player = new PlayerModel (playerId, playerName);
+		player.isAI = isAI;
+		_players [playerId] = player;
 		_nOfActivePlayers++;
 		_nOfLivingPlayers++; // TODO probably not necessary
 	}
