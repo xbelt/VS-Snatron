@@ -55,6 +55,8 @@ public class Spawner
 		_localPlayerDrive.playerId = _localPlayerId;
 		_localPlayerDrive.OnDeadlyCollision += (int id) => OnKilled (id); // TODO
 		
+		spawnedPlayers.Add(_localPlayerId, player.gameObject);
+
 		if (OnSpawned != null)
 			OnSpawned (_localPlayerId);
 	}
@@ -71,6 +73,10 @@ public class Spawner
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
 		ai.KIId = playerId; // TODO instead register event as normal and assign it the next free id
 		ai.playerId = playerId;
+		spawnedPlayers.Add(playerId, player.gameObject);
+
+		if (OnSpawned != null)
+			OnSpawned (playerId);
 	}
 	
 	public void Kill(int playerId)
