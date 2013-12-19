@@ -38,6 +38,39 @@
 % code listings
 % code listings
 \usepackage{listings}
+
+\lstnewenvironment{CS}
+ {\lstset{language=[Sharp]C,
+ 	basicstyle=\scriptsize\ttfamily,
+ 	backgroundcolor=\color{lightgray},
+ 	commentstyle=\color{java_comment},
+	keywordstyle=\color{java_keyword}\bfseries,
+	stringstyle=\color{java_string},
+	morecomment=[s][\color{java_doc}]{/**}{*/},
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	escapeinside={(*@}{@*)},
+	tabsize=2,
+	showtabs=false,
+	extendedchars=true,
+	showstringspaces=false,
+	showspaces=false,
+	breaklines=true,
+	numbers=left,
+	numberstyle=\tiny,
+	numbersep=6pt,
+	xleftmargin=3pt,
+	xrightmargin=3pt,
+	framexleftmargin=3pt,
+	framexrightmargin=3pt,
+	captionpos=b
+	}
+	}
+	{}
+	
 \lstnewenvironment{Java}
   {\lstset{ language=Java,
 	basicstyle=\scriptsize\ttfamily,
@@ -118,7 +151,8 @@
 \newcommand{\rfig}[1]{Figure~\ref{fig:#1}}
 \newcommand{\rtab}[1]{Table~\ref{tab:#1}}
 \newcommand{\rlst}[1]{Listing~\ref{#1}}
-
+\newcommand{\java}[1]{\texttt{\penalty 100 #1}}
+\newcommand{\cs}[1]{\texttt{\penalty 100 #1}}
 % General information
 
 \title{Distributed Systems -- Final Project}
@@ -196,14 +230,14 @@ In the last section, we will give our conclusions on our game and working both w
 \section{Existing games}
 
 Armagetron Advanced\cite{AA} is one of two open source projects that try to recreate the light cycle scene, the other being GLTron\cite{GLT} by Andreas Umbach\cite{Umbach}.
-GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original visually and offers a wide variety of gamemodes that go far beyond what is seen in the film as well as heavy customization, with parameters like base speed, arena size, number of players, etc.
+GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original. It is visually less faithful to the movie and offers a wide variety of gamemodes that go far beyond what is seen in the film as well as heavy customization, with parameters like base speed, arena size, number of players, etc.
 We were aiming more at recreating the enjoyment of playing Armagetron Advanced rather than being faithful to the original scene.
 Since the scope of this project was somewhat limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
 but rather focused on implementing the 'core' game mode with fixed parameters. Visually, we were inspired by the aesthetics of the 2010 film "Tron Legacy" rather than by the original film or the existing games
 
 Armagetron Advanced offers local (split-screen), local network and internet multiplayer.
 Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port.
- There exists an android game called Androgetron\cite{Andro} developed by a member of the Armagetron Advanced community,however this is a much simplified clone without networked multiplayer.
+ There exists an android game called Androgetron\cite{Andro} developed by a member of the Armagetron Advanced community, however this is a much simplified clone without networked multiplayer.
   On the official Google Play\texttrademark Store there are a few more games\cite{GP1}\cite{GP2}\cite{GP3} that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
 
 Split screen is a viable option on a full size laptop or desktop monitor, however it feels very cramped even on larger tablets and is essentially unusable on smartphones.
@@ -216,6 +250,7 @@ We decided to use Unity, a high level game engine and Integrated Development Eng
  	  
  	 	\caption{The main game... << weird wall >> }
  \end{figure}
+ 
  
  \section{Tronium mechanics }
 We simplified the complex settings and mechanics from Armagetron Advanced to a single game mode, with fixed speed, arena size, etc.
@@ -392,7 +427,7 @@ Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac 
 The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
 
 Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObject"s.
-\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing for nesting).
+\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing  nesting).
 All "GameObject"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GameObject". There are many other types of "Component"s, including "Lights", "Cameras" and "Materials" as well as Scripts.
 
 Unity offers two very different methods for networking.
@@ -428,7 +463,7 @@ Since our server instance will also be acting as a player/client instance, this 
 
 Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the current GameObject (or more specifically its NetworkView) is owned by the current instance and whether we are acting as the server, respectively. 
 
-Their is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
+There is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
 
 The NetworkController causes events (via delegates) to be triggered in the MainController, which will then in turn call methods of the NetworkController or GameController.
 The NetworkController handles all RPC. A received RPC will result in an event being triggered in MainController.
@@ -437,24 +472,60 @@ In our implementation RPC's will also be sent to the sender, ensuring that all c
 See <<FIGURE>> for examples of (simplified) state transitions involved with starting a new game via network.
 
 
-\section{Collision detection}
-If (drove into wall) \{
-	players the Died 
-	\}
-	<< << marko >> >>
 
+\section{Collision detection}
+Collisions in Unity can be implemented either with 'true' collisions or with "Triggers". With triggers, the objects do not actually collide, i.e. no physics simulation takes place but instead the two methods "OnTriggerEntry" and "OnTriggerExit" are called when an object moves into or exits a trigger. 
+In Tronium, collision detection is handled by the owner of the bike, i.e. the game instance of the player controlling the bike.
+The bike has three different types of colliders (triggers), shown in <<FIGURE>>. 
+The "BodyCollider" is the main collision mesh for the bike.
+Using a simple shape like a box greatly increases the performance of the collision detections.
+The "SpeedUpCollider"s are used to detect when a player is close to a wall (which will increase his speed). 
+Finally, the "CollisionPredictor" is used to detect if the player will move into (or 'through') a wall in the next frame update. If that is the case, the player will be killed and the movement cancelled. 
+Placing the "CollisionPredictor" in front of the bike is necessary to avoid players 'warping' through walls  - this could happen since collisions (and position updates) are calculated at discrete time points. With sufficient speed, a player might be before an obstacle at one point but already beyond the obstacle in the next.
+The "CollisionPredictor" is therefore dynamically resized to match the size of the next 'step', i.e. it covers the ground that the bike would move through during the current time step if time was truly continuous. 
+
+ \begin{figure}
+ 	 	    \includegraphics[height=5.5cm]{collision_meshes_text}
+ 	  
+ 	 	\caption{The player bike, with the colliders visible in yellow }
+ \end{figure}
+
+Each Collider is a child GameObject of the bike and has a script attached to it that listens (via OnTriggerEntry/Exit) for collisions. If a collision is detected, an appropriate event in the parent object is triggered. 
+Collisions will be triggered during the physics update phase of each frame calculation and the effects of these method calls can be used in the "Update()" method that is triggered later (but still before the actual frame is drawn). If a collision has been detected by the collision predictor, the main bike script will kill the player.
+If 'collisions' has been detected by the "SpeedUpCollider" the bike's speed will be increased (the more collisions, i.e. obstacles near the bike, the more the speed will increase).
+\lstset{language=[Sharp]C,caption={Updating the CollisionPredictor},label=code}
+\begin{CS}
+protected void AdjustSpeed () {
+		if (_numberOfWallsNear > 0) {
+			_speed = Mathf.MoveTowards (_speed, MaxSpeed, AccelerationRate * Time.deltaTime);
+		} else {
+			_speed = Mathf.MoveTowards (_speed, MinSpeed, DecelerationRate * Time.deltaTime);
+		}
+		
+		if (CollisionPrediction != null)
+			CollisionPrediction.Length = _speed*transform.localScale.z;
+	}
+	\end{CS}
+
+
+ 
 \section{Computer controlled opponents}
-In local singleplayer, there are computer controlled bikes that follow a simple pattern. 
+In local single-player, there are computer controlled bikes that follow a simple pattern. 
 Whenever a computer controlled bike predicts a wall collision (using the same code as above), it will (with high probability) do a "saving" turn (with equal probability for left and right turns). To ensure that they cannot survive forever, they are only allowed to do these "saving" turns every second frame.
 
 To avoid making the AI too predictable, there is also a chance that they will randomly (again, left right being equally likely) turn even if they do not detect any walls.
 
 This results in a very simple AI, however since the game is mostly about reflexes this unpredictable AI works well enough to make the single-player mode enjoyable.
 
-Randomly moving cubes pose as more relentless opponents, they roam the grid without trying to evade players or walls. Such a cube moves by rotating over one of its edges touching the ground as depicted by << << image >> >>. Afterwards, the cube pauses for a set amount of time, randomly changes direction, and merrily continues on its way. (note to editor: may want to remove merrily) To achieve the movement as illustrated in the aforementioned image---assuming the pivot were in the center---the cube must be translated along two axes and rotated simultaneously over time. However, if we choose to rotate around the blue axis (which also represents time in the image), none of this is necessary. Fortunately, Unity provides a \prog{RotateAround()} method to do just that.
-Our implementation can rotate only over one of the cubes edges. To allow movement in any diretion, we simply rotate the cube around it's center before initiating the movement. This works because the cube's sides are uniform: a 90° rotation is, as far as the viewer is concerned, invisible. This axis is specified by two vectors, an origin relative to the cube's center: \{x: -.5, y: -.5, z: -.5 \} and another vector to indicate the direction: \{x: 0, y: 0, z: 1\}. Unity cube primites have an edge length of 1, which produces $-0.5$ used in the coordinates. However, \prog{RotateAround()} expects the axis to be in world coordinates, for this we transform both the origin and the direction out of our local coordinate system again leveraging Unity's built-in methods. Another benefit of this method is, that the scaling factor imposed on the cube is irrelevant to the movement and rotation, because of local-to-world transformations that are used.
+Randomly moving cubes pose as more relentless opponents, they roam the grid without trying to evade players or walls. Such a cube moves by rotating over one of its edges touching the ground as depicted by << << image >> >>.
+ Afterwards, the cube pauses for a set amount of time, randomly changes direction, and merrily continues on its way.
+  (note to editor: may want to remove merrily) To achieve the movement as illustrated in the aforementioned image---assuming the pivot were in the center---the cube must be translated along two axes and rotated simultaneously over time. 
+  However, if we choose to rotate around the blue axis (which also represents time in the image), none of this is necessary. Fortunately, Unity provides a \cs{RotateAround()} method to do just that.
+Our implementation can rotate only over one of the cubes edges. To allow movement in any diretion, we simply rotate the cube around it's center before initiating the movement. This works because the cube's sides are uniform: a 90° rotation is, as far as the viewer is concerned, invisible. This axis is specified by two vectors, an origin relative to the cube's center: \{x: -.5, y: -.5, z: -.5 \} and another vector to indicate the direction: \{x: 0, y: 0, z: 1\}. Unity cube primitives have an edge length of 1, which produces $-0.5$ used in the coordinates. However, \cs{RotateAround()} expects the axis to be in world coordinates, for this we transform both the origin and the direction out of our local coordinate system again leveraging Unity's built-in methods. Another benefit of this method is, that the scaling factor imposed on the cube is irrelevant to the movement and rotation, because of local-to-world transformations that are used.
 Now that all pieces are in place, for the animation.
-The code for the rotation is unique in that it makes use of a feature nowhere else in our codebase: It's a coroutine, or Iterator in C#-speak\cite{http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx}. It allows us to program the animation inside a loop by passing control back to Unity using \Java{yield return null} after we've made the calculations for the next frame. On the next frame, Unity resumes our iterator, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. Using iterators, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
+The code for the rotation is unique in that it makes use of a feature nowhere else in our codebase: It's a coroutine, or Iterator in C\#-speak \cite{csharpthing}.
+%"http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx"
+ It allows us to program the animation inside a loop by passing control back to Unity using \cs{yield return null} after we've made the calculations for the next frame. On the next frame, Unity resumes our iterator, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. Using iterators, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
 Due to time constraints, cubes are allowed to move through any geometry. As an improvement, one might consider to have cubes tear down pieces of walls they come in contact with.
 
 
