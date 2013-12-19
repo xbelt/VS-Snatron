@@ -126,7 +126,6 @@ public class NetworkInterface : MonoBehaviour {
 		print ("RPC:StartGame()");
 		StopAnnouncingServer ();
 		StopSearching();
-		//Game.Instance.StartGame (PlayerID);
         if (OnGameStarted != null)
 			OnGameStarted (rounds); 
 	}
@@ -142,7 +141,6 @@ public class NetworkInterface : MonoBehaviour {
 	{
 		Debug.Log ("RPC:StopGame()");
 		Disconnect ();
-		//Game.Instance.StopGame ();
 		InitNetworkInterface ();
 		if (OnGameEnded != null)
 			OnGameEnded ();
@@ -224,13 +222,13 @@ public class NetworkInterface : MonoBehaviour {
 			OnConnectedToRemoteServer (playerId);
 	}
 	
-	private void broadCastPlayerJoined(string playerName, int playerId, bool isAI)
+	public void broadCastPlayerJoined(string playerName, int playerId, bool isAI)
 	{
 		Debug.Log("NET: broadCastPlayerJoined()"); 
 		GetComponent<NetworkView>().RPC("PlayerJoined", RPCMode.AllBuffered, playerName, playerId, isAI);
 	}
 
-	private void sendServerName(NetworkPlayer target)
+	public void sendServerName(NetworkPlayer target)
 	{
 		Debug.Log("NET: sendServerName()"); 
 		GetComponent<NetworkView>().RPC("PlayerJoined", target, PlayerName, PlayerID, false);
