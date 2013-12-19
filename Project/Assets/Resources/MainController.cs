@@ -43,7 +43,7 @@ public class MainController : MonoBehaviour
 		_game = Game.Instance;
 		
 		_game.OnLocalDeath += OnLocalDeath;
-		_game.OnOnePlayerLeft += OnOneHumanLeft;
+		_game.OnOnePlayerLeft += OnOnePlayerLeft;
 		_game.OnLastHumanDied += OnLastHumanDied;
 		_game.OnLastRoundEnded += OnLastRoundEnded;
 	}
@@ -137,9 +137,8 @@ public class MainController : MonoBehaviour
 		_networkControl.KillPlayer (playerId);
 	}
 	
-	void OnOneHumanLeft ()
+	void OnOnePlayerLeft ()
 	{
-		// TODO event for network game => round ends
 		Debug.Log ("Main:On One Human Left");
 		if (Network.isServer) {
 			_networkControl.EndRound (_game.CurrentRound);
@@ -148,13 +147,21 @@ public class MainController : MonoBehaviour
 	
 	void OnLastHumanDied ()
 	{
-		// TODO event for singleplayer => round ends, you lose
-		throw new NotImplementedException ();
+		Debug.Log ("MC:On Last Human Died");
+		if (Network.isServer && !_game.isGameOver) {
+			foreach (PlayerModel player in _game.Players)
+			{
+				if (player != null && player.isAI == true && player.isAlive)
+					_networkControl.KillPlayer(player.id);
+			}
+		}
 	}
 	
 	void OnLastRoundEnded ()
 	{
-		throw new NotImplementedException ();
+		if (Network.isServer) {
+			_networkControl.broadCastEndGame();
+		}
 	}
 
 	#endregion
@@ -197,16 +204,14 @@ public class MainController : MonoBehaviour
 		_gui.ShowInitGame ();
 		_game.StartGame (_networkControl.PlayerID, rounds);
 
-		Debug.Log ("AAAAAA");
 		if (Network.isServer) {
-			Debug.Log ("BBBBBB");
-			Invoke("WaitThenStartRound", 4);
+			Invoke("DelayedStartRoundHelper", TimeToShowInitGameScreen);
 		}
 	}
 
-	private void WaitThenStartRound()
+	private void DelayedStartRoundHelper()
 	{
-		_networkControl.broadcastBeginRound (1);
+		_networkControl.broadcastBeginRound (_game.CurrentRound + 1);
 	}
 	
 	private void OnRoundStarted(int round)
