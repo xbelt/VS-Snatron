@@ -10,7 +10,13 @@ public class Spawner
 	private int _localPlayerId;
 
 	private readonly Dictionary<int, GameObject> spawnedPlayers = new Dictionary<int, GameObject> ();
-	public GameObject LocalPlayer { get { return spawnedPlayers [_localPlayerId]; } }
+	public GameObject LocalPlayer {
+		get {
+			GameObject go;
+			spawnedPlayers.TryGetValue(_localPlayerId, out go);
+			return go;
+		}
+	}
 
 	Transform _playerPrefab;
 	Transform _gridPrefab;

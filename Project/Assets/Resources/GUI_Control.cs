@@ -90,7 +90,7 @@ public class GUI_Control : MonoBehaviour
 	private void StartQuickGame()
 	{
 		print ("GUI:StartQuickGame()");
-		Game.Instance.setPlayer(0, _gui.PlayerName);
+		Game.Instance.setPlayer(0, _gui.PlayerName, false);
 		Game.Instance.numberOfKIPlayers = 4;
 		_networkControl.InitServer (0);
 		_networkControl.broadCastStartGame (1);
@@ -124,7 +124,7 @@ public class GUI_Control : MonoBehaviour
 	private void OnServerStarted()
 	{
 		Debug.Log ("GUI:OnServerStarted");
-		Game.Instance.setPlayer(0, NetworkControl.PlayerName);
+		Game.Instance.setPlayer(0, NetworkControl.PlayerName, false);
 		_gui.ShowLobby (() => {return Game.Instance.Players; });
 	}
 
@@ -180,7 +180,7 @@ public class GUI_Control : MonoBehaviour
 	private void OnPlayerJoined(int id, String name)
 	{
 		Debug.Log ("GUI:OnPlayerJoined");
-		Game.Instance.setPlayer (id, name);
+		Game.Instance.setPlayer (id, name, false);
 	}
 	
 	private void OnPlayerLeft(int id)
