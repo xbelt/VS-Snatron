@@ -42,7 +42,7 @@ public class MainController : MonoBehaviour
 		_game = Game.Instance;
 		
 		_game.OnLocalDeath += OnLocalDeath;
-		_game.OnOneHumanLeft += OnOneHumanLeft;
+		_game.OnOnePlayerLeft += OnOneHumanLeft;
 		_game.OnLastHumanDied += OnLastHumanDied;
 		_game.OnLastRoundEnded += OnLastRoundEnded;
 	}
@@ -83,8 +83,7 @@ public class MainController : MonoBehaviour
 	{
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
-		_game.numberOfAIPlayers = _game.Level.MaxPlayers - _game.NofActivePlayers;
-		AddAIPlayers ();
+		AddAIPlayers (_game.Level.MaxPlayers - _game.NofPlayers);
 		int rounds = 5; // TODO take from GameConfig
 		_networkControl.broadCastBeginGame (rounds);
 	}
@@ -95,17 +94,16 @@ public class MainController : MonoBehaviour
 		print ("GUI:StartQuickGame()");
 		_networkControl.StopSearching ();
 		_game.setPlayer(0, _gui.PlayerName, false);
-		_game.numberOfAIPlayers = _game.Level.MaxPlayers - 1;
 		_networkControl.InitServer (0);
-		AddAIPlayers ();
+		AddAIPlayers (_game.Level.MaxPlayers - 1);
 		_networkControl.broadCastBeginGame (1);
 	}
 
-	private void AddAIPlayers()
+	private void AddAIPlayers(int count)
 	{
-		for (int i = 0; i < _game.numberOfAIPlayers; i++) {
+		for (int i = 1; i <= count; i++) {
 			int id = _game.getFirstFreePlayerId ();
-			_networkControl.broadCastPlayerJoined("AI " + (i + 1), id, true);
+			_networkControl.broadCastPlayerJoined("AI " + i, id, true);
 		}
 	}
 	
@@ -206,7 +204,7 @@ public class MainController : MonoBehaviour
 	{
 		Debug.Log ("GUI:OnRoundStarted");
 		_gui.ShowGame ();
-		_game.BeginRound ();
+		_game.BeginRound (round);
 	}
 	
 	private void OnRoundEnded(int round)
