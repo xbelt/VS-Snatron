@@ -58,6 +58,7 @@ public class Game
 	/// <param name="rounds">Rounds.</param>
 	public void StartGame(int localPlayerId, int rounds)
 	{
+		Debug.Log ("Game: Start Game: " + " " + localPlayerId + " " + rounds);
 		_roundsToPlay = rounds;
 		_localPlayerId = localPlayerId;
 		_spawner.LocalPlayerId = localPlayerId;
@@ -135,7 +136,6 @@ public class Game
 		{
 			_players[i] = null;
 		}
-
 		_spawner.ClearAllObjects ();
 	}
 
@@ -160,17 +160,19 @@ public class Game
 			_humanPlayers--;
 		
 		if (Network.isServer && isRoundOver) {
-			OnLastRoundEnded();
+			if (NofLivingPlayers == 1)
+				OnOnePlayerLeft();
 		}
 	}
 
 
 
 	#region game initialization
-	
 	void SpawnAIPlayers ()
 	{
 		foreach (var player in _players) {
+			if (player == null)
+				return;
 			if (player.isAI)
 				_spawner.SpawnAI (player.id, OnLocalKill);
 		}
@@ -228,8 +230,9 @@ public class Game
 	public int RoundsToPlay { get { return _roundsToPlay; } }
 	public int NofPlayers { get { return _humanPlayers + _aiPlayers; } }
 	public int NofLivingPlayers { get { return _humanPlayersAlive + _aiPlayerAlive; } }
-	public bool HasGameStarted { get { return _currentRound > 0; } }
 	
+	public int CurrentRound { get { return _currentRound; } }
+	public bool HasGameStarted { get { return _currentRound > 0; } }
 	public bool isRoundOver { get {	return HasGameStarted && NofLivingPlayers <= 1; } }
 	public bool isGameOver { get { return isRoundOver && RoundsToPlay == _currentRound; } }
 

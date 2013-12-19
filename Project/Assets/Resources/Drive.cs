@@ -52,6 +52,10 @@ public class Drive : MonoBehaviour {
 
 // ReSharper disable once UnusedMember.Local
 	void Start () {
+
+		if (!GetComponent<NetworkView> ().isMine)
+			Destroy (this);
+
         transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
 
 		if (GetComponent<NetworkView>().isMine) {
@@ -116,8 +120,9 @@ public class Drive : MonoBehaviour {
 
 	void OnGUI()
 	{
-		if (IsIndestructible)
+		if (IsIndestructible && Game.Instance.PlayerID == playerId)
 		{
+			// TODO this has thrown some error ...
 			GUI.Label(new Rect(9 / 20f * WidthPixels, 
 			                   19 / 40f * HeightPixels, 
 			                   1 / 10f * WidthPixels, 
@@ -195,7 +200,7 @@ public class Drive : MonoBehaviour {
 	/// </summary>
     protected virtual void DeadlyCollide()
 	{
-		Debug.Log ("DeadlyCollision.");
+		Debug.Log ("DeadlyCollision. id : " + playerId);
 		_latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
         if (OnDeadlyCollision != null)
 			OnDeadlyCollision (playerId);

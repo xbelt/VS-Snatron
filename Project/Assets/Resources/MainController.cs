@@ -5,6 +5,7 @@ using UnityEngine;
 
 // ReSharper disable once UnusedMember.Global
 using System.Threading;
+using System.Collections;
 
 
 public class MainController : MonoBehaviour
@@ -68,7 +69,7 @@ public class MainController : MonoBehaviour
 	private void StartServer()
 	{
 		print ("GUI,Server:StartServer()");
-		//_state = State.Lobby;
+		_game.setPlayer (0, _gui.PlayerName, false);
 		_networkControl.AnnounceServer ();
 	}
 	
@@ -98,9 +99,14 @@ public class MainController : MonoBehaviour
 		AddAIPlayers (_game.Level.MaxPlayers - 1);
 		_networkControl.broadCastBeginGame (1);
 	}
+	
+	private bool _withAiPlayers = false;
 
 	private void AddAIPlayers(int count)
 	{
+		if (!_withAiPlayers)
+			return;
+
 		for (int i = 1; i <= count; i++) {
 			int id = _game.getFirstFreePlayerId ();
 			_networkControl.broadCastPlayerJoined("AI " + i, id, true);
@@ -134,7 +140,10 @@ public class MainController : MonoBehaviour
 	void OnOneHumanLeft ()
 	{
 		// TODO event for network game => round ends
-		throw new NotImplementedException ();
+		Debug.Log ("Main:On One Human Left");
+		if (Network.isServer) {
+			_networkControl.EndRound (_game.CurrentRound);
+		}
 	}
 	
 	void OnLastHumanDied ()
@@ -161,7 +170,8 @@ public class MainController : MonoBehaviour
 
 	private void OnConnectedToRemoteServer(int id)
 	{
-		Debug.Log ("GUI:OnConnectedToRemoteServer");
+		Debug.Log ("GUI:OnConnectedToRemoteServer:" + id);
+		_game.setPlayer (id, _gui.PlayerName, false); // TODO maybe not needed
 		_gui.ShowLobby (() => {return _game.Players; });
 		// TODO ?
 		// id:That's us!
@@ -178,26 +188,25 @@ public class MainController : MonoBehaviour
 		// TODO show some error message?
 	}
 
-	private const int TimeToShowInitGameScreen = 3000;
+	private const int TimeToShowInitGameScreen = 3;
 
 	// This is indirectly called through RPC StartGame event
 	private void OnGameStarted(int rounds)
 	{
-		print ("GUI:OnGameStarted()");
+		print ("GUI:OnGameStarted()" + " " + _networkControl.PlayerID);
 		_gui.ShowInitGame ();
 		_game.StartGame (_networkControl.PlayerID, rounds);
 
-		if (Network.isServer) { // TODO move to game event! bitch
-			WaitThenStartRound(1);
+		Debug.Log ("AAAAAA");
+		if (Network.isServer) {
+			Debug.Log ("BBBBBB");
+			Invoke("WaitThenStartRound", 4);
 		}
 	}
 
-	private void WaitThenStartRound(int round)
+	private void WaitThenStartRound()
 	{
-		new Thread (() => {
-			Thread.Sleep(TimeToShowInitGameScreen);
-			_networkControl.BeginRound(1);
-		}).Start ();
+		_networkControl.broadcastBeginRound (1);
 	}
 	
 	private void OnRoundStarted(int round)
@@ -223,19 +232,19 @@ public class MainController : MonoBehaviour
 	
 	private void OnPlayerJoined(int id, String name, bool isAI)
 	{
-		Debug.Log ("GUI:OnPlayerJoined");
+		Debug.Log ("GUI:OnPlayerJoined: " + id + " " + name);
 		_game.setPlayer (id, name, isAI);
 	}
 	
 	private void OnPlayerLeft(int id)
 	{
-		Debug.Log ("GUI:OnPlayerLeft");
+		Debug.Log ("GUI:OnPlayerLeft" + " " + id);
 		_game.removePlayer (id);
 	}
 	
 	private void OnPlayerKilled(int id)
 	{
-		Debug.Log ("GUI:OnPlayerKilled");
+		Debug.Log ("GUI:OnPlayerKilled" + " " + id);
 		_game.OnGlobalKill (id);
 	}
 
