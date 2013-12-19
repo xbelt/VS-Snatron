@@ -8,6 +8,7 @@ public class MainController : MonoBehaviour
 {
 	public UserInterface _gui;
 	public NetworkInterface _networkControl;
+	private Game _game;
 
     // ReSharper disable once UnusedMember.Local
     private void Start()
@@ -35,7 +36,9 @@ public class MainController : MonoBehaviour
 	
 	private void initGame()
 	{
+		_game = Game.Instance;
 
+		// TODO register events for game and round control
 	}
 
 	private void initNetworkControl()
@@ -74,7 +77,7 @@ public class MainController : MonoBehaviour
 	{
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
-		Game.Instance.numberOfAIPlayers = 0;
+		_game.numberOfAIPlayers = 0;
 		int rounds = 5; // TODO take from GameConfig
 		_networkControl.broadCastStartGame (rounds);
 		//GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
@@ -84,8 +87,8 @@ public class MainController : MonoBehaviour
 	private void StartQuickGame()
 	{
 		print ("GUI:StartQuickGame()");
-		Game.Instance.setPlayer(0, _gui.PlayerName, false);
-		Game.Instance.numberOfAIPlayers = 4;
+		_game.setPlayer(0, _gui.PlayerName, false);
+		_game.numberOfAIPlayers = 4;
 		_networkControl.InitServer (0);
 		_networkControl.broadCastStartGame (1);
 	}
@@ -94,7 +97,7 @@ public class MainController : MonoBehaviour
 	private void LeaveGame()
 	{
 		_networkControl.Disconnect ();
-		Game.Instance.StopGame ();
+		_game.StopGame ();
 		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
 	}
 	
@@ -118,14 +121,14 @@ public class MainController : MonoBehaviour
 	private void OnServerStarted()
 	{
 		Debug.Log ("GUI:OnServerStarted");
-		Game.Instance.setPlayer(0, NetworkInterface.PlayerName, false);
-		_gui.ShowLobby (() => {return Game.Instance.Players; });
+		_game.setPlayer(0, NetworkInterface.PlayerName, false);
+		_gui.ShowLobby (() => {return _game.Players; });
 	}
 
 	private void OnConnectedToRemoteServer(int id)
 	{
 		Debug.Log ("GUI:OnConnectedToRemoteServer");
-		_gui.ShowLobby (() => {return Game.Instance.Players; });
+		_gui.ShowLobby (() => {return _game.Players; });
 		// TODO ?
 		// id:That's us!
 		// needed only when game starts for now
@@ -134,7 +137,7 @@ public class MainController : MonoBehaviour
 	private void OnConnectionError(String message)
 	{
 		Debug.Log ("GUI:OnConnectionError: " + message);
-		Game.Instance.NewGame ();
+		_game.NewGame ();
 		_networkControl.Disconnect ();
 		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
 		// TODO show some error message?
@@ -146,7 +149,7 @@ public class MainController : MonoBehaviour
 	{
 		print ("GUI:OnGameStarted()");
 		_gui.ShowGame ();
-		Game.Instance.StartGame (_networkControl.PlayerID, rounds);
+		_game.StartGame (_networkControl.PlayerID, rounds);
 	}
 	
 	private void OnGameEnded()
@@ -162,31 +165,31 @@ public class MainController : MonoBehaviour
 	private void OnRoundStarted(int round) // TODO probably not necessary
 	{
 		Debug.Log ("GUI:OnRoundStarted");
-		//Game.Instance.NewRound ();
+		//_game.NewRound ();
 	}
 	
 	private void OnRoundEnded(int round) // TODO probably not necessary
 	{
 		Debug.Log ("GUI:OnRoundEnded");
-		//Game.Instance.NewRound ();
+		//_game.NewRound ();
 	}
 	
 	private void OnPlayerJoined(int id, String name)
 	{
 		Debug.Log ("GUI:OnPlayerJoined");
-		Game.Instance.setPlayer (id, name, false);
+		_game.setPlayer (id, name, false);
 	}
 	
 	private void OnPlayerLeft(int id)
 	{
 		Debug.Log ("GUI:OnPlayerLeft");
-		Game.Instance.removePlayer (id);
+		_game.removePlayer (id);
 	}
 	
 	private void OnPlayerKilled(int id)
 	{
 		Debug.Log ("GUI:OnPlayerKilled");
-		Game.Instance.playerDied (id);
+		_game.playerDied (id);
 	}
 
 	#endregion
