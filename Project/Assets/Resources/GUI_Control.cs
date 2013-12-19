@@ -80,7 +80,7 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
-		Game.Instance.numberOfKIPlayers = 0;
+		Game.Instance.numberOfAIPlayers = 0;
 		int rounds = 5; // TODO take from GameConfig
 		_networkControl.broadCastStartGame (rounds);
 		//GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
@@ -91,7 +91,7 @@ public class GUI_Control : MonoBehaviour
 	{
 		print ("GUI:StartQuickGame()");
 		Game.Instance.setPlayer(0, _gui.PlayerName, false);
-		Game.Instance.numberOfKIPlayers = 4;
+		Game.Instance.numberOfAIPlayers = 4;
 		_networkControl.InitServer (0);
 		_networkControl.broadCastStartGame (1);
 	}
