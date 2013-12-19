@@ -300,56 +300,53 @@ Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the 
  % use tabular for content to get columns/rows
  % parbox to limit width of the listing
  \node[state,draw=none] (RPC) 
- {RPC};
+ {\small{RPC}};
 
  % Next node: NetworkControl
  \node[state,       % layout (defined above)
- node distance=4cm,     % distance to RPC
- text width=3.2cm,        % max text width
+ node distance=2.3cm,     % distance to RPC
+ text width=2.8cm,        % max text width
  right of=RPC](NC)       % Position is to the right of RPC (NC)
  {%                     % posistion relative to the center of the 'box'
  \begin{tabular}{l}     % content
-  \textbf{NetworkControl}\\
-  \parbox{2.8cm}{[RPC]\texttt{startGame()}}
+  \small{\textbf{NetworkControl}}\\
+  \parbox{2.6cm}{\small{[RPC]\texttt{startGame()}}}
  \end{tabular}
  };
 
  % STATE MainController
  \node[state,
  right of=NC,
- node distance=5cm,
- text width=3cm] (MC) 
+ node distance=4cm,
+ text width=2.8cm] (MC) 
  {%
  \begin{tabular}{l}
-  \textbf{MainController}\\
-  \parbox{2.8cm}{\texttt{onGameStarted()}}
+  \small{\textbf{MainController}}\\
+  \parbox{2.6cm}{\small{\texttt{onGameStarted()}}}
  \end{tabular}
  };
 
  % STATE Game
  \node[state,
- right of=MC,
- node distance=5cm,text width=3cm] (Game) 
+ below of=MC,
+ node distance=2cm,text width=2.8cm] (Game) 
  {%
  \begin{tabular}{l}
-  \textbf{Game}\\
-  \parbox{2.8cm}{\texttt{startNewGame()}}
+  \small{\textbf{Game}}\\
+  \parbox{2.6cm}{\small{\texttt{startNewGame()}}}
  \end{tabular}
  };
 
  % draw the paths and and print some Text below/above the graph
  \path (RPC) edge node {} (NC)
-       (NC)  edge node [anchor=south]{event}  (MC)
-       (MC)  edge node[anchor=south] {call} (Game)
+       (NC)  edge node [anchor=south]{\scriptsize{event}}  (MC)
+       (MC)  edge node[anchor=east] {\scriptsize{call}} (Game)
  ;
 \end{tikzpicture}
 }
-\caption{Client side}
 
 \hfill
 \subfigure[server]{
-
-
 
 \begin{tikzpicture}[->,>=stealth']
 
@@ -358,30 +355,30 @@ Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the 
  % use tabular for content to get columns/rows
  % parbox to limit width of the listing
  \node[state,draw=none] (GUI) 
- {GUI};
+ {\small{GUI}};
 
  % Next node: MainController
  \node[state,       % layout (defined above)
- node distance=4cm,     % distance to RPC
- text width=3.5cm,        % max text width
+ node distance=2.3cm,     % distance to RPC
+ text width=2.7cm,        % max text width
  right of=GUI](MC)       % Position is to the right of RPC (NC)
  {%                     % posistion relative to the center of the 'box'
  \begin{tabular}{l}     % content
-  \textbf{MainController}\\
-  \parbox{2.8cm}{\texttt{startNetwokGame()}}
+  \small{\textbf{MainController}}\\
+  \parbox{2.5cm}{\small{\texttt{startNetwokGame()}}}
  \end{tabular}
  };
 
  % STATE NetworkControl
  \node[state,
  right of=MC,
- node distance=5cm,
- text width=4cm] (NC) 
+ node distance=3.6cm,
+ text width=3.1cm] (NC) 
  {%
  \begin{tabular}{l}
-  \textbf{NetworkControl}\\
-  \parbox{3.6cm}{\texttt{broadcastNewGame()}
-  				[RPC]\texttt{startNewGame()}
+  \small{\textbf{NetworkControl}}\\
+  \parbox{2.9cm}{\small{\texttt{broadcastNewGame()}}
+  				\small{[RPC]\texttt{startNewGame()}}
  	}
  \end{tabular}
  };
@@ -389,8 +386,8 @@ Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the 
  % STATE SameAsClient
  \node[state,draw=none,
  below of=NC,
- node distance=2cm,
- text width=2.5cm] (SAC) 
+ node distance=1.3cm,
+ text width=2.2cm] (SAC) 
  {%
  \begin{tabular}{l}
   \parbox{2.5cm}{Same as client}
@@ -399,14 +396,13 @@ Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the 
 
  % draw the paths and and print some Text below/above the graph
  \path (RPC) edge node {} (MC)
-       (MC)  edge node [anchor=south]{call}  (NC)
-       (NC)  edge [loop right, min distance=10mm,in=-7,out=7,looseness=5] node[anchor=west] {RPC} (NC)
+       (MC)  edge node [anchor=south]{\scriptsize{call}}  (NC)
+       (NC)  edge [loop right, min distance=10mm,in=-7,out=7,looseness=1] node[anchor=east] {\small{RPC}} (NC)
        (NC) edge [bend left=40] (SAC.east)
  ;
 \end{tikzpicture}
 }
-\caption{Server side}
-
+\caption{Control flow diagrams}
 \end{figure}
 
 

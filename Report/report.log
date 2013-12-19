@@ -1,20 +1,23 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.1)  19 DEC 2013 11:17
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.10.11)  19 DEC 2013 12:42
 entering extended mode
 **report.tex
-(C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.tex
+
+("C:\Users\Maximova\Documents\ETH\Verteilte Systeme\final_project\VS-Snatron\Re
+port\report.tex"
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
 croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
 ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
  lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
 ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
 an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
 ishmax, welsh, loaded.
-(C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.cls
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\epsfig.sty"
+
+("C:\Users\Maximova\Documents\ETH\Verteilte Systeme\final_project\VS-Snatron\Re
+port\report.cls" ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\epsfig.sty"
 Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
@@ -260,7 +263,7 @@ Package: enumitem 2011/09/28 v3.5.2 Customized lists
 \enit@inbox=\box30
 \enitdp@description=\count115
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\url\url.sty"
 \Urlmuskip=\muskip11
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
@@ -971,7 +974,8 @@ File: listings.cfg 2013/08/26 1.5b listings configuration
 ))
 Package: listings 2013/08/26 1.5b (Carsten Heinz)
 
-(C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.aux)
+("C:\Users\Maximova\Documents\ETH\Verteilte Systeme\final_project\VS-Snatron\Re
+port\report.aux")
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 172.
 LaTeX Font Info:    ... okay on input line 172.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 172.
@@ -987,8 +991,7 @@ LaTeX Font Info:    ... okay on input line 172.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 172.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 172.
 
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 172.
@@ -1064,7 +1067,8 @@ LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
- <C:/Users/Alexander/Documents/GitHub/VS-Snatron/Report/tron_four.png>]
+ <C:/Users/Maximova/Documents/ETH/Verteilte Systeme/final_project/VS-Snatron/Re
+port/tron_four.png>]
 Overfull \hbox (15.95398pt too wide) in paragraph at lines 246--250
 \T1/aer/m/n/9 strac-tion of a 3D space that con-tains "GameOb-jects". "GameOb-
  []
@@ -1079,74 +1083,88 @@ LaTeX Font Info:    Try loading font information for T1+aett on input line 346.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
-Overfull \hbox (5.10954pt too wide) in paragraph at lines 346--346
+Overfull \hbox (5.10953pt too wide) in paragraph at lines 346--346
  [][][][][] 
  []
 
 
-Overfull \hbox (5.10954pt too wide) in paragraph at lines 346--346
+Overfull \hbox (5.10953pt too wide) in paragraph at lines 346--346
  [][][][][] 
  []
 
 
-Overfull \hbox (221.65984pt too wide) in paragraph at lines 346--347
- [][] 
- []
-
-
-Overfull \hbox (0.50296pt too wide) in paragraph at lines 407--407
-[]\T1/aett/m/n/9 startNetwokGame() 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 407--407
-[]\T1/aett/m/n/9 broadcastNewGame()
- []
-
-
-Overfull \hbox (10.8pt too wide) in paragraph at lines 407--407
+Overfull \hbox (5.10953pt too wide) in paragraph at lines 346--346
  [][][][][] 
  []
 
 
-Overfull \hbox (139.83496pt too wide) in paragraph at lines 349--408
+Overfull \hbox (1.08258pt too wide) in paragraph at lines 404--404
+[]\T1/aett/m/n/8 startNetwokGame() 
+ []
+
+
+Overfull \hbox (5.10954pt too wide) in paragraph at lines 404--404
+ [][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 404--404
+[]\T1/aett/m/n/8 broadcastNewGame()
+ []
+
+
+Overfull \hbox (5.10912pt too wide) in paragraph at lines 404--404
+ [][][][][] 
+ []
+
+
+Overfull \hbox (19.33592pt too wide) in paragraph at lines 404--404
+ [][][][][] 
+ []
+
+
+Overfull \hbox (19.20987pt too wide) in paragraph at lines 348--405
  [] 
  []
 
 
-Overfull \hbox (1.40186pt too wide) in paragraph at lines 414--414
+Overfull \hbox (1.40186pt too wide) in paragraph at lines 410--410
 []\secfnt COLLISONS/POWERUPS/PREDICTION 
  []
 
-[2] (C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.bbl) [3]
-(C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.aux)
+[2]
+("C:\Users\Maximova\Documents\ETH\Verteilte Systeme\final_project\VS-Snatron\Re
+port\report.bbl") [3]
+("C:\Users\Maximova\Documents\ETH\Verteilte Systeme\final_project\VS-Snatron\Re
+port\report.aux")
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 14595 strings out of 493921
- 264345 string characters out of 3147270
- 328324 words of memory out of 3000000
- 17563 multiletter control sequences out of 15000+200000
- 48140 words of font info for 67 fonts, out of 3000000 for 9000
+ 14616 strings out of 493921
+ 264782 string characters out of 3147272
+ 328366 words of memory out of 3000000
+ 17567 multiletter control sequences out of 15000+200000
+ 56994 words of font info for 84 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 49i,16n,64p,502b,917s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\Alexander\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi
-600\tcrm0900.pk>{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C
-:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Program
- Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Program Files/MiK
-TeX 2.9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/f
-onts/type1/public/amsfonts/cm/cmti9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
-1/public/amsfonts/cm/cmtt9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/hel
-vetic/uhvb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr8a.p
-fb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb>
-Output written on report.pdf (3 pages, 436030 bytes).
+ 49i,17n,64p,502b,923s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\Maximova\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi6
+00\tcrm0900.pk>{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:
+/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Program Files/MiK
+TeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.9/fo
+nts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmr9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmsy9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmti9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt8.pfb
+><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt9.pfb><C:/Prog
+ram Files/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/urw/times/utmb8a.pfb>
+Output written on report.pdf (3 pages, 467889 bytes).
 PDF statistics:
- 54 PDF objects out of 1000 (max. 8388607)
+ 70 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 
