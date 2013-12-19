@@ -15,8 +15,10 @@ public class NetworkInterface : MonoBehaviour {
 	private readonly Dictionary<string, int> _ip2playerId = new Dictionary<string, int> ();
 
 	// Server Events
-	public delegate void ServerStartedEvent(); // OK
-	public ServerStartedEvent OnServerStarted;
+	public delegate void ServerEvent(); // OK
+	public ServerEvent OnServerStarted;
+	public ServerEvent OnGameAborted;
+
 	public delegate void MessageEvent(string msg); // ok
 	public MessageEvent OnConnectionError;
 
@@ -114,16 +116,16 @@ public class NetworkInterface : MonoBehaviour {
 
 	#endregion
 
-	public void broadCastStartGame(int rounds)
+	public void broadCastBeginGame(int rounds)
 	{
 		print ("NET:broadCastStartGame()");
-		GetComponent<NetworkView>().RPC("StartGame", RPCMode.AllBuffered, rounds);
+		GetComponent<NetworkView>().RPC("BeginGame", RPCMode.AllBuffered, rounds);
 	}
 
     [RPC]
-    public void StartGame(int rounds)
+    public void BeginGame(int rounds)
 	{
-		print ("RPC:StartGame()");
+		print ("RPC:BeginGame()");
 		StopAnnouncingServer ();
 		StopSearching();
         if (OnGameStarted != null)
@@ -133,29 +135,45 @@ public class NetworkInterface : MonoBehaviour {
 	public void broadCastStopGame()
 	{
 		Debug.Log ("NET:broadCastStopGame()");
-		GetComponent<NetworkView>().RPC("StopGame", RPCMode.AllBuffered);
+		GetComponent<NetworkView>().RPC("EndGame", RPCMode.AllBuffered);
 	}
 
 	[RPC]
-	public void StopGame() 
+	public void EndGame() 
 	{
-		Debug.Log ("RPC:StopGame()");
+		Debug.Log ("RPC:EndGame()");
 		Disconnect ();
 		InitNetworkInterface ();
 		if (OnGameEnded != null)
 			OnGameEnded ();
 	}
 	
-	public void broadCastStartRound(int round)
+	public void broadcastAbortGame(int round)
 	{
-		Debug.Log ("NET:broadCastStartRound()");
-		GetComponent<NetworkView>().RPC("StartRound", RPCMode.AllBuffered, round);
+		Debug.Log ("NET:broadcastAbortGame()");
+		GetComponent<NetworkView>().RPC("AbortGame", RPCMode.AllBuffered, round);
 	}
 	
 	[RPC]
-	public void StartRound(int round)
+	public void AbortGame() 
 	{
-		Debug.Log ("RPC:StartRound()");
+		Debug.Log ("RPC:AbortGame()");
+		Disconnect ();
+		InitNetworkInterface ();
+		if (OnGameAborted != null)
+			OnGameAborted ();
+	}
+	
+	public void broadcastBeginRound(int round)
+	{
+		Debug.Log ("NET:broadcastBeginRound()");
+		GetComponent<NetworkView>().RPC("BeginRound", RPCMode.AllBuffered, round);
+	}
+	
+	[RPC]
+	public void BeginRound(int round)
+	{
+		Debug.Log ("RPC:BeginRound()");
 		if (OnRoundStarted != null)
 			OnRoundStarted (round);
 	}
@@ -224,7 +242,7 @@ public class NetworkInterface : MonoBehaviour {
 	
 	public void broadCastPlayerJoined(string playerName, int playerId, bool isAI)
 	{
-		Debug.Log("NET: broadCastPlayerJoined()"); 
+		Debug.Log("NET: broadCastPlayerJoined()");
 		GetComponent<NetworkView>().RPC("PlayerJoined", RPCMode.AllBuffered, playerName, playerId, isAI);
 	}
 
