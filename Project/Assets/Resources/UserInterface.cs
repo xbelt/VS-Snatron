@@ -42,7 +42,7 @@ public class UserInterface : MonoBehaviour
 	public string PlayerName { get { return _playerName; } }
 	public string ServerIp { get { return _serverIP; } }
 	
-	private enum State { Uninitialized, StartScreen, Lobby, Game, GamePaused }
+	private enum State { Uninitialized, StartScreen, Lobby, InitGame, Game, BetweenRounds, Ranking, GamePaused }
 	private State _state = State.Uninitialized;
 
 	public void ShowStartScreen(GetServerList serverSource) {
@@ -57,10 +57,23 @@ public class UserInterface : MonoBehaviour
 		_playerSource = playerSource;
 		_state = State.Lobby;
 	}
+	public void ShowInitGame() {
+		Debug.Log ("UI:ShowInitGame");
+		_state = State.InitGame;
+	}
 	public void ShowGame() {
 		Debug.Log ("UI:Show Game");
 		HideMenuBackground ();
 		_state = State.Game;
+	}
+	public void ShowBetweenRounds(){
+		Debug.Log ("UI:Show Between Rounds");
+		_state = State.BetweenRounds;
+	}
+	public void ShowRanking(GetPlayerList sortedPlayerSource){
+		Debug.Log ("UI:Show Ranking");
+		_playerSource = sortedPlayerSource;
+		_state = State.Ranking;
 	}
 	public void ShowGamePaused() {
 		Debug.Log ("UI:Show GamePaused");
@@ -70,7 +83,6 @@ public class UserInterface : MonoBehaviour
 	private void Start()
 	{
 		ReadScreenDimensionsAndroid();
-		Debug.Log ("UI:Screen Size : " + HeightPixels + " / " + WidthPixels);
 		SetFontSize(HeightPixels / 25);
 		SetTextColor(Color.white);
 	}
@@ -80,11 +92,15 @@ public class UserInterface : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			switch(_state){
-			case State.StartScreen: OnCloseAppRequest(); break;
-			case State.Game:
-			case State.Lobby:
+			case State.StartScreen: 	OnCloseAppRequest(); 	break;
+			case State.Game: 			ShowGamePaused(); 		break;
+			case State.GamePaused: 		ShowGame(); 			break;
+			case State.Ranking: 		OnLeaveGameRequest(); 	break;
+			case State.Lobby: 			OnLeaveGameRequest(); 	break;
+			case State.InitGame:
 			case State.Uninitialized:
-			default: OnLeaveGameRequest(); break;
+			case State.BetweenRounds:
+			default: 											break;
 			}
 		}
 	}
@@ -93,21 +109,21 @@ public class UserInterface : MonoBehaviour
 	private void OnGUI()
 	{
 		switch (_state) {
-		case State.StartScreen:
-			HandleStartScreenGUI ();
-			break;
-		case State.Lobby:
-			HandleWaitingScreen ();
-			break;
-		case State.Game:
-			HandleGame ();
-			break;
-		case State.GamePaused:
-			HandleGamePaused ();
-			break;
-		case State.Uninitialized: // TODO loading...
-			break;
+		case State.StartScreen: 	HandleStartScreenGUI ();break;
+		case State.Lobby:			HandleWaitingScreen ();	break;
+		case State.InitGame:		HandleInitGame();		break;
+		case State.Game:			HandleGame ();			break;
+		case State.BetweenRounds:	HandleBetweenRounds();	break;
+		case State.Ranking:			HandleRanking();		break;
+		case State.GamePaused:		HandleGamePaused ();	break;
+		case State.Uninitialized: 	HandleUninitialized();	break;
+		default:											break;
 		}
+	}
+
+	public void HandleUninitialized()
+	{
+		// TODO show loading ...
 	}
 
 	public void HandleStartScreenGUI()
@@ -133,6 +149,11 @@ public class UserInterface : MonoBehaviour
 		
 	}
 
+	public void HandleInitGame()
+	{
+		// TODO
+	}
+
 	public void HandleGame() {
 		bool isAlive = Game.Instance.isAlive (Game.Instance.PlayerID);
 		bool hasWon = Game.Instance.hasWon (Game.Instance.PlayerID);
@@ -147,6 +168,16 @@ public class UserInterface : MonoBehaviour
 			DrawYouWinMessage ();
 			DrawBackButton ();
 		}
+	}
+
+	public void HandleBetweenRounds()
+	{
+		// TODO
+	}
+	
+	public void HandleRanking()
+	{
+		// TODO
 	}
 
 	public void HandleGamePaused()
