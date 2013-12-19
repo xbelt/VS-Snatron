@@ -92,19 +92,106 @@ public class Game
 		NewGame ();
 	}
 
-	#region game initialization
+	private void EndRound()
+	{
+		// TODO something else?
+		clearGameObjects ();
+		
+		if (isGameOver ()) {
+			EndGame ();
+		}
+	}
+	
+	private void EndGame()
+	{
+		StopGame ();
+	}
+	// Reset the game instance
+	public void NewGame()
+	{
+		_nOfActivePlayers = 0;
+		_nOfLivingPlayers = 0;
+		_roundsToPlay = GAME_LENGTH;
+		_gameStarted = false;
+		
+		for (int i = 0; i < _level.MaxPlayers; i++)
+		{
+			_players[i] = null;
+		}
+	}
+	
+	public void NewRound()
+	{
+		_roundsToPlay--;
+		_nOfLivingPlayers = _nOfActivePlayers;
+		for (int i = 0; i < _level.MaxPlayers; i++)
+		{
+			if (_players[i] == null)
+				continue;
+			_players[i].score += _nOfActivePlayers - _players[i].rank;
+			_players[i].startRound();
+		}
+	}
 
 	private void OnLocalKill(int playerId)
 	{
 		_players [playerId].isAlive = false;
 		_spawner.Kill (playerId);
 	}
-
+	
 	private void OnRemoteKill(int playerId)
 	{
 		// TODO necessary? (not yet called)
 		_players [playerId].isAlive = false;
 	}
+	
+	public void playerDied(int playerId)
+	{
+		PlayerModel player = _players [playerId];
+		if (player == null)
+			return;
+		player.rank = _nOfLivingPlayers;
+		player.isAlive = false;
+		_nOfLivingPlayers--;
+		
+		if (isRoundOver ()) {
+			EndRound();
+		}
+	}
+
+	public bool isRoundOver()
+	{
+		if (!_gameStarted)
+			return false;
+		if (_nOfActivePlayers > 1)
+			return _nOfLivingPlayers <= 1;
+		if (numberOfAIPlayers > 0) {
+			return numberOfLivingKIPlayers <= 0;
+		}
+		return isAlive (PlayerID);
+	}
+	
+	public bool isGameOver()
+	{
+		if (!_gameStarted)
+			return false;
+		return isRoundOver () && RoundsToPlay == 0;
+	}
+	
+	// Does the player have the highest score?
+	// Condition: for this to become true, the game must be over
+	// => nobody wins until the end of the game
+	public bool hasWon(int playerId) {
+		return NofLivingPlayers <= 1 && numberOfLivingKIPlayers <= 0;
+	}
+	
+	// Does he have the highest score?
+	public bool HasLocalPlayerWon()
+	{
+		return hasWon (PlayerID);
+	}
+
+	#region game initialization
 
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName, bool isAI) {
@@ -138,94 +225,6 @@ public class Game
 	#endregion
 
 	#region game and round logic
-
-	// Reset the game instance
-	public void NewGame()
-	{
-		_nOfActivePlayers = 0;
-		_nOfLivingPlayers = 0;
-		_roundsToPlay = GAME_LENGTH;
-		_gameStarted = false;
-		
-		for (int i = 0; i < _level.MaxPlayers; i++)
-		{
-			_players[i] = null;
-		}
-	}
-	
-	public void NewRound()
-	{
-		_roundsToPlay--;
-		_nOfLivingPlayers = _nOfActivePlayers;
-		for (int i = 0; i < _level.MaxPlayers; i++)
-		{
-			if (_players[i] == null)
-				continue;
-			_players[i].score += _nOfActivePlayers - _players[i].rank;
-			_players[i].startRound();
-		}
-	}
-
-	public void playerDied(int playerId)
-	{
-		PlayerModel player = _players [playerId];
-		if (player == null)
-			return;
-		player.rank = _nOfLivingPlayers;
-		player.isAlive = false;
-		_nOfLivingPlayers--;
-		
-		if (isRoundOver ()) {
-			EndRound();
-		}
-	}
-
-	private void EndRound()
-	{
-		// TODO something else?
-		clearGameObjects ();
-
-		if (isGameOver ()) {
-			EndGame ();
-		}
-	}
-	
-	private void EndGame()
-	{
-		StopGame ();
-	}
-
-	public bool isRoundOver()
-	{
-		if (!_gameStarted)
-			return false;
-		if (_nOfActivePlayers > 1)
-			return _nOfLivingPlayers <= 1;
-	    if (numberOfAIPlayers > 0) {
-	        return numberOfLivingKIPlayers <= 0;
-	    }
-	    return isAlive (PlayerID);
-	}
-	
-	public bool isGameOver()
-	{
-		if (!_gameStarted)
-			return false;
-		return isRoundOver () && RoundsToPlay == 0;
-	}
-	
-	// Does the player have the highest score?
-	// Condition: for this to become true, the game must be over
-	// => nobody wins until the end of the game
-	public bool hasWon(int playerId) {
-	    return NofLivingPlayers <= 1 && numberOfLivingKIPlayers <= 0;
-	}
-	
-	// Does he have the highest score?
-	public bool HasLocalPlayerWon()
-	{
-		return hasWon (PlayerID);
-	}
 
 	#endregion
 
