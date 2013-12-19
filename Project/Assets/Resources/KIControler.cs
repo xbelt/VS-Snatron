@@ -76,14 +76,6 @@ namespace Assets.Resources
             return false;
         }
 
-        protected override void DeadlyCollide() {
-            _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(transform.position);
-            Network.Destroy(gameObject);
-            Game.Instance.KillKI(KIId);
-			if (OnDeadlyCollision != null)
-				OnDeadlyCollision (playerId);
-        }
-
         protected override void NewWall() {
             _latestWallGameObject = ((GameObject)Network.Instantiate(UnityEngine.Resources.Load("Wall" + KIId), CurrentWallEnd, Quaternion.identity, 0)).transform;
             _latestWallGameObject.GetComponent<WallBehaviour>().start = CurrentWallEnd;

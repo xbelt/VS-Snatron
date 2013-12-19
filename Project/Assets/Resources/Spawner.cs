@@ -67,7 +67,7 @@ public class Spawner
 			OnSpawned (_localPlayerId);
 	}
 	
-	public void SpawnAI(int playerId) {
+	public void SpawnAI(int playerId, KillEvent onKilled) {
 		_playerPrefab = Resources.Load<Transform>("Player" + playerId);
 		Vector3 location;
 		Quaternion orientation;
@@ -78,6 +78,7 @@ public class Spawner
 		player.gameObject.AddComponent<KIControler>();
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
 		ai.KIId = playerId; // TODO instead register event as normal and assign it the next free id
+		ai.OnDeadlyCollision += (int id) => onKilled (id);
 		ai.playerId = playerId;
 		spawnedPlayers.Add(playerId, player.gameObject);
 
