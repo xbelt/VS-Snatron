@@ -72,7 +72,7 @@ public class Game
 			for (int i = 0; i < numberOfKIPlayers; i++) {
 				int id = getFirstFreePlayerId();
 				setPlayer(id, "AI " + (i+1), true);
-				_spawner.SpawnAI(id);
+				_spawner.SpawnAI(id, OnLocalKill);
 			}
 		}
 		
