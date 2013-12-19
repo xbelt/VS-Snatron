@@ -7,7 +7,6 @@ namespace Assets.Resources
     {
         private System.Random random = new Random();
         private bool lastFrameTurned = false;
-        public int KIId;
         void Start() {
             transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
             if (GetComponent<NetworkView>().isMine)
@@ -75,13 +74,5 @@ namespace Assets.Resources
             }
             return false;
         }
-
-        protected override void NewWall() {
-            _latestWallGameObject = ((GameObject)Network.Instantiate(UnityEngine.Resources.Load("Wall" + KIId), CurrentWallEnd, Quaternion.identity, 0)).transform;
-            _latestWallGameObject.GetComponent<WallBehaviour>().start = CurrentWallEnd;
-            _latestWallGameObject.GetComponent<WallBehaviour>().end = CurrentWallEnd;
-            _latestWallGameObject.GetComponent<WallBehaviour>().updateWall(CurrentWallEnd);
-        }
-
     }
 }

@@ -24,9 +24,6 @@ public class Drive : MonoBehaviour {
 	protected int WidthPixels;
 
 	public bool isIndestructible;
-    
-    protected bool _showPauseMenu;
-    protected GUIStyle buttonStyle = new GUIStyle();
 
     Vector3 Offset {
         get {
@@ -53,11 +50,6 @@ public class Drive : MonoBehaviour {
 // ReSharper disable once UnusedMember.Local
 	void Start () {
         transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
-	    buttonStyle.normal.background = Resources.Load<Texture2D>("TextBox");
-	    buttonStyle.normal.textColor = Color.white;
-	    var size = HeightPixels/50;
-        buttonStyle.fontSize = size < 12 ? 12 : size;
-        buttonStyle.alignment = TextAnchor.MiddleCenter;
 
 		if (GetComponent<NetworkView>().isMine) {
 			NewWall();
@@ -168,8 +160,8 @@ public class Drive : MonoBehaviour {
 	}
 // ReSharper restore UnusedMember.Local
 
-    protected virtual void NewWall() {
-	    _latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+ Game.Instance.PlayerID), CurrentWallEnd, Quaternion.identity, 0)).transform;
+    protected virtual void NewWall() { 
+		_latestWallGameObject = ((GameObject)Network.Instantiate(Resources.Load("Wall"+ playerId), CurrentWallEnd, Quaternion.identity, 0)).transform;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().start = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().end = CurrentWallEnd;
 		_latestWallGameObject.GetComponent<WallBehaviour> ().updateWall (CurrentWallEnd);

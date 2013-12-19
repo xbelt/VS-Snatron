@@ -77,7 +77,6 @@ public class Spawner
 		MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
 		player.gameObject.AddComponent<KIControler>();
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
-		ai.KIId = playerId; // TODO instead register event as normal and assign it the next free id
 		ai.OnDeadlyCollision += (int id) => onKilled (id);
 		ai.playerId = playerId;
 		spawnedPlayers.Add(playerId, player.gameObject);
