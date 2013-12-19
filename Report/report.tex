@@ -174,43 +174,42 @@
 \maketitle
 
 \begin{abstract}
-We present a cross-platform game that allows up to eight players (who can be using different platforms)to play together via local network, 
-or alternatively allows singleplayer matches against AI opponents.
->> The game is inspired by the "light cycle" scene from the 1982 film "Tron". <<
->> The game is implemented using the Unity Engine, which is a high-level framework for game development << 
-The game supports Windows x86/x86\_64 and Android with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity engine.
+We present a cross-platform game called Tronium that allows up to eight players (who can be using different platforms) to play together via local network, 
+or alternatively allows single-player matches against AI opponents. 
+
+Tronium is inspired by the "light cycle" scene from the 1982 film "Tron" and is implemented using the  Unity\textregistered   \ Engine, which is a high-level framework for game development.
+The game supports Windows on x86/x86\_64 and Android\texttrademark \ 
+with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity engine.
 
 \end{abstract}
 
-\section{Introduction + Prior Work}
+\section{Introduction}
 
-We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron. 
-In section <<2 we will look at Armagetron Advanced and other games inspired by "Tron" <<and android ports>>.
-In section <<3, we will explain the gameplay and game mechanics that we decided to implement for our game, and in  section <<4 we will introduce Unity with a focus on its networking concepts. In section <<5 we will show how we use these concepts in our game in order to ensure <<what??>>.
-In section <<6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are "long" in comparison to the high in-game speeds.
-In section <<7 we introduce the AI that we use in the singleplayer mode as well as our own extension to the game,  randomly roaming obstacles.
-In the last section, we will give our conclusions on our game working both with Unity as well as with a larger group.
+We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from "Tron". 
+In Section 2 we will look at Armagetron Advanced and other games inspired by Tron, as well as similar games available on mobile platforms.
+In Section 3, we will explain the gameplay and game mechanics that we decided to implement with Tronium, and in  Section 4 we will introduce Unity with a focus on its networking concepts. In Section 5 we will show how we use these concepts in our game. 
+In Section 6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are "long" in comparison to the high in-game speeds.
+In Section 7 we introduce the AI that we use in the single-player mode as well as our own extension to the game,  randomly roaming obstacles.
+In the last section, we will give our conclusions on our game and working both with Unity as well as with a larger group.
 
  
-\section{Existing "Tron"-like games}
+\section{Existing games}
 
-Armagetron Advanced is one of two open source projects that try to recreate the light cycle scene, the other being GLTron by Andreas Umbach.
+Armagetron Advanced\cite{AA} is one of two open source projects that try to recreate the light cycle scene, the other being GLTron\cite{GLT} by Andreas Umbach\cite{Umbach}.
 GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original visually and offers a wide variety of gamemodes that go far beyond what is seen in the film as well as heavy customization, with parameters like base speed, arena size, number of players, etc.
-We were aiming more to recreate the enjoyment of playing Armagetron Advanced rather than to be faithful to the original scene.
-Since the scope of this project was very limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
-but rather focused on implementing the "core" game mode with fixed parameters. 
-Our game is visually very dissimilar to both the original scene as well as both games. Instead, we were inspired by the aesthetics from the 2010 film "Tron Legacy" which also features a light cycle scene, which does not, however, in terms of "game mechanics", bear much resemblance to the original. >>un-nest last sntc<<
+We were aiming more at recreating the enjoyment of playing Armagetron Advanced rather than being faithful to the original scene.
+Since the scope of this project was somewhat limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
+but rather focused on implementing the 'core' game mode with fixed parameters. Visually, we were inspired by the aesthetics of the 2010 film "Tron Legacy" rather than by the original film or the existing games
 
-\subsection{Existing mobile solutions}
+Armagetron Advanced offers local (split-screen), local network and internet multiplayer.
 Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port.
-Armagetron Advanced offers local (split-screen), local network and internet multiplayer for up to >>????<< players. 
- There exists an android game called Androgetron developed by a member of the Armagetron Advanced community, however this is a much simplified clone  which features only split-screen multiplayer. On the official Google Play Store >>TM!!<< there are a few more games >>list??<< that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
+ There exists an android game called Androgetron\cite{Andro} developed by a member of the Armagetron Advanced community,however this is a much simplified clone without networked multiplayer.
+  On the official Google Play\texttrademark Store there are a few more games\cite{GP1}\cite{GP2}\cite{GP3} that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
 
 Split screen is a viable option on a full size laptop or desktop monitor, however it feels very cramped even on larger tablets and is essentially unusable on smartphones.
 Our goal was therefore to implement a true (networked) multiplayer experience on mobile devices.
 Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
->>Mention OpenGL being waaay too complex?<<
-We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in section 3), to implement the following game mechanics:
+We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in Section 4) to implement the following game mechanics:
 
 \begin{figure}
  	 	    \includegraphics[height=6cm]{tron_four}
@@ -218,35 +217,32 @@ We decided to use Unity, a high level game engine and Integrated Development Eng
  	 	\caption{The main game... << weird wall >> }
  \end{figure}
  
-\section{Gameplay and game mechanics }
-We simplified AA to a single game mode, with fixed speed, arena size, etc.
-We did, however, also extend the game to new concepts not present in any of the other versions. Specifically, we introduced collectible powerups and moving obstacles that roam the arena.
+ \section{Tronium mechanics }
+We simplified the complex settings and mechanics from Armagetron Advanced to a single game mode, with fixed speed, arena size, etc.
+We did, however, also extend the game to new concepts not present in any of the other versions. Specifically, we introduced collectible "powerups" and moving obstacles that roam the arena.
 
-\begin{enumerate}
-  \item you drive around in an arena
-  \item the bike moves constantly and you can steer only by turning left or right at 90\textdegree \ angles.
-  \item you leave a solid trail that is like a wall (and will be referred to as wall from now on)
-  \item colliding with your own or another player's wall results in your death
-  \item the aim is to be the last player alive
-  \item being close to another wall increases your speed, allowing you to e.g. overtake other players.
-  \item There are two different types of "power ups", which are randomly spawned items that will either increase your speed or make you invincible (you will be able to go through walls) for a short amount of time
-  \item there are (optional?) obstacles in the form of large cubes that slowly "roll" around the arena, collisions with these also result in death.
- 
-\end{enumerate}
+The game takes place in a (square) arena, in which the players drive with their "light cycles" (from now on simply bike).
+The bike moves constantly and can only be turned 90\textdegree left or right.
+Each bike leaves a solid trail (wall), and collisions with either the sides of the arena, your own wall or another player's wall will result in your death.
+The aim is to avoid collisions and to be the last player alive.
+Being close to another wall increases your speed, allowing you to e.g. overtake and 'box in' another player.
+There are also two different types of powerups that spawn randomly throughout the arena. 
+They grant a temporary speed bonus or temporary invincibility (allowing the player to go through walls).
+There are also additional obstacles in form of large cubes that slowly 'roll' around the arena. Collisions with these obstacles also results in the player's death. 
 
+For single-player games, there are AI opponents which will take the role of other players (i.e. drive bikes as well).
+The AI and the roaming obstacles will be described in more detail in Section 7.
 
 \section{Unity}
-Unity, which is developed by Unity Technologies, is a relatively new game engine that is designed "to make game dev more democratic" >>find cit<<.
-Unity includes the core engine which is used through an IDE that offers an editor >>fig<< that allows manipulation of 3D environments, game assets and live debugging.
-Unity is based on Mono (an open source .NET-compatible framework) and allows development in JavaScript, Boo or C\#. 
+Unity\textregistered, which is developed by Unity Technologies, is a high level game development framework or engine. Our project specifically uses the commercial version of Unity called Unity\textregistered Pro. Unity offers an editor  <<FIGURE>> that allows manipulation of 3D environments, game assets and live debugging.
+Unity is based on Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
 We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE.
-Unity supports a large number of plattforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
-The support for native x86 versions greately reduced the time needed for testing and debugging during development.
+Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
+The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
 
-Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObjects".
-"GameObjects" are containers that contain "Components" (which can also be GameObjects, allowing for nesting).
->>containers containing containers contained in ...<<
-All "GO"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GO". There are many other types of components, including "Lights", "Cameras" and "Materials" as well as Scripts.
+Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObject"s.
+\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing for nesting).
+All "GameObject"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GameObject". There are many other types of "Component"s, including "Lights", "Cameras" and "Materials" as well as Scripts.
 
 Unity offers two very different methods for networking.
 A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
@@ -256,186 +252,65 @@ Synchronization allows for high-frequency, low-cost updates  of GOs. It can howe
 
 RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
 
-\section{Networky stuff (ours)}
-Our game combines (as >> will << most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for communicating gamestate changes.
+\section{Tronium networking}
+Tronium combines (as do most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for communicating gamestate changes.
 
-In terms of networked multiplayer, most games can be classified into either an authorative or non-authorative server style.
+In terms of networked multiplayer, most games can be classified into either an authoritative or non-authoritative server style.
 
-With a non-authorative server, clients will do their own calculations locally and based on those will report e.g. their player's new position and events like the player's death to the server (and potentially other players). This is in contrast to an authorative server, where the client is mostly reduced to relaying the users input to the server which in turn does the necessary calculations and sends back information about   e.g. the player's position and liveness back to the clients.
+With a non-authoritative server, clients will do their own calculations locally and based on those will report e.g. their player's new position and events like the player's death to the server (and potentially other players). This is in contrast to an authoritative server, where the client is mostly reduced to relaying the users input to the server which in turn does the necessary calculations and sends back information about   e.g. the player's position and liveness back to the clients.
 
-Authorative servers have the advantage of preventing many common forms of cheating that involve running modified client code, however they also require a more powerful machine as server and result in additional latency.
+Authoritative servers have the advantage of preventing many common forms of cheating that involve running modified client code, however they also require a more powerful machine as server and result in additional latency.
 
-Since our game is quite fast paced and supposed to run on relatively low-power mobile devices and will most likely not be subject to complicated cheating attempts, we feel that non-authorative server was the best fit for our application.
+Since our game is quite fast paced and supposed to run on relatively low-power mobile devices and will most likely not be subject to complicated cheating attempts, we feel that non-authoritative server was the best fit for our application.
 
 
 Updates regarding the movement of the player and the creation of new walls in a player's trail are handled by the player instance and are communicated using Unity's "state synchronization" system. 
 The system offers two options for data transfer. One is a unity-specific reliable data protocol that uses delta compression (i.e. sending only the information that has changed) and ensures in-order delivery. The other is unreliable transmission via UDP.
-Since in a racing game low latency is more important than in order-delivery, we use the UDP transmission mode.
-<<is there anything else that we can say about this?>>
+Since in a racing game low latency is more important than in order-delivery, we use the UDP transmission mode. All clients will locally extrapolate (based on last known speed) the position of other players' bikes. In Section 6 we will explain how we deal with network delay when calculating collisions and player deaths to ensure that players will never be 'retroactively' killed because of information that arrives late.
 
 Spawning of new GameObjects (e.g. walls) is done via Unity's Network.Instantiate method, which automatically creates the same object on all clients.
 
 Less frequent updates like e.g. player deaths and game start/end are sent via RPC.
 
-Their is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
-
-The NetworkController causes events (via delegates) to be triggered in the MainController, which will then in turn call methods of the NetworkController or GameController.
-The NetworkController handles all RPC. A received RPC will result in an event being triggered in MainController.
-The MainController calls (non-RPC) functions of the NetworkController which will then in turn send out RPC Calls <<ATM machine?>> to the network.
-Usually, RPC's will also be sent to the sender, ensuring that all clients make the same state transitions.
-
 Since unity does not have a high-level concept representing the current application instance in its entirety, every script has to be attached to a GameObject and each instance (client?) will execute the same code for a given GameObject. 
 Since our server instance will also be acting as a player/client instance, this model works well with our application design.
 
 Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the current GameObject (or more specifically its NetworkView) is owned by the current instance and whether we are acting as the server, respectively. 
-<<move Since unity... back to beginning?>>
 
-\begin{figure}
-\centering
-\subfigure[client] {
-\begin{tikzpicture}[->,>=stealth']
+Their is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
 
- % First node
- % Use previously defined 'state' as layout (see above)
- % use tabular for content to get columns/rows
- % parbox to limit width of the listing
- \node[state,draw=none] (RPC) 
- {RPC};
-
- % Next node: NetworkControl
- \node[state,       % layout (defined above)
- node distance=4cm,     % distance to RPC
- text width=3.2cm,        % max text width
- right of=RPC](NC)       % Position is to the right of RPC (NC)
- {%                     % posistion relative to the center of the 'box'
- \begin{tabular}{l}     % content
-  \textbf{NetworkControl}\\
-  \parbox{2.8cm}{[RPC]\texttt{startGame()}}
- \end{tabular}
- };
-
- % STATE MainController
- \node[state,
- right of=NC,
- node distance=5cm,
- text width=3cm] (MC) 
- {%
- \begin{tabular}{l}
-  \textbf{MainController}\\
-  \parbox{2.8cm}{\texttt{onGameStarted()}}
- \end{tabular}
- };
-
- % STATE Game
- \node[state,
- right of=MC,
- node distance=5cm,text width=3cm] (Game) 
- {%
- \begin{tabular}{l}
-  \textbf{Game}\\
-  \parbox{2.8cm}{\texttt{startNewGame()}}
- \end{tabular}
- };
-
- % draw the paths and and print some Text below/above the graph
- \path (RPC) edge node {} (NC)
-       (NC)  edge node [anchor=south]{event}  (MC)
-       (MC)  edge node[anchor=south] {call} (Game)
- ;
-\end{tikzpicture}
-}
-\caption{Client side}
-
-\hfill
-\subfigure[server]{
+The NetworkController causes events (via delegates) to be triggered in the MainController, which will then in turn call methods of the NetworkController or GameController.
+The NetworkController handles all RPC. A received RPC will result in an event being triggered in MainController.
+The MainController calls (non-RPC) functions of the NetworkController which will then in turn send out RPC Calls  to the network.
+In our implementation RPC's will also be sent to the sender, ensuring that all clients make the same state transitions.
+See <<FIGURE>> for examples of (simplified) state transitions involved with starting a new game via network.
 
 
-
-\begin{tikzpicture}[->,>=stealth']
-
- % First node
- % Use previously defined 'state' as layout (see above)
- % use tabular for content to get columns/rows
- % parbox to limit width of the listing
- \node[state,draw=none] (GUI) 
- {GUI};
-
- % Next node: MainController
- \node[state,       % layout (defined above)
- node distance=4cm,     % distance to RPC
- text width=3.5cm,        % max text width
- right of=GUI](MC)       % Position is to the right of RPC (NC)
- {%                     % posistion relative to the center of the 'box'
- \begin{tabular}{l}     % content
-  \textbf{MainController}\\
-  \parbox{2.8cm}{\texttt{startNetwokGame()}}
- \end{tabular}
- };
-
- % STATE NetworkControl
- \node[state,
- right of=MC,
- node distance=5cm,
- text width=4cm] (NC) 
- {%
- \begin{tabular}{l}
-  \textbf{NetworkControl}\\
-  \parbox{3.6cm}{\texttt{broadcastNewGame()}
-  				[RPC]\texttt{startNewGame()}
- 	}
- \end{tabular}
- };
-
- % STATE SameAsClient
- \node[state,draw=none,
- below of=NC,
- node distance=2cm,
- text width=2.5cm] (SAC) 
- {%
- \begin{tabular}{l}
-  \parbox{2.5cm}{Same as client}
- \end{tabular}
- };
-
- % draw the paths and and print some Text below/above the graph
- \path (RPC) edge node {} (MC)
-       (MC)  edge node [anchor=south]{call}  (NC)
-       (NC)  edge [loop right, min distance=10mm,in=-7,out=7,looseness=5] node[anchor=west] {RPC} (NC)
-       (NC) edge [bend left=40] (SAC.east)
- ;
-\end{tikzpicture}
-}
-\caption{Server side}
-
-\end{figure}
-
-
-
-\section{Collisons/Powerups/Prediction}
+\section{Collision detection}
 If (drove into wall) \{
 	players the Died 
 	\}
-	<< << >> >>
+	<< << marko >> >>
 
-\section{ Opponents: AI + cubes}
-In local singleplayer, there 
-wenn KI stirbt hat sie 99% wkeit dass sie nochmal dreht.
-50/50 links/rechts.
+\section{Computer controlled opponents}
+In local singleplayer, there are computer controlled bikes that follow a simple pattern. 
+Whenever a computer controlled bike predicts a wall collision (using the same code as above), it will (with high probability) do a "saving" turn (with equal probability for left and right turns). To ensure that they cannot survive forever, they are only allowed to do these "saving" turns every second frame.
 
-Nur jedes 2te frame darf sie sich drehen (sonst geht es auf der stelle)
+To avoid making the AI too predictable, there is also a chance that they will randomly (again, left right being equally likely) turn even if they do not detect any walls.
 
-0.005% links  0.000% rechts in jedem frame
+This results in a very simple AI, however since the game is mostly about reflexes this unpredictable AI works well enough to make the single-player mode enjoyable.
 
-Sch... simple aber effektiv.
-<< >>
+A far greater challenge, however, comes in form of randomly roaming cubes ...
+ << << christian >> >>
 
 
 \section{Conclusion}
- Working in a larger group was an interesting change and while our intra team communication was good there were considerable efficiency losses when e.g. bugfixes for one component affected code that was concurrently being refactored.
+ Working in a larger group was an interesting change and while our intra team communication was very good there were considerable efficiency losses when e.g. bug fixes for one component affected code that was concurrently being refactored.
 
- Wir glauben dass wir unser goal eine enjoyable networked multiplayer version zu builden gut erfüllt haben. Unity allowed us to very quickly create the visual aspects of the game and allowed <<doppel allowed>> us to focus on the distributed networking component of the game.
+ We feel that we accomplished our goal of creating an enjoyable  networked multiplayer version of a "Tron-like game" for mobile devices. Unity allowed us to very quickly create the visual aspects of the game and allowed us to focus on the distributed networking component of the game.
 
-Eine naheliegender next step would be allowing the  player to customize the parameters of the game. Another interessante extension wäre Internet multiplayer,however additional work for NAT and higher latencies might be necessary.
+An obvious and straight forward next step would be allowing the  player to customize the parameters of the game. Another interesting extension would be internet multiplayer, however additional work for NAT and higher latencies might be necessary.
+
 \balancecolumns % GM June 2007
 
 % The following two commands are all you need in the

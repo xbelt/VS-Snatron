@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.1)  19 DEC 2013 11:17
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.1)  19 DEC 2013 13:07
 entering extended mode
 **report.tex
 (C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.tex
@@ -1042,83 +1042,65 @@ Overfull \hbox (3.46208pt too wide) in paragraph at lines 174--174
  []\eaddfnt cvonruet@student.ethz.ch| 
  []
 
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 180.
 
-Overfull \hbox (5.92789pt too wide) in paragraph at lines 205--208
-[]\T1/aer/m/n/9 Armagetron Ad-vanced it-self is avail-able for Win-dows, Linux
+LaTeX Font Info:    No file TS1aer.fd. on input line 180.
+
+LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
+(Font)              using `TS1/cmr/m/n' instead
+(Font)              for symbol `textregistered' on input line 180.
+
+
+LaTeX Warning: Citation `AA' on page \thepage  undefined on input line 198.
+
+
+LaTeX Warning: Citation `GLT' on page \thepage  undefined on input line 198.
+
+
+LaTeX Warning: Citation `Umbach' on page \thepage  undefined on input line 198.
+
+
+
+Overfull \hbox (3.86835pt too wide) in paragraph at lines 198--203
+[]\T1/aer/m/n/9 Armagetron Ad-vanced[\T1/aer/bx/n/9 ?\T1/aer/m/n/9 ] is one of 
+two open source projects
  []
+
+
+LaTeX Warning: Citation `Andro' on page \thepage  undefined on input line 206.
+
+
+LaTeX Warning: Citation `GP1' on page \thepage  undefined on input line 207.
+
+
+LaTeX Warning: Citation `GP2' on page \thepage  undefined on input line 207.
+
+
+LaTeX Warning: Citation `GP3' on page \thepage  undefined on input line 207.
 
 <tron_four.png, id=4, 407.121pt x 304.7385pt>
 File: tron_four.png Graphic file (type png)
  <use tron_four.png>
-Package pdftex.def Info: tron_four.png used on input line 216.
+Package pdftex.def Info: tron_four.png used on input line 215.
 (pdftex.def)             Requested size: 228.07318pt x 170.71652pt.
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 227.
-
-LaTeX Font Info:    No file TS1aer.fd. on input line 227.
-
-
-LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
-(Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textdegree' on input line 227.
-
-[1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
+ [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
  <C:/Users/Alexander/Documents/GitHub/VS-Snatron/Report/tron_four.png>]
-Overfull \hbox (15.95398pt too wide) in paragraph at lines 246--250
-\T1/aer/m/n/9 strac-tion of a 3D space that con-tains "GameOb-jects". "GameOb-
+Overfull \hbox (13.88074pt too wide) in paragraph at lines 295--295
+[]\secfnt COMPUTER CON-TROLLED OP-PO-NENTS 
  []
 
 
-Overfull \hbox (2.7799pt too wide) in paragraph at lines 266--267
-[]\T1/aer/m/n/9 Authorative servers have the ad-van-tage of pre-vent-ing many
- []
+Underfull \vbox (badness 3623) has occurred while \output is active []
 
-LaTeX Font Info:    Try loading font information for T1+aett on input line 346.
+ [2]
+(C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.bbl
+LaTeX Font Info:    Try loading font information for T1+aett on input line 6.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)
-Overfull \hbox (5.10954pt too wide) in paragraph at lines 346--346
- [][][][][] 
- []
-
-
-Overfull \hbox (5.10954pt too wide) in paragraph at lines 346--346
- [][][][][] 
- []
-
-
-Overfull \hbox (221.65984pt too wide) in paragraph at lines 346--347
- [][] 
- []
-
-
-Overfull \hbox (0.50296pt too wide) in paragraph at lines 407--407
-[]\T1/aett/m/n/9 startNetwokGame() 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 407--407
-[]\T1/aett/m/n/9 broadcastNewGame()
- []
-
-
-Overfull \hbox (10.8pt too wide) in paragraph at lines 407--407
- [][][][][] 
- []
-
-
-Overfull \hbox (139.83496pt too wide) in paragraph at lines 349--408
- [] 
- []
-
-
-Overfull \hbox (1.40186pt too wide) in paragraph at lines 414--414
-[]\secfnt COLLISONS/POWERUPS/PREDICTION 
- []
-
-[2] (C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.bbl) [3]
+)) [3]
 (C:\Users\Alexander\Documents\GitHub\VS-Snatron\Report\report.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1128,13 +1110,13 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 14595 strings out of 493921
- 264345 string characters out of 3147270
- 328324 words of memory out of 3000000
- 17563 multiletter control sequences out of 15000+200000
+ 14472 strings out of 493921
+ 261577 string characters out of 3147270
+ 321559 words of memory out of 3000000
+ 17440 multiletter control sequences out of 15000+200000
  48140 words of font info for 67 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 49i,16n,64p,502b,917s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 49i,11n,55p,506b,250s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\Alexander\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi
 600\tcrm0900.pk>{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C
 :/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Program
@@ -1144,9 +1126,9 @@ onts/type1/public/amsfonts/cm/cmti9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
 1/public/amsfonts/cm/cmtt9.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/hel
 vetic/uhvb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr8a.p
 fb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb>
-Output written on report.pdf (3 pages, 436030 bytes).
+Output written on report.pdf (3 pages, 428867 bytes).
 PDF statistics:
- 54 PDF objects out of 1000 (max. 8388607)
+ 56 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 
