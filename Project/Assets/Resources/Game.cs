@@ -112,6 +112,7 @@ public class Game
 	
 	public void EndGame()
 	{
+		_currentRound = 0;
 		_ranking = getRanking ();
 	}
 	
@@ -293,6 +294,12 @@ public class Game
 	{
 		public int Compare(PlayerModel a, PlayerModel b)
 		{
+			if (a == null && b == null)
+				return 0;
+			if (a == null)
+				return 1;
+			if (b == null)
+				return -1;
 			return a.score.CompareTo(b.score);
 		}
 	}

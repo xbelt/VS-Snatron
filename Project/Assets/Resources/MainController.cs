@@ -10,6 +10,11 @@ using System.Collections;
 
 public class MainController : MonoBehaviour
 {
+	// TODO : make this configurable.
+	private bool _withAiPlayers = true;
+	private int _singlePlayerRounds = 3;
+
+
 	public UserInterface _gui;
 	public NetworkInterface _networkControl;
 	private Game _game;
@@ -97,10 +102,8 @@ public class MainController : MonoBehaviour
 		_game.setPlayer(0, _gui.PlayerName, false);
 		_networkControl.InitServer (0);
 		AddAIPlayers (_game.Level.MaxPlayers - 1);
-		_networkControl.broadCastBeginGame (1);
+		_networkControl.broadCastBeginGame (_singlePlayerRounds);
 	}
-	
-	private bool _withAiPlayers = false;
 
 	private void AddAIPlayers(int count)
 	{
@@ -109,6 +112,7 @@ public class MainController : MonoBehaviour
 
 		for (int i = 1; i <= count; i++) {
 			int id = _game.getFirstFreePlayerId ();
+			_game.setPlayer(id, "AI " + id, true);
 			_networkControl.broadCastPlayerJoined("AI " + i, id, true);
 		}
 	}
