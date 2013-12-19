@@ -4,7 +4,7 @@ using Assets;
 using UnityEngine;
 
 // ReSharper disable once UnusedMember.Global
-public class GUI_Control : MonoBehaviour
+public class MainController : MonoBehaviour
 {
 	public UserInterface _gui;
 	public NetworkControl _networkControl;

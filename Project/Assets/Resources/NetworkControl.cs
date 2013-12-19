@@ -2,7 +2,7 @@
 using Assets;
 using UnityEngine;
 
-public class NetworkControl : MonoBehaviour {
+public class NetworkInterface : MonoBehaviour {
 
 	// Local Player
 	public static string PlayerName = "Player";
