@@ -77,10 +77,12 @@ public class Game
 	}
 	
 	public delegate void GameEvent();
-	public GameEvent OnGameEnded;
-	public delegate void RoundEvent(int round);
-	public RoundEvent OnRoundStarted;
-	public RoundEvent OnRoundEnded;
+	public GameEvent OnLastRoundEnded;
+	public GameEvent OnOneHumanLeft;
+	public GameEvent OnLastHumanDied;
+
+	public delegate void PlayerEvent(int playerId);
+	public PlayerEvent OnLocalDeath;
 
 	public void BeginRound()
 	{
@@ -97,11 +99,11 @@ public class Game
 		_spawner.ClearMyObjects ();
 		
 		if (Network.isServer && isGameOver ()) {
-			OnGameEnded();
+			OnLastRoundEnded();
 		}
 	}
 	
-	private void EndGame()
+	public void EndGame()
 	{
 		_ranking = getRanking ();
 	}
@@ -111,7 +113,10 @@ public class Game
 		InitGame ();
 	}
 
-	// Reset the game instance
+	/// <summary>
+	/// Reset the game instance.
+	/// Before calling, make sure there is no active network connection.
+	/// </summary>
 	public void InitGame()
 	{
 		_nOfActivePlayers = 0;
@@ -123,6 +128,8 @@ public class Game
 		{
 			_players[i] = null;
 		}
+
+		_spawner.ClearAllObjects ();
 	}
 	
 	public void NewRound()
@@ -138,15 +145,14 @@ public class Game
 		}
 	}
 
-	// This event is triggered by locally spawned objects : need to inform all others about kill
+	/// This event is triggered by locally spawned objects : need to inform all others about kill
 	private void OnLocalKill(int playerId)
 	{
-		_players [playerId].isAlive = false;
-		_spawner.Kill (playerId);
-		// TODO either fire here another event using a delegate, or let MainController listen to Spawner events
+		_spawner.Kill (playerId); // "physically kill" (unity engine)
+		OnLocalDeath(playerId); // "logically kill" (game logic)
 	}
 
-	// This is in response to the broadcast message fired after a OnLocalKill : everybody executes this.
+	/// This is in response to the broadcast message fired after a OnLocalKill : everybody executes this.
 	public void OnGlobalKill(int playerId)
 	{
 		PlayerModel player = _players [playerId];
@@ -156,8 +162,8 @@ public class Game
 		player.isAlive = false;
 		_nOfLivingPlayers--;
 		
-		if (isRoundOver ()) {
-			OnGameEnded();
+		if (Network.isServer && isRoundOver ()) {
+			OnLastRoundEnded();
 		}
 	}
 

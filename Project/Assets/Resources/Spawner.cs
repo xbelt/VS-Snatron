@@ -184,6 +184,53 @@ public class Spawner
 		var walls = GameObject.FindGameObjectsWithTag("wall");
 		foreach (var wall in walls)
 		{
+			if (wall.networkView.isMine)
+				Network.Destroy(wall);
+		}
+		var gameWalls = GameObject.FindGameObjectsWithTag("gameWall");
+		foreach (var gameWall in gameWalls) {
+			if (gameWall.networkView.isMine)
+				Network.Destroy(gameWall);
+		}
+		var lines = GameObject.FindGameObjectsWithTag("line");
+		foreach (var line in lines)
+		{
+			MonoBehaviour.Destroy(line);
+		}
+		var cubes = GameObject.FindGameObjectsWithTag("cube");
+		foreach (var cube in cubes)
+		{
+			if (cube.networkView.isMine)
+				Network.Destroy(cube);
+		}
+		var players = GameObject.FindGameObjectsWithTag("tron");
+		foreach (var player in players)
+		{
+			if (player.networkView.isMine)
+				Network.Destroy(player);
+		}
+		var powerUp0s = GameObject.FindGameObjectsWithTag("powerUp0");
+		foreach (var powerUp0 in powerUp0s) {
+			if (powerUp0.networkView.isMine)
+				Network.Destroy(powerUp0);
+		}
+		var powerUp1s = GameObject.FindGameObjectsWithTag("powerUp1");
+		foreach (var powerUp1 in powerUp1s) {
+			if (powerUp1.networkView.isMine)
+				Network.Destroy(powerUp1);
+		}
+	}
+
+	/// <summary>
+	/// Make sure you call this only after network connection is closed.
+	/// Incoming update events for objects which are locally destroyed, will cause error messages
+	/// (which are noticable by the player though)
+	/// </summary>
+	public void ClearAllObjects()
+	{
+		var walls = GameObject.FindGameObjectsWithTag("wall");
+		foreach (var wall in walls)
+		{
 			MonoBehaviour.Destroy(wall);
 		}
 		var gameWalls = GameObject.FindGameObjectsWithTag("gameWall");

@@ -4,6 +4,9 @@ using Assets;
 using UnityEngine;
 
 // ReSharper disable once UnusedMember.Global
+using System.Threading;
+
+
 public class MainController : MonoBehaviour
 {
 	public UserInterface _gui;
@@ -37,8 +40,11 @@ public class MainController : MonoBehaviour
 	private void initGame()
 	{
 		_game = Game.Instance;
-
-		// TODO register events for game and round control
+		
+		_game.OnLocalDeath += OnLocalDeath;
+		_game.OnOneHumanLeft += OnOneHumanLeft;
+		_game.OnLastHumanDied += OnLastHumanDied;
+		_game.OnLastRoundEnded += OnLastRoundEnded;
 	}
 
 	private void initNetworkControl()
@@ -80,7 +86,7 @@ public class MainController : MonoBehaviour
 		_game.numberOfAIPlayers = _game.Level.MaxPlayers - _game.NofActivePlayers;
 		AddAIPlayers ();
 		int rounds = 5; // TODO take from GameConfig
-		_networkControl.broadCastStartGame (rounds);
+		_networkControl.broadCastBeginGame (rounds);
 	}
 	
 	// A QuickGame is a normal "NetworkGame" with only the server playing, which is only 1 round
@@ -92,7 +98,7 @@ public class MainController : MonoBehaviour
 		_game.numberOfAIPlayers = _game.Level.MaxPlayers - 1;
 		_networkControl.InitServer (0);
 		AddAIPlayers ();
-		_networkControl.broadCastStartGame (1);
+		_networkControl.broadCastBeginGame (1);
 	}
 
 	private void AddAIPlayers()
@@ -122,7 +128,27 @@ public class MainController : MonoBehaviour
 
 	#region Game Event Handlers
 
-	// TODO : Game and Round Control
+	void OnLocalDeath (int playerId)
+	{
+		_networkControl.KillPlayer (playerId);
+	}
+	
+	void OnOneHumanLeft ()
+	{
+		// TODO event for network game => round ends
+		throw new NotImplementedException ();
+	}
+	
+	void OnLastHumanDied ()
+	{
+		// TODO event for singleplayer => round ends, you lose
+		throw new NotImplementedException ();
+	}
+	
+	void OnLastRoundEnded ()
+	{
+		throw new NotImplementedException ();
+	}
 
 	#endregion
 		
@@ -147,41 +173,54 @@ public class MainController : MonoBehaviour
 	private void OnConnectionError(String message)
 	{
 		Debug.Log ("GUI:OnConnectionError: " + message);
+		_game.Spawner.ClearMyObjects ();
 		_game.InitGame ();
 		_networkControl.Disconnect ();
 		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
 		// TODO show some error message?
-		// TODO Clean up stuff?
 	}
-	
+
+	private const int TimeToShowInitGameScreen = 3000;
+
 	// This is indirectly called through RPC StartGame event
 	private void OnGameStarted(int rounds)
 	{
 		print ("GUI:OnGameStarted()");
-		_gui.ShowGame ();
+		_gui.ShowInitGame ();
 		_game.StartGame (_networkControl.PlayerID, rounds);
+
+		if (Network.isServer) { // TODO move to game event! bitch
+			WaitThenStartRound(1);
+		}
+	}
+
+	private void WaitThenStartRound(int round)
+	{
+		new Thread (() => {
+			Thread.Sleep(TimeToShowInitGameScreen);
+			_networkControl.BeginRound(1);
+		}).Start ();
+	}
+	
+	private void OnRoundStarted(int round)
+	{
+		Debug.Log ("GUI:OnRoundStarted");
+		_gui.ShowGame ();
+		_game.BeginRound ();
+	}
+	
+	private void OnRoundEnded(int round)
+	{
+		Debug.Log ("GUI:OnRoundEnded");
+		_gui.ShowBetweenRounds ();
+		_game.EndRound ();
 	}
 	
 	private void OnGameEnded()
 	{
 		print ("GUI:OnGameEnded()");
-		// TODO make sure all players are disconnected
-		// and they all show the main menu
-		
-		GameObject.Find("Network").networkView.RPC("StopGame", RPCMode.All); //TODO avoiding RPCMode.all
-		_gui.ShowStartScreen (() => {return _networkControl.Servers;});
-	}
-	
-	private void OnRoundStarted(int round) // TODO probably not necessary
-	{
-		Debug.Log ("GUI:OnRoundStarted");
-		//_game.NewRound ();
-	}
-	
-	private void OnRoundEnded(int round) // TODO probably not necessary
-	{
-		Debug.Log ("GUI:OnRoundEnded");
-		//_game.NewRound ();
+		_game.EndGame ();
+		_gui.ShowRanking (() => _game.Ranking);
 	}
 	
 	private void OnPlayerJoined(int id, String name, bool isAI)
