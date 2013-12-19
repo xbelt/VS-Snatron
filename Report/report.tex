@@ -233,6 +233,157 @@ There are also additional obstacles in form of large cubes that slowly 'roll' ar
 For single-player games, there are AI opponents which will take the role of other players (i.e. drive bikes as well).
 The AI and the roaming obstacles will be described in more detail in Section 7.
 
+
+\begin{figure}
+\centering
+\subfigure[client] {
+\begin{tikzpicture}[->,>=stealth']
+
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,draw=none] (RPC) 
+ {\small{RPC}};
+
+ % Next node: NetworkControl
+ \node[state,       % layout (defined above)
+ node distance=2.3cm,     % distance to RPC
+ text width=2.8cm,        % max text width
+ right of=RPC](NC)       % Position is to the right of RPC (NC)
+ {%                     % posistion relative to the center of the 'box'
+ \begin{tabular}{l}     % content
+  \small{\textbf{NetworkControl}}\\
+  \parbox{2.6cm}{\small{[RPC]\texttt{startGame()}}}
+ \end{tabular}
+ };
+
+ % STATE MainController
+ \node[state,
+ right of=NC,
+ node distance=4cm,
+ text width=2.8cm] (MC) 
+ {%
+ \begin{tabular}{l}
+  \small{\textbf{MainController}}\\
+  \parbox{2.6cm}{\small{\texttt{onGameStarted()}}}
+ \end{tabular}
+ };
+
+ % STATE Game
+ \node[state,
+ below of=MC,
+ node distance=2cm,text width=2.8cm] (Game) 
+ {%
+ \begin{tabular}{l}
+  \small{\textbf{Game}}\\
+  \parbox{2.6cm}{\small{\texttt{startNewGame()}}}
+ \end{tabular}
+ };
+
+ % draw the paths and and print some Text below/above the graph
+ \path (RPC) edge node {} (NC)
+       (NC)  edge node [anchor=south]{\scriptsize{event}}  (MC)
+       (MC)  edge node[anchor=east] {\scriptsize{call}} (Game)
+ ;
+\end{tikzpicture}
+}
+
+\hfill
+\subfigure[server]{
+
+\begin{tikzpicture}[->,>=stealth']
+
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,draw=none] (GUI) 
+ {\small{GUI}};
+
+ % Next node: MainController
+ \node[state,       % layout (defined above)
+ node distance=2.3cm,     % distance to RPC
+ text width=2.7cm,        % max text width
+ right of=GUI](MC)       % Position is to the right of RPC (NC)
+ {%                     % posistion relative to the center of the 'box'
+ \begin{tabular}{l}     % content
+  \small{\textbf{MainController}}\\
+  \parbox{2.5cm}{\small{\texttt{startNetwokGame()}}}
+ \end{tabular}
+ };
+
+ % STATE NetworkControl
+ \node[state,
+ right of=MC,
+ node distance=3.6cm,
+ text width=3.1cm] (NC) 
+ {%
+ \begin{tabular}{l}
+  \small{\textbf{NetworkControl}}\\
+  \parbox{2.9cm}{\small{\texttt{broadcastNewGame()}}
+  				\small{[RPC]\texttt{startNewGame()}}
+ 	}
+ \end{tabular}
+ };
+
+ % STATE SameAsClient
+ \node[state,draw=none,
+ below of=NC,
+ node distance=1.3cm,
+ text width=2.2cm] (SAC) 
+ {%
+ \begin{tabular}{l}
+  \parbox{2.5cm}{Same as client}
+ \end{tabular}
+ };
+
+ % draw the paths and and print some Text below/above the graph
+ \path (RPC) edge node {} (MC)
+       (MC)  edge node [anchor=south]{\scriptsize{call}}  (NC)
+       (NC)  edge [loop right, min distance=10mm,in=-7,out=7,looseness=1] node[anchor=east] {\small{RPC}} (NC)
+       (NC) edge [bend left=40] (SAC.east)
+ ;
+\end{tikzpicture}
+}
+\caption{Control flow diagrams}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[->,>=stealth']
+
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,text width=2cm] (SG) 
+ {\small{StartGame}};
+
+ % Next node: WS (no idea what these letters should mean)
+ \node[state,       % layout (defined above)
+ node distance=3cm,     % distance to SG
+ text width=2cm,        % max text width
+ right of=SG](WS)       % Position is to the right of SG
+ {\small{Waiting screen}};
+
+ % STATE Game
+ \node[state,
+ below of=SG,
+ node distance=2cm,
+ text width=2cm] (Game) 
+ {\small{Game}};
+
+ % draw the paths and and print some Text below/above the graph
+ \path (SG) edge [bend left] node [anchor=south] {\scriptsize{host}} (WS)
+ (WS) edge [bend left] node [anchor=north] {\scriptsize{esc}} (SG)
+       (SG)  edge [bend right] node [anchor=east]{\scriptsize{join}}  (Game)
+       (Game) edge [bend right] node [anchor=west] {\scriptsize{esc}} (SG)
+ ;
+\end{tikzpicture}
+\caption{Control flow}
+\end{figure}
+
 \section{Unity}
 Unity\textregistered, which is developed by Unity Technologies, is a high level game development framework or engine. Our project specifically uses the commercial version of Unity called Unity\textregistered Pro. Unity offers an editor  <<FIGURE>> that allows manipulation of 3D environments, game assets and live debugging.
 Unity is based on Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
