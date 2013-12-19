@@ -3,7 +3,9 @@ using System.Threading;
 using UnityEngine;
 
 public class Drive : MonoBehaviour {
-	//public Transform wallTemplate;
+
+	public GUIStyle labelGUIStyle;
+
 	public int playerId;
 
     protected Transform _latestWallGameObject;
@@ -18,12 +20,13 @@ public class Drive : MonoBehaviour {
 
     protected float _speed = MinSpeed;
 
+	protected bool IsIndestructible;
+	protected double IndestructibleTimeLeft { get; set; }
+
 	int _numberOfWallsNear = 0;
 
     protected int HeightPixels;
 	protected int WidthPixels;
-
-	public bool isIndestructible;
 
     Vector3 Offset {
         get {
@@ -91,7 +94,7 @@ public class Drive : MonoBehaviour {
 
 		// The tron would keep moving straight
 		// But are there any obstacles in front?
-        if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
+        if (_predictedCollisions > 0 && !IsIndestructible || _predictedWallCollisions > 0)
         {
 			DeadlyCollide();
 			return;
@@ -107,6 +110,21 @@ public class Drive : MonoBehaviour {
 		// want to resize the collider before control is returned to unity for collision detection etc.
 		// Adjusting the collider within this method, earlier, would not immediately trigger new collisions etc.
 		AdjustSpeed ();
+
+
+	}
+
+	void OnGUI()
+	{
+		if (IsIndestructible)
+		{
+			GUI.Label(new Rect(9 / 20f * WidthPixels, 
+			                   19 / 40f * HeightPixels, 
+			                   1 / 10f * WidthPixels, 
+			                   1 / 20f * HeightPixels),
+			          "Indestructible for " + IndestructibleTimeLeft.ToString("0.0") + "s", 
+			          labelGUIStyle);
+		}
 	}
 
     protected bool ApplyUserCommands ()
@@ -217,16 +235,16 @@ public class Drive : MonoBehaviour {
     }
 
     public void ConsumeIndestructiblePowerup() {
-        Game.Instance.IndestructibleTimeLeft += IndestructibleTime;
-        if (!(Game.Instance.IndestructibleTimeLeft > IndestructibleTime)) {
+        IndestructibleTimeLeft += IndestructibleTime;
+        if (!(IndestructibleTimeLeft > IndestructibleTime)) {
             (new Thread(() => {
-                isIndestructible = true;
-                while (Game.Instance.IndestructibleTimeLeft > 0.1 && Game.Instance.isAlive(Game.Instance.PlayerID)) {
-                    Game.Instance.IndestructibleTimeLeft -= 0.1;
+                IsIndestructible = true;
+                while (IndestructibleTimeLeft > 0.1 && Game.Instance.isAlive(Game.Instance.PlayerID)) {
+                    IndestructibleTimeLeft -= 0.1;
                     Thread.Sleep(100);
                 }
 
-                isIndestructible = false;
+                IsIndestructible = false;
             })).Start();
         }
     }

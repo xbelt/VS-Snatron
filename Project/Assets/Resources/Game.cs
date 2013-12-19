@@ -46,8 +46,6 @@ public class Game
 	private int _roundsToPlay;
 	public int RoundsToPlay { get { return _roundsToPlay; } }
 
-    public double IndestructibleTimeLeft { get; set; } // TODO move to somewhere else
-
     private Game() {
 		_level = new BasicLevelModel ();
 		_spawner = new Spawner (_level);
