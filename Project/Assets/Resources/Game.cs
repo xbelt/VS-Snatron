@@ -5,44 +5,42 @@ using System.Collections.Generic;
 
 public class Game
 {
-	// TODO put into game config
-	private static readonly int GAME_LENGTH = 5;
-
-	// The only game instance
+	// Singleton
 	private static Game _instance = new Game();
 	public static Game Instance { get { return _instance; } }
 
 	private Level _level;
-	public Level Level { get {return _level;} }
-	
 	private Spawner _spawner;
-	public Spawner Spawner { get { return _spawner; } }
 
 	private Transform _playerPrefab;
 	private Transform _gridPrefab;
 
 	private int _localPlayerId;
-	public int PlayerID { get {return _localPlayerId;} }
-
-	private bool _gameStarted;
-    public bool GameStarted {
-        get { return _gameStarted; }
-    }
 
 	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
 	private PlayerModel[] _players;
-	public PlayerModel[] Players { get { return _players; } }
 
-	private int _nOfActivePlayers;
-	public int NofActivePlayers { get {	return _nOfActivePlayers; }	}
-	
-	private int _nOfLivingPlayers;
-	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
-    public int numberOfAIPlayers;
-    public int numberOfLivingKIPlayers;
+	private int _aiPlayers;
+    private int _aiPlayerAlive;
+
+	private int _humanPlayers;
+	private int _humanPlayersAlive;
 
 	private int _roundsToPlay;
-	public int RoundsToPlay { get { return _roundsToPlay; } }
+	private int _currentRound;
+
+	private PlayerModel[] _ranking;
+
+	#region Events
+	public delegate void GameEvent();
+	public GameEvent OnLastRoundEnded;
+	public GameEvent OnOnePlayerLeft;
+	public GameEvent OnLastHumanDied;
+	
+	public delegate void PlayerEvent(int playerId);
+	public PlayerEvent OnLocalDeath;
+
+	#endregion
 
     private Game() {
 		_level = new BasicLevelModel ();
@@ -50,7 +48,6 @@ public class Game
 		_players = new PlayerModel[_level.MaxPlayers];
 		InitGame ();
 	}
-
 
 	/// <summary>
 	/// Start the game and give the local player control of the tron with localPlayerId
@@ -65,32 +62,35 @@ public class Game
 		_localPlayerId = localPlayerId;
 		_spawner.LocalPlayerId = localPlayerId;
 		// TODO make sure local player and all other human players are contained in _players
-		// And alive!
 
-		Debug.Log ("Players starting game: " + _players.ToString());
-		
-		_gameStarted = true;
+		_humanPlayers = 0;
+		_aiPlayers = 0;
 
-		if (HasLocalPlayerWon()) { // that is, when the player is alone
-			EndGame();
+		Debug.Log ("Players starting game: ");
+		foreach (PlayerModel player in _players) {
+			if (player == null)
+				continue;
+			Debug.Log (player.id + " " + player.name);
+			player.startGame();
 		}
 	}
-	
-	public delegate void GameEvent();
-	public GameEvent OnLastRoundEnded;
-	public GameEvent OnOneHumanLeft;
-	public GameEvent OnLastHumanDied;
 
-	public delegate void PlayerEvent(int playerId);
-	public PlayerEvent OnLocalDeath;
-
-	public void BeginRound()
+	public void BeginRound(int round)
 	{
-		if (Network.isServer)
-		{
+		_currentRound = round;
+		_aiPlayerAlive = _aiPlayers;
+		_humanPlayersAlive = _humanPlayers;
+
+		for (int i = 0; i < _level.MaxPlayers; i++) {
+			if (_players[i] != null)
+				_players[i].startRound();
+		}
+
+		if (Network.isServer) {
 			_spawner.InstantiateLevelObjects();
 			SpawnAIPlayers ();
 		}
+
 		_spawner.SpawnLocalPlayer (OnLocalKill);
 	}
 
@@ -98,7 +98,13 @@ public class Game
 	{
 		_spawner.ClearMyObjects ();
 		
-		if (Network.isServer && isGameOver ()) {
+		for (int i = 0; i < _level.MaxPlayers; i++)
+		{
+			if (_players[i] != null)
+				_players[i].score += NofPlayers - _players[i].rank;
+		}
+		
+		if (Network.isServer && isGameOver) {
 			OnLastRoundEnded();
 		}
 	}
@@ -119,10 +125,11 @@ public class Game
 	/// </summary>
 	public void InitGame()
 	{
-		_nOfActivePlayers = 0;
-		_nOfLivingPlayers = 0;
-		_roundsToPlay = GAME_LENGTH;
-		_gameStarted = false;
+		_humanPlayers = 0;
+		_humanPlayersAlive = 0;
+		_aiPlayers = 0;
+		_aiPlayerAlive = 0;
+		_currentRound = 0;
 		
 		for (int i = 0; i < _level.MaxPlayers; i++)
 		{
@@ -130,19 +137,6 @@ public class Game
 		}
 
 		_spawner.ClearAllObjects ();
-	}
-	
-	public void NewRound()
-	{
-		_roundsToPlay--;
-		_nOfLivingPlayers = _nOfActivePlayers;
-		for (int i = 0; i < _level.MaxPlayers; i++)
-		{
-			if (_players[i] == null)
-				continue;
-			_players[i].score += _nOfActivePlayers - _players[i].rank;
-			_players[i].startRound();
-		}
 	}
 
 	/// This event is triggered by locally spawned objects : need to inform all others about kill
@@ -158,46 +152,19 @@ public class Game
 		PlayerModel player = _players [playerId];
 		if (player == null)
 			return;
-		player.rank = _nOfLivingPlayers;
+		player.rank = NofLivingPlayers;
 		player.isAlive = false;
-		_nOfLivingPlayers--;
+		if (player.isAI)
+			_aiPlayerAlive--;
+		else
+			_humanPlayers--;
 		
-		if (Network.isServer && isRoundOver ()) {
+		if (Network.isServer && isRoundOver) {
 			OnLastRoundEnded();
 		}
 	}
 
-	public bool isRoundOver()
-	{
-		if (!_gameStarted)
-			return false;
-		if (_nOfActivePlayers > 1)
-			return _nOfLivingPlayers <= 1;
-		if (numberOfAIPlayers > 0) {
-			return numberOfLivingKIPlayers <= 0;
-		}
-		return isAlive (PlayerID);
-	}
-	
-	public bool isGameOver()
-	{
-		if (!_gameStarted)
-			return false;
-		return isRoundOver () && RoundsToPlay == 0;
-	}
-	
-	// Does the player have the highest score?
-	// Condition: for this to become true, the game must be over
-	// => nobody wins until the end of the game
-	public bool hasWon(int playerId) {
-		return NofLivingPlayers <= 1 && numberOfLivingKIPlayers <= 0;
-	}
-	
-	// Does he have the highest score?
-	public bool HasLocalPlayerWon()
-	{
-		return hasWon (PlayerID);
-	}
+
 
 	#region game initialization
 	
@@ -214,16 +181,27 @@ public class Game
         MonoBehaviour.print("Game:SetPlayer()");
 		PlayerModel player = new PlayerModel (playerId, playerName);
 		player.isAI = isAI;
+		if(isAI)
+			_aiPlayers++;
+		else
+			_humanPlayers++;
+		
 		_players [playerId] = player;
-		_nOfActivePlayers++;
-		_nOfLivingPlayers++; // TODO probably not necessary
 	}
 
 	public void removePlayer(int playerId) {
-        MonoBehaviour.print("Game:removePlayer()");
-		if (_players [playerId].isAlive)
-			_nOfLivingPlayers--;
-		_nOfActivePlayers--;
+        Debug.Log("Game:removePlayer()");
+		PlayerModel player = _players [playerId];
+		if (player.isAI) {
+			_aiPlayers--;
+			if (player.isAlive)
+				_aiPlayerAlive--;
+		} else {
+			_humanPlayers--;
+			if (player.isAlive)
+				_humanPlayersAlive--;
+		}
+
 		_players [playerId] = null;
 	}
 
@@ -240,8 +218,33 @@ public class Game
 
 	#endregion
 
-	#region game and round logic
+	#region Game State Accessors
+	
+	public Level Level { get {return _level;} }
+	public Spawner Spawner { get { return _spawner; } }
+	public int PlayerID { get {return _localPlayerId;} }
 
+	public PlayerModel[] Players { get { return _players; } }
+	public int RoundsToPlay { get { return _roundsToPlay; } }
+	public int NofPlayers { get { return _humanPlayers + _aiPlayers; } }
+	public int NofLivingPlayers { get { return _humanPlayersAlive + _aiPlayerAlive; } }
+	public bool HasGameStarted { get { return _currentRound > 0; } }
+	
+	public bool isRoundOver { get {	return HasGameStarted && NofLivingPlayers <= 1; } }
+	public bool isGameOver { get { return isRoundOver && RoundsToPlay == _currentRound; } }
+
+	public bool HasLocalPlayerWon {	get { return hasWon (_localPlayerId); } }
+	public bool IsLocalPlayerAlive { get { return _players [_localPlayerId].isAlive; } }
+
+	public PlayerModel[] Ranking { get { return _ranking; } }
+	
+	// Does the player have the highest score?
+	// Condition: for this to become true, the game must be over
+	// => nobody wins until the end of the game (after all rounds)
+	public bool hasWon(int playerId) {
+		return _ranking != null && _ranking [0].id == playerId;
+	}
+	
 	#endregion
 
 	#region player accessors
@@ -286,9 +289,6 @@ public class Game
 			return a.score.CompareTo(b.score);
 		}
 	}
-
-	private PlayerModel[] _ranking;
-	public PlayerModel[] Ranking { get { return _ranking; } }
 
 	private PlayerModel[] getRanking()
 	{

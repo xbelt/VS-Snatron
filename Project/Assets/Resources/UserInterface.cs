@@ -164,7 +164,7 @@ public class UserInterface : MonoBehaviour
 		
 		DrawPlayerStateList ();
 		
-		if (Game.Instance.HasLocalPlayerWon() ) {
+		if (Game.Instance.HasLocalPlayerWon ) {
 			DrawYouWinMessage ();
 			DrawBackButton ();
 		}

@@ -10,7 +10,7 @@ public class PowerUpSpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (random.Next(0, 1000) < 7 && Game.Instance.GameStarted)
+        if (random.Next(0, 1000) < 7 && Game.Instance.HasGameStarted)
 		{
 			Debug.Log("Spawn powerUp");
 			Game.Instance.Spawner.SpawnPowerUp();
