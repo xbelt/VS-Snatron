@@ -12,7 +12,7 @@ public class PowerUpSpawner : MonoBehaviour {
 	void Update () {
         if (random.Next(0, 1000) < 7 && Game.Instance.HasGameStarted)
 		{
-			Debug.Log("Spawn powerUp");
+			//Debug.Log("Spawn powerUp");
 			Game.Instance.Spawner.SpawnPowerUp();
 			/* TODO remove these lines
 

@@ -7,13 +7,13 @@ public class Spawner
 {
 	private Level _level;
 
-	private int _localPlayerId;
+	public int LocalPlayerId;
 
 	private readonly Dictionary<int, GameObject> spawnedPlayers = new Dictionary<int, GameObject> ();
 	public GameObject LocalPlayer {
 		get {
 			GameObject go;
-			spawnedPlayers.TryGetValue(_localPlayerId, out go);
+			spawnedPlayers.TryGetValue(LocalPlayerId, out go);
 			return go;
 		}
 	}
@@ -33,22 +33,14 @@ public class Spawner
 		_gridPrefab = Resources.Load<Transform>("Lines");
 	}
 
-	public int LocalPlayerId {
-		get {
-			return _localPlayerId;
-		}
-		set {
-			_localPlayerId = value;
-		}
-	}
-
 	public void SpawnLocalPlayer(KillEvent OnKilled)
 	{
+		Debug.Log ("Spawner: Spawn Local Player " + LocalPlayerId);
 		Vector3 location;
 		Quaternion orientation;
-		_level.MapStartLocation (_localPlayerId, out location, out orientation);
+		_level.MapStartLocation (LocalPlayerId, out location, out orientation);
 
-		_playerPrefab = Resources.Load<Transform>("Player" + _localPlayerId);
+		_playerPrefab = Resources.Load<Transform>("Player" + LocalPlayerId);
 		
 		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
 		var cam = GameObject.Find("Main Camera");
@@ -58,13 +50,13 @@ public class Spawner
 		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
 		
 		Drive _localPlayerDrive = player.GetComponent<Drive> ();
-		_localPlayerDrive.playerId = _localPlayerId;
-		_localPlayerDrive.OnDeadlyCollision += (int id) => OnKilled (id); // TODO
+		_localPlayerDrive.playerId = LocalPlayerId;
+		_localPlayerDrive.OnDeadlyCollision += (int id) => OnKilled (id); // TODO ?
 		
-		spawnedPlayers.Add(_localPlayerId, player.gameObject);
+		spawnedPlayers.Add(LocalPlayerId, player.gameObject);
 
 		if (OnSpawned != null)
-			OnSpawned (_localPlayerId);
+			OnSpawned (LocalPlayerId);
 	}
 	
 	public void SpawnAI(int playerId, KillEvent onKilled) {
@@ -111,7 +103,7 @@ public class Spawner
 	public void SpawnPowerUp()
 	{
 		//TODO: Make dependent of framerate
-		Debug.Log ("Spawn powerUp");
+		//Debug.Log ("Spawn powerUp");
 		var x = random.Next (-_level.FieldBorderCoordinates, _level.FieldBorderCoordinates);
 		var z = random.Next (-_level.FieldBorderCoordinates, _level.FieldBorderCoordinates);
 		Network.Instantiate (

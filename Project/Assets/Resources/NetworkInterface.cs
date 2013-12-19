@@ -232,7 +232,7 @@ public class NetworkInterface : MonoBehaviour {
 	[RPC]
 	private void AssignLocalPlayerID(int playerId)
 	{
-		Debug.Log("RPC: AssignLocalPlayerID()"); 
+		Debug.Log("RPC: AssignLocalPlayerID() : " + playerId);
 		_localPlayerID = playerId;
 		// Tell everybody who we are
 		broadCastPlayerJoined (PlayerName, playerId, false);

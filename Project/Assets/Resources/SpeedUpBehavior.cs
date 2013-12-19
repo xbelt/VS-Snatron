@@ -12,20 +12,20 @@ public class SpeedUpBehavior : MonoBehaviour {
 			Destroy(gameObject);
 			return;
 		}
-		Debug.Log ("is mine: speed up behavior");
+		//Debug.Log ("is mine: speed up behavior");
 		_drive = transform.parent.GetComponent<Drive> ();
 	}
 
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "wall") {
-			Debug.Log ("Wall near enter: " + other.name + " " + name);
+			//Debug.Log ("Wall near enter: " + other.name + " " + name);
 			_drive.OnSpeedUpTriggerEnter();
 		}
 	}
 	
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "wall") {
-			Debug.Log ("Wall near exit: " + other.name + " " + name);
+			//Debug.Log ("Wall near exit: " + other.name + " " + name);
 			_drive.OnSpeedUpTriggerExit();
 		}
 	}
