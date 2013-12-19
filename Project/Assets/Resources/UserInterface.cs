@@ -110,6 +110,202 @@ public class UserInterface : MonoBehaviour
 		}
 	}
 
+	public void HandleStartScreenGUI()
+	{
+		drawHostButton ();
+		DrawQuickGameButton ();
+		DrawPlayerNameLabelAndInput ();
+		DrawServerIpLabelAndInput ();
+		DrawJoinServerButton ();
+		NetworkInterface.PlayerName = _playerName; // TODO remove this shit static fuck players the died
+		DrawServerList ();
+
+	}
+	
+	public void HandleWaitingScreen()
+	{
+		DrawPlayerList ();
+		
+		if (Network.isServer) {
+			DrawStartButton ();
+			DrawIpAddress ();
+		}
+		
+	}
+
+	public void HandleGame() {
+		bool isAlive = Game.Instance.isAlive (Game.Instance.PlayerID);
+		bool hasWon = Game.Instance.hasWon (Game.Instance.PlayerID);
+		
+		if (!isAlive && !hasWon) {
+			DrawYouLoseMessage ();
+		}
+		
+		DrawPlayerStateList ();
+		
+		if (Game.Instance.HasLocalPlayerWon() ) {
+			
+			Game.Instance.GameStarted = false; // TODO remove this! The game decides itself when it ends!
+			DrawYouWinMessage ();
+			DrawBackButton ();
+		}
+	}
+
+	public void HandleGamePaused()
+	{
+		DrawExitButton ();
+		DrawEndGameButton ();
+	}
+
+	#region GUI Elements
+
+	void drawHostButton ()
+	{
+		if (GUI.Button (new Rect (1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Host", buttonGUIStyle)) {
+			OnStartServerRequest ();
+		}
+	}
+
+	void DrawQuickGameButton ()
+	{
+		if (GUI.Button (new Rect (1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Race", buttonGUIStyle)) {
+			OnStartQuickGameRequest ();
+		}
+	}
+
+	void DrawPlayerNameLabelAndInput ()
+	{
+		GUI.Label (new Rect (17 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Player Name:", labelGUIStyle);
+		_playerName = GUI.TextField (new Rect (21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName, textFieldGUIStyle);
+	}
+
+	void DrawServerIpLabelAndInput ()
+	{
+		GUI.Label (new Rect (17 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Server IP:", labelGUIStyle);
+		_serverIP = GUI.TextField (new Rect (21 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _serverIP, textFieldGUIStyle);
+	}
+
+	void DrawJoinServerButton ()
+	{
+		if (GUI.Button (new Rect (21 / 30f * WidthPixels, 5 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Join", buttonGUIStyle)) {
+			OnJoinGameRequest (_serverIP);
+		}
+	}
+
+	void DrawServerList ()
+	{
+		GUILayout.BeginArea (new Rect (5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
+		_scrollPosition = GUILayout.BeginScrollView (_scrollPosition, false, true);
+		GUILayout.BeginVertical (horizontalScrollbarGUIStyle);
+		foreach (var item in _serverSource ().Where (item => GUILayout.Button (item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth (true), GUILayout.Height (1 / 15f * HeightPixels)))) {
+			OnJoinGameRequest (item.Ip.ToString ());
+		}
+		GUILayout.EndVertical ();
+		GUILayout.EndScrollView ();
+		GUILayout.EndArea ();
+	}
+
+	void DrawPlayerList ()
+	{
+		GUILayout.BeginArea (new Rect (10 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
+		_scrollPosition = GUILayout.BeginScrollView (_scrollPosition, false, true);
+		GUILayout.BeginVertical (layoutGUIStyle);
+		PlayerModel[] players = _playerSource ();
+		foreach (PlayerModel player in players) {
+			if (player == null)
+				continue;
+			// TODO fix ArgumentException
+			GUILayout.Label (player.id + ": " + player.name, labelGUIStyle, GUILayout.ExpandWidth (true), GUILayout.Height (1 / 15f * HeightPixels));
+		}
+		GUILayout.EndVertical ();
+		GUILayout.EndScrollView ();
+		GUILayout.EndArea ();
+	}
+
+	void DrawStartButton ()
+	{
+		if (GUI.Button (new Rect (1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Start", buttonGUIStyle)) {
+			OnStartNetworkGameRequest ();
+		}
+	}
+
+	void DrawIpAddress ()
+	{
+		GUI.Label (new Rect (1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "IP: " + Network.player.ipAddress, labelGUIStyle);
+	}
+
+	void DrawYouLoseMessage ()
+	{
+		GUI.Label (new Rect (9 / 20f * WidthPixels, 19 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You lose!", labelGUIStyle);
+	}
+
+	void DrawPlayerStateList ()
+	{
+		var i = 0;
+		for (int j = 0; j < Game.Instance.Level.MaxPlayers; j++) {
+			if (Game.Instance.isActivePlayer (j)) {
+				GUI.Label (new Rect (1 / 20f * WidthPixels, (1 + 3 * i) / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), Game.Instance.getPlayerName (j) + ": " + (Game.Instance.isAlive (j) ? "Alive" : "Dead"), labelGUIStyle);
+				i++;
+			}
+		}
+	}
+
+	void DrawYouWinMessage ()
+	{
+		GUI.Label (new Rect (9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "You won!", labelGUIStyle);
+	}
+
+	void DrawBackButton ()
+	{
+		if (GUI.Button (new Rect (8 / 20f * WidthPixels, 20 / 40f * HeightPixels, 2 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Back to menu", buttonGUIStyle)) {
+			// TODO restart game
+			OnLeaveGameRequest ();
+		}
+	}
+
+	private void DrawExitButton()
+	{
+		if (GUI.Button(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels,
+		                        1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+		               "Exit", buttonGUIStyle))
+		{
+			OnCloseAppRequest();
+		}
+	}
+
+	private void DrawEndGameButton()
+	{
+		if (GUI.Button(new Rect(9 / 20f * WidthPixels, 20 / 40f * HeightPixels,
+		                        1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+		               Network.isServer ? "End game" : "Leave game", buttonGUIStyle))
+		{
+			OnLeaveGameRequest();
+		}
+	}
+
+	#endregion
+	
+	public void HideMenuBackground()
+	{
+		_splashScreenLight.SetActive (false);
+		_splashScreen.SetActive (false);
+		_splashScreen.renderer.enabled = false;
+	}
+	
+	public void ShowMenuBackground()
+	{
+		_splashScreenLight.SetActive (true);
+		_splashScreen.SetActive (true);
+		_splashScreen.renderer.enabled = true;
+	}
+	
+	public void ResetCamera()
+	{
+		GameObject.Find("Main Camera").transform.position = new Vector3(-7.621216f, -3.097347f, -11.66232f);
+		GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
+	}
+	
+	
 	private void ReadScreenDimensionsAndroid()
 	{
 		#if UNITY_Android
@@ -155,174 +351,6 @@ public class UserInterface : MonoBehaviour
 		textFieldGUIStyle.fontSize = size < 12 ? 12 : size;
 		textFieldGUIStyle.padding.top = ((int)(1/20f*HeightPixels) - buttonGUIStyle.fontSize)/2;
 		textFieldGUIStyle.padding.left = 6;
-	}
-
-	public void HandleStartScreenGUI()
-	{
-		if (GUI.Button(
-			new Rect(1 / 30f * WidthPixels,
-		         1 / 20f * HeightPixels, 1 / 10f * WidthPixels,
-		         1 / 20f * HeightPixels), "Host", buttonGUIStyle))
-		{
-			OnStartServerRequest();
-		}
-		if (GUI.Button(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Race", buttonGUIStyle))
-		{
-			OnStartQuickGameRequest();
-		}
-		
-		GUI.Label(new Rect(17 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Player Name:", labelGUIStyle);
-		_playerName = GUI.TextField(new Rect(21 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _playerName, textFieldGUIStyle);
-		
-		GUI.Label(new Rect(17 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Server IP:", labelGUIStyle);
-		_serverIP = GUI.TextField(new Rect(21 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), _serverIP, textFieldGUIStyle);
-		
-		if (GUI.Button(new Rect(21/30f*WidthPixels, 5/20f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels), "Join",
-		               buttonGUIStyle)) {
-			OnJoinGameRequest(_serverIP);
-		}
-		
-		NetworkInterface.PlayerName = _playerName; // TODO remove this shit static fuck players the died
-		
-		GUILayout.BeginArea(new Rect(5 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
-		_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-		GUILayout.BeginVertical(horizontalScrollbarGUIStyle);
-
-		foreach (var item in _serverSource().Where(item => GUILayout.Button(item.Ip + " " + item.Name, buttonGUIStyle, GUILayout.ExpandWidth(true), GUILayout.Height(1 / 15f * HeightPixels))))
-		{
-			OnJoinGameRequest(item.Ip.ToString());
-		}
-		
-		GUILayout.EndVertical();
-		GUILayout.EndScrollView();
-		GUILayout.EndArea();
-	}
-	
-	public void HandleWaitingScreen()
-	{
-		GUILayout.BeginArea(new Rect(10 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
-		_scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
-		GUILayout.BeginVertical(layoutGUIStyle);
-
-		PlayerModel[] players = _playerSource ();
-
-		foreach (PlayerModel player in players) {
-			if (player == null)
-				continue;
-
-			// TODO fix ArgumentException
-			GUILayout.Label(player.id + ": " + player.name,
-			                labelGUIStyle,
-			                GUILayout.ExpandWidth(true),
-			                GUILayout.Height(1 / 15f * HeightPixels));
-		}
-		
-		GUILayout.EndVertical();
-		GUILayout.EndScrollView();
-		GUILayout.EndArea();
-		
-		if (Network.isServer)
-		{
-			if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Start", buttonGUIStyle))
-			{
-				OnStartNetworkGameRequest();
-			}
-			GUI.Label(new Rect(1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "IP: " + Network.player.ipAddress, labelGUIStyle);
-		}
-
-	}
-	
-	public void HandleGame() {
-		bool isAlive = Game.Instance.isAlive (Game.Instance.PlayerID);
-		bool hasWon = Game.Instance.hasWon (Game.Instance.PlayerID);
-		
-		if (!isAlive) {
-			if (!hasWon)
-			{
-				GUI.Label(new Rect(9/20f*WidthPixels, 19/40f*HeightPixels, 1/10f*WidthPixels, 1/20f*HeightPixels),
-				          "You are dead!", labelGUIStyle);
-			}else
-			{
-				OnLeaveGameRequest();
-			}
-		}
-		
-		var i = 0;
-		
-		for (int j = 0; j < Game.Instance.Level.MaxPlayers; j++)
-		{
-			if (Game.Instance.isActivePlayer(j))
-			{
-				GUI.Label(new Rect(1 / 20f * WidthPixels,
-				                   (1 + 3 * i) / 40f * HeightPixels,
-				                   1 / 10f * WidthPixels,
-				                   1 / 20f * HeightPixels),
-				          Game.Instance.getPlayerName(j) + ": " 
-				          + (Game.Instance.isAlive(j) ? "Alive" : "Dead"),
-				          labelGUIStyle);
-				i++;
-			}
-		}
-		
-		if (Game.Instance.HasLocalPlayerWon() ) {
-			Game.Instance.GameStarted = false; // TODO remove this! The game decides itself when it ends!
-			GUI.Label(new Rect(9 / 20f * WidthPixels,
-			                   17 / 40f * HeightPixels,
-			                   1 / 10f * WidthPixels,
-			                   1 / 20f * HeightPixels),
-			          "You won!",
-			          labelGUIStyle);
-			if (GUI.Button(new Rect(8/20f*WidthPixels,
-			                        20/40f*HeightPixels,
-			                        2/10f*WidthPixels,
-			                        1/20f*HeightPixels),
-			               "Back to menu",
-			               buttonGUIStyle))
-			{
-				// TODO restart game
-				OnLeaveGameRequest();
-			}
-		}
-				
-		// TODO Draw Player info :
-		// * who's still alive?
-		// * "YOU WERE KILLED (BY ...?)"
-		// * YOU HAVE WON
-		// * PAUSE BUTTON? -> no since pause makes no sense in multiplayer
-	}
-	
-	public void HandleGamePaused()
-	{
-		if (GUI.Button(new Rect(9 / 20f * WidthPixels, 17 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-		               "Exit", buttonGUIStyle))
-		{
-			Application.Quit();
-		}
-		if (GUI.Button(new Rect(9 / 20f * WidthPixels, 20 / 40f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
-		               Network.isServer ? "End game" : "Leave game", buttonGUIStyle))
-		{
-			OnLeaveGameRequest();
-		}
-	}
-	
-	public void HideMenuBackground()
-	{
-		_splashScreenLight.SetActive (false);
-		_splashScreen.SetActive (false);
-		_splashScreen.renderer.enabled = false;
-	}
-	
-	public void ShowMenuBackground()
-	{
-		_splashScreenLight.SetActive (true);
-		_splashScreen.SetActive (true);
-		_splashScreen.renderer.enabled = true;
-	}
-	
-	public void ResetCamera()
-	{
-		GameObject.Find("Main Camera").transform.position = new Vector3(-7.621216f, -3.097347f, -11.66232f);
-		GameObject.Find("Main Camera").transform.rotation = Quaternion.identity;
 	}
 }
 
