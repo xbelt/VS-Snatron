@@ -32,7 +32,7 @@ namespace Assets.Resources
 
             // The tron would keep moving straight
             // But are there any obstacles in front?
-            if (_predictedCollisions > 0 && !isIndestructible || _predictedWallCollisions > 0)
+            if (_predictedCollisions > 0 && !IsIndestructible || _predictedWallCollisions > 0)
             {
                 if (!lastFrameTurned) {
                     if (random.Next(0, 100) < 50) {
