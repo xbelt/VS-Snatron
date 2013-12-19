@@ -27,7 +27,6 @@ public class Game
 	private bool _gameStarted;
     public bool GameStarted {
         get { return _gameStarted; }
-        set { _gameStarted = value; } // TODO remove this! The game decides itself when it ends!
     }
 
 	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
@@ -73,7 +72,7 @@ public class Game
 		
 		_gameStarted = true;
 		if (HasLocalPlayerWon()) { // that is, when the player is alone
-			Game.Instance.GameStarted = false;
+			_gameStarted = false;
 			EndGame();
 		}
 	}
