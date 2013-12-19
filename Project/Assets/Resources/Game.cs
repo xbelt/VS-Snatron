@@ -51,8 +51,14 @@ public class Game
 		NewGame ();
 	}
 
-	// Start the game and give the local player control of the tron with localPlayerId
-	// rounds tells how many rounds one game last
+
+	/// <summary>
+	/// Start the game and give the local player control of the tron with localPlayerId
+	/// rounds tells how many rounds one game last
+	/// This is called indirectly through rpc
+	/// </summary>
+	/// <param name="localPlayerId">Local player identifier.</param>
+	/// <param name="rounds">Rounds.</param>
 	public void StartGame(int localPlayerId, int rounds)
 	{
 		_roundsToPlay = rounds;

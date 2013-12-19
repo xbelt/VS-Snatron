@@ -174,10 +174,10 @@ public class MainController : MonoBehaviour
 		//_game.NewRound ();
 	}
 	
-	private void OnPlayerJoined(int id, String name)
+	private void OnPlayerJoined(int id, String name, bool isAI)
 	{
 		Debug.Log ("GUI:OnPlayerJoined");
-		_game.setPlayer (id, name, false);
+		_game.setPlayer (id, name, isAI);
 	}
 	
 	private void OnPlayerLeft(int id)
