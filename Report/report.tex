@@ -11,6 +11,21 @@
 \usepackage{url}
 \usepackage[utf8]{inputenc}
 \usepackage{textcomp} %for the degree symbol. yes. overkill
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+\tikzset{
+    state/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           minimum height=2em,
+           inner sep=2pt,
+           text centered,
+           },
+}
 
 \usepackage{color}
 \definecolor{orange}{rgb}{1,0.5,0}
@@ -274,6 +289,127 @@ Since our server instance will also be acting as a player/client instance, this 
 
 Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the current GameObject (or more specifically its NetworkView) is owned by the current instance and whether we are acting as the server, respectively. 
 <<move Since unity... back to beginning?>>
+
+\begin{figure}
+\centering
+\subfigure[client] {
+\begin{tikzpicture}[->,>=stealth']
+
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,draw=none] (RPC) 
+ {RPC};
+
+ % Next node: NetworkControl
+ \node[state,       % layout (defined above)
+ node distance=4cm,     % distance to RPC
+ text width=3.2cm,        % max text width
+ right of=RPC](NC)       % Position is to the right of RPC (NC)
+ {%                     % posistion relative to the center of the 'box'
+ \begin{tabular}{l}     % content
+  \textbf{NetworkControl}\\
+  \parbox{2.8cm}{[RPC]\texttt{startGame()}}
+ \end{tabular}
+ };
+
+ % STATE MainController
+ \node[state,
+ right of=NC,
+ node distance=5cm,
+ text width=3cm] (MC) 
+ {%
+ \begin{tabular}{l}
+  \textbf{MainController}\\
+  \parbox{2.8cm}{\texttt{onGameStarted()}}
+ \end{tabular}
+ };
+
+ % STATE Game
+ \node[state,
+ right of=MC,
+ node distance=5cm,text width=3cm] (Game) 
+ {%
+ \begin{tabular}{l}
+  \textbf{Game}\\
+  \parbox{2.8cm}{\texttt{startNewGame()}}
+ \end{tabular}
+ };
+
+ % draw the paths and and print some Text below/above the graph
+ \path (RPC) edge node {} (NC)
+       (NC)  edge node [anchor=south]{event}  (MC)
+       (MC)  edge node[anchor=south] {call} (Game)
+ ;
+\end{tikzpicture}
+}
+\caption{Client side}
+
+\hfill
+\subfigure[server]{
+
+
+
+\begin{tikzpicture}[->,>=stealth']
+
+ % First node
+ % Use previously defined 'state' as layout (see above)
+ % use tabular for content to get columns/rows
+ % parbox to limit width of the listing
+ \node[state,draw=none] (GUI) 
+ {GUI};
+
+ % Next node: MainController
+ \node[state,       % layout (defined above)
+ node distance=4cm,     % distance to RPC
+ text width=3.5cm,        % max text width
+ right of=GUI](MC)       % Position is to the right of RPC (NC)
+ {%                     % posistion relative to the center of the 'box'
+ \begin{tabular}{l}     % content
+  \textbf{MainController}\\
+  \parbox{2.8cm}{\texttt{startNetwokGame()}}
+ \end{tabular}
+ };
+
+ % STATE NetworkControl
+ \node[state,
+ right of=MC,
+ node distance=5cm,
+ text width=4cm] (NC) 
+ {%
+ \begin{tabular}{l}
+  \textbf{NetworkControl}\\
+  \parbox{3.6cm}{\texttt{broadcastNewGame()}
+  				[RPC]\texttt{startNewGame()}
+ 	}
+ \end{tabular}
+ };
+
+ % STATE SameAsClient
+ \node[state,draw=none,
+ below of=NC,
+ node distance=2cm,
+ text width=2.5cm] (SAC) 
+ {%
+ \begin{tabular}{l}
+  \parbox{2.5cm}{Same as client}
+ \end{tabular}
+ };
+
+ % draw the paths and and print some Text below/above the graph
+ \path (RPC) edge node {} (MC)
+       (MC)  edge node [anchor=south]{call}  (NC)
+       (NC)  edge [loop right, min distance=10mm,in=-7,out=7,looseness=5] node[anchor=west] {RPC} (NC)
+       (NC) edge [bend left=40] (SAC.east)
+ ;
+\end{tikzpicture}
+}
+\caption{Server side}
+
+\end{figure}
+
+
 
 \section{Collisons/Powerups/Prediction}
 If (drove into wall) \{
