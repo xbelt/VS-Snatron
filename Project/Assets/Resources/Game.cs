@@ -73,7 +73,7 @@ public class Game
 		if (Network.isServer)
 		{
 			_spawner.InstantiateLevelObjects();
-			AddAIPlayers ();
+			SpawnAIPlayers ();
 		}
 		
 		_gameStarted = true;
@@ -83,22 +83,12 @@ public class Game
 		}
 	}
 
-	void AddAIPlayers ()
+	public void BeginRound()
 	{
-		for (int i = 0; i < numberOfAIPlayers; i++) {
-			int id = getFirstFreePlayerId ();
-			setPlayer (id, "AI " + (i + 1), true);
-			_spawner.SpawnAI (id, OnLocalKill);
-		}
+
 	}
 
-    public void StopGame()
-	{
-		_spawner.ClearMyObjects ();
-		NewGame ();
-	}
-
-	private void EndRound()
+	public void EndRound()
 	{
 		// TODO something else?
 		_spawner.ClearMyObjects ();
@@ -112,6 +102,13 @@ public class Game
 	{
 		StopGame ();
 	}
+	
+	public void StopGame()
+	{
+		_spawner.ClearMyObjects ();
+		NewGame ();
+	}
+
 	// Reset the game instance
 	public void NewGame()
 	{
@@ -198,6 +195,14 @@ public class Game
 	}
 
 	#region game initialization
+	
+	void SpawnAIPlayers ()
+	{
+		foreach (var player in _players) {
+			if (player.isAI)
+				_spawner.SpawnAI (player.id, OnLocalKill);
+		}
+	}
 
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName, bool isAI) {

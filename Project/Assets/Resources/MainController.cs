@@ -77,10 +77,10 @@ public class MainController : MonoBehaviour
 	{
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
-		_game.numberOfAIPlayers = 0;
+		_game.numberOfAIPlayers = _game.Level.MaxPlayers - _game.NofActivePlayers;
+		AddAIPlayers ();
 		int rounds = 5; // TODO take from GameConfig
 		_networkControl.broadCastStartGame (rounds);
-		//GameObject.Find ("Network").networkView.RPC ("StartGame", RPCMode.All);
 	}
 	
 	// A QuickGame is a normal "NetworkGame" with only the server playing, which is only 1 round
@@ -88,9 +88,18 @@ public class MainController : MonoBehaviour
 	{
 		print ("GUI:StartQuickGame()");
 		_game.setPlayer(0, _gui.PlayerName, false);
-		_game.numberOfAIPlayers = 4;
+		_game.numberOfAIPlayers = _game.Level.MaxPlayers - 1;
 		_networkControl.InitServer (0);
+		AddAIPlayers ();
 		_networkControl.broadCastStartGame (1);
+	}
+
+	private void AddAIPlayers()
+	{
+		for (int i = 0; i < _game.numberOfAIPlayers; i++) {
+			int id = _game.getFirstFreePlayerId ();
+			_networkControl.broadCastPlayerJoined("AI " + (i + 1), id, true);
+		}
 	}
 	
 	// Disconnect from a running game
