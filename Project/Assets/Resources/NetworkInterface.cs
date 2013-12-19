@@ -132,7 +132,7 @@ public class NetworkInterface : MonoBehaviour {
 			OnGameStarted (rounds); 
 	}
 	
-	public void broadCastStopGame()
+	public void broadCastEndGame()
 	{
 		Debug.Log ("NET:broadCastStopGame()");
 		GetComponent<NetworkView>().RPC("EndGame", RPCMode.AllBuffered);

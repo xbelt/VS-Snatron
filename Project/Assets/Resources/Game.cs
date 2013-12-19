@@ -157,10 +157,14 @@ public class Game
 		if (player.isAI)
 			_aiPlayerAlive--;
 		else
-			_humanPlayers--;
-		
-		if (Network.isServer && isRoundOver) {
-			if (NofLivingPlayers == 1)
+			_humanPlayersAlive--;
+
+		Debug.Log ("Players alive " + _humanPlayersAlive + " " + _aiPlayerAlive);
+
+		if (Network.isServer) {
+			if (_humanPlayersAlive == 0 && player.isAI == false)
+				OnLastHumanDied();
+			else if (NofLivingPlayers <= 1)
 				OnOnePlayerLeft();
 		}
 	}
