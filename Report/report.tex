@@ -215,8 +215,8 @@ Tronium is inspired by the "light cycle" scene from the 1982 film "Tron" and is 
 The game supports Windows on x86/x86\_64 and Android\texttrademark \ 
 with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity engine.
 
-\end{abstract}
 
+ 
 \section{Introduction}
 
 We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from "Tron". 
@@ -245,12 +245,39 @@ Our goal was therefore to implement a true (networked) multiplayer experience on
 Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
 We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in Section 4) to implement the following game mechanics:
 
+\end{abstract}
+
 \begin{figure}
  	 	    \includegraphics[height=6cm]{tron_four}
  	  
  	 	\caption{The main game... << weird wall >> }
  \end{figure}
  
+\section{Unity}
+Unity\textregistered, which is developed by Unity Technologies, is a high level game development framework or engine. Our project specifically uses the commercial version of Unity called Unity\textregistered Pro. Unity offers an editor (Figure 2) that allows manipulation of 3D environments, game assets and live debugging.
+Unity is based on Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
+We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE.
+Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
+The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
+
+Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObject"s.
+\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing  nesting).
+All "GameObject"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GameObject". There are many other types of "Component"s, including "Lights", "Cameras" and "Materials" as well as Scripts.
+
+Unity offers two very different methods for networking.
+A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
+Both require a GO to have a "NetworkView" component which makes them visible to the network in Unity.
+
+Synchronization allows for high-frequency, low-cost updates  of GOs. It can however only be used to synchronize certain properties of the GO, e.g. the transform (pos,rot,vel) component.
+
+RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
+
+\begin{figure}
+\center
+ 	 	    \includegraphics[height=5.7cm]{editor_cropped}
+ 	  
+ 	 	\caption{The Unity editor}
+ \end{figure}
  
  \section{Tronium mechanics }
 We simplified the complex settings and mechanics from Armagetron Advanced to a single game mode, with fixed speed, arena size, etc.
@@ -269,9 +296,9 @@ For single-player games, there are AI opponents which will take the role of othe
 The AI and the roaming obstacles will be described in more detail in Section 7.
 
 
-\begin{figure}
+\begin{figure}[bp]
 \centering
-\subfigure[client] {
+\subfigure {
 \begin{tikzpicture}[->,>=stealth']
 
  % First node
@@ -325,7 +352,7 @@ The AI and the roaming obstacles will be described in more detail in Section 7.
 }
 
 \hfill
-\subfigure[server]{
+\subfigure{
 
 \begin{tikzpicture}[->,>=stealth']
 
@@ -381,62 +408,8 @@ The AI and the roaming obstacles will be described in more detail in Section 7.
  ;
 \end{tikzpicture}
 }
-\caption{Control flow diagrams}
+\caption{Control flow diagrams for client (top) and server (bottom).}
 \end{figure}
-
-\begin{figure}
-\centering
-\begin{tikzpicture}[->,>=stealth']
-
- % First node
- % Use previously defined 'state' as layout (see above)
- % use tabular for content to get columns/rows
- % parbox to limit width of the listing
- \node[state,text width=2cm] (SG) 
- {\small{StartGame}};
-
- % Next node: WS (no idea what these letters should mean)
- \node[state,       % layout (defined above)
- node distance=3cm,     % distance to SG
- text width=2cm,        % max text width
- right of=SG](WS)       % Position is to the right of SG
- {\small{Waiting screen}};
-
- % STATE Game
- \node[state,
- below of=SG,
- node distance=2cm,
- text width=2cm] (Game) 
- {\small{Game}};
-
- % draw the paths and and print some Text below/above the graph
- \path (SG) edge [bend left] node [anchor=south] {\scriptsize{host}} (WS)
- (WS) edge [bend left] node [anchor=north] {\scriptsize{esc}} (SG)
-       (SG)  edge [bend right] node [anchor=east]{\scriptsize{join}}  (Game)
-       (Game) edge [bend right] node [anchor=west] {\scriptsize{esc}} (SG)
- ;
-\end{tikzpicture}
-\caption{Control flow}
-\end{figure}
-
-\section{Unity}
-Unity\textregistered, which is developed by Unity Technologies, is a high level game development framework or engine. Our project specifically uses the commercial version of Unity called Unity\textregistered Pro. Unity offers an editor  <<FIGURE>> that allows manipulation of 3D environments, game assets and live debugging.
-Unity is based on Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
-We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE.
-Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
-The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
-
-Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObject"s.
-\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing  nesting).
-All "GameObject"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GameObject". There are many other types of "Component"s, including "Lights", "Cameras" and "Materials" as well as Scripts.
-
-Unity offers two very different methods for networking.
-A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
-Both require a GO to have a "NetworkView" component which makes them visible to the network in Unity.
-
-Synchronization allows for high-frequency, low-cost updates  of GOs. It can however only be used to synchronize certain properties of the GO, e.g. the transform (pos,rot,vel) component.
-
-RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
 
 \section{Tronium networking}
 Tronium combines (as do most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for communicating gamestate changes.
@@ -469,8 +442,13 @@ The NetworkController causes events (via delegates) to be triggered in the MainC
 The NetworkController handles all RPC. A received RPC will result in an event being triggered in MainController.
 The MainController calls (non-RPC) functions of the NetworkController which will then in turn send out RPC Calls  to the network.
 In our implementation RPC's will also be sent to the sender, ensuring that all clients make the same state transitions.
-See <<FIGURE>> for examples of (simplified) state transitions involved with starting a new game via network.
+See Figure 3 for examples of (simplified) state transitions involved with starting a new game via network.
 
+ \begin{figure}[bp]
+ 	 	    \includegraphics[height=5.5cm]{collision_meshes_text}
+ 	  
+ 	 	\caption{The player bike, with the colliders visible in yellow }
+ \end{figure}
 
 
 \section{Collision detection}
@@ -484,11 +462,6 @@ Finally, the "CollisionPredictor" is used to detect if the player will move into
 Placing the "CollisionPredictor" in front of the bike is necessary to avoid players 'warping' through walls  - this could happen since collisions (and position updates) are calculated at discrete time points. With sufficient speed, a player might be before an obstacle at one point but already beyond the obstacle in the next.
 The "CollisionPredictor" is therefore dynamically resized to match the size of the next 'step', i.e. it covers the ground that the bike would move through during the current time step if time was truly continuous. 
 
- \begin{figure}
- 	 	    \includegraphics[height=5.5cm]{collision_meshes_text}
- 	  
- 	 	\caption{The player bike, with the colliders visible in yellow }
- \end{figure}
 
 Each Collider is a child GameObject of the bike and has a script attached to it that listens (via OnTriggerEntry/Exit) for collisions. If a collision is detected, an appropriate event in the parent object is triggered. 
 Collisions will be triggered during the physics update phase of each frame calculation and the effects of these method calls can be used in the "Update()" method that is triggered later (but still before the actual frame is drawn). If a collision has been detected by the collision predictor, the main bike script will kill the player.
@@ -530,10 +503,14 @@ Our implementation can rotate only over one of the cubes edges. To allow movemen
 Now that all pieces are in place, for the animation.
 The code for the rotation is unique in that it makes use of a feature nowhere else in our codebase: It's a coroutine, or Iterator in C\#-speak \cite{csharpthing}.
 %"http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx"
- It allows us to program the animation inside a loop by passing control back to Unity using \cs{yield return null} after we've made the calculations for the next frame. On the next frame, Unity resumes our iterator, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. Using iterators, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
+ It allows us to program the animation inside a loop by passing control back to Unity using \cs{yield return null} after we've made the calculations for the next frame.
+
+  On the next frame, Unity resumes our iterator, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. Using iterators, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
 Due to time constraints, cubes are allowed to move through any geometry. As an improvement, one might consider to have cubes tear down pieces of walls they come in contact with.
 
 
+ \balancecolumns
+ 
 \section{Conclusion}
  Working in a larger group was an interesting change and while our intra team communication was very good there were considerable efficiency losses when e.g. bug fixes for one component affected code that was concurrently being refactored.
 
@@ -541,7 +518,7 @@ Due to time constraints, cubes are allowed to move through any geometry. As an i
 
 An obvious and straight forward next step would be allowing the  player to customize the parameters of the game. Another interesting extension would be internet multiplayer, however additional work for NAT and higher latencies might be necessary.
 
-\balancecolumns % GM June 2007
+ % GM June 2007
 
 % The following two commands are all you need in the
 % initial runs of your .tex file to
@@ -549,6 +526,6 @@ An obvious and straight forward next step would be allowing the  player to custo
 \bibliographystyle{abbrv}
 \bibliography{report}  % sigproc.bib is the name of the Bibliography in this case
 % You must have a proper ".bib" file
-
+ \balancecolumns
 
 \end{document}
