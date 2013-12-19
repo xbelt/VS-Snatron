@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 public class Game
 {
-	public static readonly int MaxPlayers = 8;
 	// TODO put into game config
 	private static readonly int GAME_LENGTH = 5;
 
@@ -32,7 +31,7 @@ public class Game
     }
 
 	//public PlayerModel LocalPlayerModel { get { return _players [PlayerID]; } }
-	private PlayerModel[] _players = new PlayerModel[MaxPlayers];
+	private PlayerModel[] _players;
 	public PlayerModel[] Players { get { return _players; } }
 
 	private int _nOfActivePlayers;
@@ -49,6 +48,7 @@ public class Game
     private Game() {
 		_level = new BasicLevelModel ();
 		_spawner = new Spawner (_level);
+		_players = new PlayerModel[_level.MaxPlayers];
 		NewGame ();
 	}
 
@@ -90,74 +90,17 @@ public class Game
 
 	#region game initialization
 
-	//public delegate void SpawnEvent(int playerId);
-	//public SpawnEvent OnSpawned;
-	
-	//public delegate void KillEvent (int playerId);
-	//public KillEvent OnKilled;
-
 	private void OnLocalKill(int playerId)
 	{
-		_players [playerId].isAlive = true;
+		_players [playerId].isAlive = false;
 		_spawner.Kill (playerId);
 	}
 
 	private void OnRemoteKill(int playerId)
 	{
-		// TODO ?
+		// TODO necessary? (not yet called)
+		_players [playerId].isAlive = false;
 	}
-
-	/*
-    private void SpawnPlayer()
-	{
-		Vector3 location;
-		Quaternion orientation;
-		mapStartLocation (PlayerID, out location, out orientation);
-		
-		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
-		var cam = GameObject.Find("Main Camera");
-		cam.AddComponent<SmoothFollow>().target = player;
-		
-		MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.identity);
-        MonoBehaviour.Instantiate(_gridPrefab, Vector3.zero, Quaternion.FromToRotation(Vector3.forward, Vector3.right));
-		
-		_localPlayer = player.GetComponent<Drive> ();
-		_localPlayer.playerId = _localPlayerId;
-		_localPlayer.OnDeadlyCollision += Kill;
-
-		if (OnSpawned != null)
-			OnSpawned (_localPlayerId);
-	}
-
-	private void Kill(int playerId)
-	{
-		if (playerId == _localPlayerId) {
-			// TODO move this up?
-			Network.Destroy (_localPlayer.gameObject);
-			_localPlayer = null;
-			// Logically destroy the player
-			if (OnKilled != null)
-				OnKilled(playerId);
-			GameObject.Find("Network").networkView.RPC("KillPlayer", RPCMode.All, playerId);
-		}
-	}
-	
-    private void SpawnKI() {
-        numberOfLivingKIPlayers = numberOfKIPlayers;
-        for (int i = PlayerID + 1; i < PlayerID + 1 + numberOfKIPlayers; i++) {
-            _playerPrefab = Resources.Load<Transform>("Player" + i);
-            Vector3 location;
-            Quaternion orientation;
-            mapStartLocation(i, out location, out orientation);
-
-            var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
-            MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
-            player.gameObject.AddComponent<KIControler>();
-			KIControler ai = player.gameObject.GetComponent<KIControler>();
-			ai.KIId = i; // TODO instead register event as normal and assign it the next free id
-        }
-    }*/
-
 
 	// Called when both local player and remote player was spawned? TODO really?
 	public void setPlayer(int playerId, string playerName, bool isAI) {
@@ -200,7 +143,7 @@ public class Game
 		_roundsToPlay = GAME_LENGTH;
 		_gameStarted = false;
 		
-		for (int i = 0; i < MaxPlayers; i++)
+		for (int i = 0; i < _level.MaxPlayers; i++)
 		{
 			_players[i] = null;
 		}
@@ -210,7 +153,7 @@ public class Game
 	{
 		_roundsToPlay--;
 		_nOfLivingPlayers = _nOfActivePlayers;
-		for (int i = 0; i < MaxPlayers; i++)
+		for (int i = 0; i < _level.MaxPlayers; i++)
 		{
 			if (_players[i] == null)
 				continue;
@@ -354,93 +297,5 @@ public class Game
 	        MonoBehaviour.Destroy(powerUp1);
 	    }
 	}
-	// TODO remove the following commented code
-	/*
-	private void mapStartLocation(int playerId, out Vector3 location, out Quaternion orientation)
-	{
-		// This is how players are arranged in a square, by id
-		// 4 0 6
-		// 3 * 2
-		// 7 1 5
-		
-		// Orientations:
-		// 0,1,2,3 look towards the center * @(0/0/0)
-		// 4,5,6,7 look in clockwise direction
-		
-		float dist = FieldBorderCoordinates/2;
-		
-		switch (playerId) {
-		case 0: location = new Vector3(0, 0, -dist); 	 orientation = Quaternion.AngleAxis(0, Vector3.up); break;
-		case 1: location = new Vector3(0, 0,  dist); 	 orientation = Quaternion.AngleAxis(180, Vector3.up); break;
-		case 2:	location = new Vector3( dist, 0, 0); 	 orientation = Quaternion.AngleAxis(270, Vector3.up); break;
-		case 3:	location = new Vector3(-dist, 0, 0); 	 orientation = Quaternion.AngleAxis(90, Vector3.up); break;
-		case 4:	location = new Vector3(-dist, 0, -dist); orientation = Quaternion.AngleAxis(90, Vector3.up); break;
-		case 5:	location = new Vector3( dist, 0,  dist); orientation = Quaternion.AngleAxis(270, Vector3.up); break;
-		case 6:	location = new Vector3( dist, 0, -dist); orientation = Quaternion.AngleAxis(0, Vector3.up); break;
-		case 7:	location = new Vector3(-dist, 0,  dist); orientation = Quaternion.AngleAxis(180, Vector3.up); break;
-		default:location = new Vector3(); 				 orientation = new Quaternion(); break;
-		}
-	}
-	
-	private void InstantiateGameBorders() {
-		var leftWall =
-			Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-		var frontWall =
-			Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-		var rightWall =
-			Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-		var backWall =
-			Network.Instantiate(Resources.Load<Transform>("Wall"), Vector3.zero, Quaternion.identity, 0) as Transform;
-		var wallColor = new Color(204 / 255f, 204 / 255f, 204 / 255f, 1f);
-		var shader = Shader.Find("Diffuse");
-		if (leftWall != null)
-		{
-			leftWall.transform.localScale = new Vector3(1, 5, 1);
-			leftWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-			leftWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-			leftWall.renderer.material.shader = shader;
-		}
-		if (frontWall != null)
-		{
-			frontWall.transform.localScale = new Vector3(1, 5, 1);
-			frontWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates);
-			frontWall.GetComponent<WallBehaviour>().updateWall(new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-			frontWall.renderer.material.shader = shader;
-		}
-		if (rightWall != null)
-		{
-			rightWall.transform.localScale = new Vector3(1, 5, 1);
-			rightWall.GetComponent<WallBehaviour>().start = new Vector3(FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
-			rightWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates));
-			rightWall.renderer.material.shader = shader;
-		}
-		if (backWall != null)
-		{
-			backWall.transform.localScale = new Vector3(1, 5, 1);
-			backWall.GetComponent<WallBehaviour>().start = new Vector3(-FieldBorderCoordinates, 1.5f, FieldBorderCoordinates);
-			backWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-FieldBorderCoordinates, 1.5f, -FieldBorderCoordinates));
-			backWall.renderer.material.shader = shader;
-		}
-	}
-	
-	private void InstantiateCubes() {
-		var cubes = new List<Transform>();
-		var random = new System.Random();
-		var shader = Shader.Find("Diffuse");
-		for(var i = 0; i < NumberOfCubes; ++i) {
-			var x = random.Next(-FieldBorderCoordinates, FieldBorderCoordinates);
-			var z = random.Next(-FieldBorderCoordinates, FieldBorderCoordinates);
-			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3(x, 1.5f, z), Quaternion.identity, 0) as Transform);
-			cubes[i].renderer.material.shader = shader;
-		}
-	}*/
-
-    public void KillKI(int kiId) {
-        numberOfLivingKIPlayers--;
-        if (isRoundOver())
-        {
-            EndRound();
-        }
-    }
 }
 

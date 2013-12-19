@@ -50,7 +50,7 @@ public class NetworkControl : MonoBehaviour {
 	public void AnnounceServer() {
 		StopSearching ();
 		ServerHoster.HostServer(HostName);
-		InitServer(Game.MaxPlayers);
+		InitServer(Game.Instance.Level.MaxPlayers);
 		if (OnServerStarted != null)
 			OnServerStarted ();
 	}

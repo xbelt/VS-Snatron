@@ -249,7 +249,7 @@ public class UserInterface : MonoBehaviour
 		
 		var i = 0;
 		
-		for (int j = 0; j < Game.MaxPlayers; j++)
+		for (int j = 0; j < Game.Instance.Level.MaxPlayers; j++)
 		{
 			if (Game.Instance.isActivePlayer(j))
 			{
