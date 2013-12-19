@@ -40,7 +40,7 @@ public class Game
 	
 	private int _nOfLivingPlayers;
 	public int NofLivingPlayers { get { return _nOfLivingPlayers; } }
-    public int numberOfKIPlayers;
+    public int numberOfAIPlayers;
     public int numberOfLivingKIPlayers;
 
 	private int _roundsToPlay;
@@ -67,16 +67,20 @@ public class Game
 		if (Network.isServer)
 		{
 			_spawner.InstantiateLevelObjects();
-			for (int i = 0; i < numberOfKIPlayers; i++) {
-				int id = getFirstFreePlayerId();
-				setPlayer(id, "AI " + (i+1), true);
-				_spawner.SpawnAI(id, OnLocalKill);
-			}
+			AddAIPlayers ();
 		}
 		
 		_gameStarted = true;
 	}
 
+	void AddAIPlayers ()
+	{
+		for (int i = 0; i < numberOfAIPlayers; i++) {
+			int id = getFirstFreePlayerId ();
+			setPlayer (id, "AI " + (i + 1), true);
+			_spawner.SpawnAI (id, OnLocalKill);
+		}
+	}
 
     public void StopGame()
 	{
@@ -250,7 +254,7 @@ public class Game
 			return false;
 		if (_nOfActivePlayers > 1)
 			return _nOfLivingPlayers <= 1;
-	    if (numberOfKIPlayers > 0) {
+	    if (numberOfAIPlayers > 0) {
 	        return numberOfLivingKIPlayers <= 0;
 	    }
 	    return isAlive (PlayerID);
