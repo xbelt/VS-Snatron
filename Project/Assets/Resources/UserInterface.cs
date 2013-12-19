@@ -46,26 +46,31 @@ public class UserInterface : MonoBehaviour
 	private State _state = State.Uninitialized;
 
 	public void ShowStartScreen(GetServerList serverSource) {
+		Debug.Log ("UI:Show Start Screen");
 		_serverSource = serverSource;
 		ShowMenuBackground ();
 		ResetCamera();
 		_state = State.StartScreen;
 	}
 	public void ShowLobby(GetPlayerList playerSource) {
+		Debug.Log ("UI:Show Lobby");
 		_playerSource = playerSource;
 		_state = State.Lobby;
 	}
 	public void ShowGame() {
+		Debug.Log ("UI:Show Game");
 		HideMenuBackground ();
 		_state = State.Game;
 	}
 	public void ShowGamePaused() {
+		Debug.Log ("UI:Show GamePaused");
 		_state = State.GamePaused;
 	}
 
-	void OnStart()
+	private void Start()
 	{
 		ReadScreenDimensionsAndroid();
+		Debug.Log ("UI:Screen Size : " + HeightPixels + " / " + WidthPixels);
 		SetFontSize(HeightPixels / 25);
 		SetTextColor(Color.white);
 	}
@@ -154,7 +159,10 @@ public class UserInterface : MonoBehaviour
 
 	public void HandleStartScreenGUI()
 	{
-		if (GUI.Button(new Rect(1 / 30f * WidthPixels, 1 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Host", buttonGUIStyle))
+		if (GUI.Button(
+			new Rect(1 / 30f * WidthPixels,
+		         1 / 20f * HeightPixels, 1 / 10f * WidthPixels,
+		         1 / 20f * HeightPixels), "Host", buttonGUIStyle))
 		{
 			OnStartServerRequest();
 		}

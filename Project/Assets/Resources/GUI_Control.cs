@@ -9,11 +9,11 @@ public class GUI_Control : MonoBehaviour
 	public UserInterface _gui;
 	public NetworkControl _networkControl;
 
-	public GUIStyle buttonGUIStyle { get { return _gui.buttonGUIStyle; } set { _gui.buttonGUIStyle = value; } }
-	public GUIStyle labelGUIStyle { get { return _gui.labelGUIStyle; } set { _gui.labelGUIStyle = value; } }
-	public GUIStyle layoutGUIStyle { get { return _gui.layoutGUIStyle; } set { _gui.layoutGUIStyle = value; } }
-	public GUIStyle textFieldGUIStyle { get { return _gui.textFieldGUIStyle; } set { _gui.textFieldGUIStyle = value; } }
-	public GUIStyle horizontalScrollbarGUIStyle { get { return _gui.horizontalScrollbarGUIStyle; } set { _gui.horizontalScrollbarGUIStyle = value; } }
+	public GUIStyle buttonGUIStyle;
+	public GUIStyle labelGUIStyle;
+	public GUIStyle layoutGUIStyle;
+	public GUIStyle textFieldGUIStyle;
+	public GUIStyle horizontalScrollbarGUIStyle;
 
     // ReSharper disable once UnusedMember.Local
     private void Start()
