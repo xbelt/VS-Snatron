@@ -144,8 +144,6 @@ public class UserInterface : MonoBehaviour
 		DrawPlayerStateList ();
 		
 		if (Game.Instance.HasLocalPlayerWon() ) {
-			
-			Game.Instance.GameStarted = false; // TODO remove this! The game decides itself when it ends!
 			DrawYouWinMessage ();
 			DrawBackButton ();
 		}
