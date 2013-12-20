@@ -219,7 +219,7 @@ with potential for easy ports to others platforms thanks to the cross platform c
  
 \section{Introduction}
 
-We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron. 
+We were inspired to create this game after playing Armagetron Advanced\cite{AA}, an open source game that is itself inspired by the light cycle scene from Tron. 
 In Section 2 we will look at Armagetron Advanced and other games inspired by Tron, as well as similar games available on mobile platforms.
 In Section 3, we will explain the gameplay and game mechanics that we decided to implement with Tronium, and in  Section 4 we will introduce Unity with a focus on its networking concepts. In Section 5 we will show how we use these concepts in our game. 
 In Section 6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are 'long' in comparison to the high in-game speeds.
@@ -229,9 +229,9 @@ In the last section, we will give our conclusions on our game and working both w
  
 \section{Existing games}
 
-Armagetron Advanced\cite{AA} is one of two open source projects that try to recreate the light cycle scene, the other being GLTron\cite{GLT} by Andreas Umbach\cite{Umbach}.
-GLTron is a faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film.
-Armagetron Advanced is less faithful to the movie and offers a wide variety of gamemodes and heavy customization, with parameters like base speed, arena size, number of players, etc.
+Armagetron Advanced\cite{AA} is one of two open source projects that try to recreate the light cycle scene, the other being GLTron\cite{GLT} by Andreas Umbach.
+GLTron is a faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film Tron.
+Armagetron Advanced is less faithful to the film and offers a wide variety of gamemodes and heavy customization, with parameters like base speed, arena size, number of players, etc.
 We were aiming more at recreating the enjoyment of playing Armagetron Advanced rather than being faithful to the original scene.
 Since the scope of this project was somewhat limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
 but rather focused on implementing the 'core' game mode with fixed parameters. Visually, we were inspired by the aesthetics of the 2010 film ``Tron Legacy" rather than by the original film or the existing games.
@@ -248,9 +248,9 @@ We used Unity, a high level game engine (which will be discussed in Section 4) t
 \end{abstract}
 
 \begin{figure}
- 	 	    \includegraphics[height=6cm]{tron_four}
+ 	 	    \includegraphics[height=6.2cm]{tron_four}
  	  
- 	 	\caption{The main game... << weird wall >> }
+ 	 	\caption{A screenshot from Tronium }
  \end{figure}
  
  
@@ -509,8 +509,7 @@ This works because the cube's sides are uniform: a 90° rotation is, as far as t
 This axis is specified by two vectors, an origin relative to the cube's center: \{x: -.5, y: -.5, z: -.5 \} and another vector to indicate the direction: \{x: 0, y: 0, z: 1\}.
 Unity cube primitives have an edge length of 1, which produces $-0.5$ used in the coordinates. 
 However, \cs{RotateAround()} expects the axis to be in world coordinates, for this we transform both the origin and the direction out of our local coordinate system again leveraging Unity's built-in methods. Another benefit of this method is, that the scaling factor imposed on the cube is irrelevant to the movement and rotation, because of local-to-world transformations that are used.
-The code for the rotation is unique in that it makes use of a feature not present in the rest of the code: It uses a coroutine, or \cs{Iterator}\cite{yield}.
-%"http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx"
+The code for the rotation is unique in that it makes use of a feature not present in the rest of the code: It uses a coroutine, or \cs{Iterator} 
  It allows us to program the animation inside a loop by passing control back to Unity using \cs{yield return null} after we've made the calculations for the next frame.
 
   On the next frame, Unity resumes our \cs{Iterator}, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. 
