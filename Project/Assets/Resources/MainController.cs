@@ -91,7 +91,7 @@ public class MainController : MonoBehaviour
 		print ("GUI,Server:StartNetworkGame()");
 		_networkControl.StopAnnouncingServer();
 		AddAIPlayers (_game.Level.MaxPlayers - _game.NofPlayers);
-		int rounds = 5; // TODO take from GameConfig
+		int rounds = 1; // TODO take from GameConfig
 		_networkControl.broadCastBeginGame (rounds);
 	}
 	

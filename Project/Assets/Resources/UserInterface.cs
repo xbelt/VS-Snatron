@@ -136,6 +136,7 @@ public class UserInterface : MonoBehaviour
 	{
 		drawHostButton ();
 		DrawQuickGameButton ();
+
 		DrawPlayerNameLabelAndInput ();
 		DrawServerIpLabelAndInput ();
 		DrawJoinServerButton ();
@@ -218,6 +219,7 @@ public class UserInterface : MonoBehaviour
 		if (GUI.Button (new Rect (1 / 30f * WidthPixels, 3 / 20f * HeightPixels, 1 / 10f * WidthPixels, 1 / 20f * HeightPixels), "Race", buttonGUIStyle)) {
 			OnStartQuickGameRequest ();
 		}
+
 	}
 
 	void DrawPlayerNameLabelAndInput ()

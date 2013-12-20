@@ -142,7 +142,7 @@ public class NetworkInterface : MonoBehaviour {
 	public void EndGame() 
 	{
 		Debug.Log ("RPC:EndGame()");
-		Disconnect ();
+		//Disconnect ();
 		InitNetworkInterface ();
 		if (OnGameEnded != null)
 			OnGameEnded ();
