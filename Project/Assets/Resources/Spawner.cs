@@ -255,6 +255,11 @@ public class Spawner
 		foreach (var powerUp1 in powerUp1s) {
 			MonoBehaviour.Destroy(powerUp1);
 		}
+	    var powerUp2s = GameObject.FindGameObjectsWithTag("powerUp2");
+        foreach (var powerUp2 in powerUp2s)
+        {
+            MonoBehaviour.Destroy(powerUp2);
+        }
 	}
 }
 
