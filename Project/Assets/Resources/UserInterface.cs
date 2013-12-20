@@ -200,8 +200,8 @@ public class UserInterface : MonoBehaviour
 		// Temp hack
 		int old = labelGUIStyle.fontSize;
 		labelGUIStyle.fontSize = 30;
-		GUI.Label (new Rect (0.1f * WidthPixels, 0.1f * HeightPixels,
-		                     0.9f * WidthPixels, 0.9f * HeightPixels),
+		GUI.Label (new Rect (0.4f * WidthPixels, 0.1f * HeightPixels,
+		                     0.2f * WidthPixels, 0.2f * HeightPixels),
 		           "Round " + _round, labelGUIStyle);
 		labelGUIStyle.fontSize = old;
 	}
