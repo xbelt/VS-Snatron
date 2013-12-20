@@ -1,27 +1,44 @@
 \begin{thebibliography}{1}
 
-\bibitem{devServices}
-{Services: Sending Notifications to the User}.
+\bibitem{AA}
+{Armagetron Advanced}.
+\newblock \url{http://armagetronad.org/about.php}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{GLT}
+{GLTron}.
+\newblock \url{http://www.gltron.org/index.php}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{Andro}
+{Androgetron}.
+\newblock \url{http://forums3.armagetronad.net/viewtopic.php?f=4&t=23073}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{GP1}
+{"3D Tron Light Cycle" on Google Play}.
+\newblock \url{https://play.google.com/store/apps/details?id=mobi.pixi.glTron}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{GP2}
+{"TRON 3D" on Google Play}.
+\newblock \url{https://play.google.com/store/apps/details?id=com.msi.tron3d}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{GP3}
+{(simplified) GLTron port on Google Play}.
+\newblock \url{https://play.google.com/store/apps/details?id=com.glTron}.
+\newblock Accessed on 20 Dec 2013.
+
+\bibitem{Andro2}
+{Androgetron on Google Play}.
 \newblock
-  \url{http://developer.android.com/guide/components/services.html#Notifications}.
-\newblock Accessed on 29 Aug 2013.
+  \url{https://play.google.com/store/apps/details?id=net.guru3.androgetron2}.
+\newblock Accessed on 20 Dec 2013.
 
-\bibitem{hello}
-E.~Burnette.
-\newblock {\em Hello, Android: introducing Google's mobile development
-  platform}.
-\newblock Pragmatic Bookshelf, 3 edition, 2010.
-
-\bibitem{RFC2616}
-R.~Fielding, J.~Gettys, J.~Mogul, H.~Frystyk, L.~Masinter, P.~Leach, and
-  T.~Berners-Lee.
-\newblock {Hypertext Transfer Protocol -- HTTP/1.1}.
-\newblock RFC 2616, 1999.
-
-\bibitem{REST}
-R.~T. Fielding.
-\newblock {\em {Architectural Styles and the Design of Network-based Software
-  Architectures}}.
-\newblock Phd thesis, UC Irvine, 2000.
+\bibitem{yield}
+{MSDN Reference: yield}.
+\newblock \url{http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx}.
+\newblock Accessed on 20 Dec 2013.
 
 \end{thebibliography}
