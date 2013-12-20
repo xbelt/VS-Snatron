@@ -285,9 +285,8 @@ public class Drive : MonoBehaviour {
                 + transform.right * distance * Mathf.Sin(ang * Mathf.Deg2Rad);
 
 
-            var rotation = Quaternion.FromToRotation(center, pos);
             pos.y = 2.5f;
-            var cube = Instantiate(Resources.Load<Transform>("RotatingCube"), pos, rotation) as Transform;
+            var cube = Instantiate(Resources.Load<Transform>("RotatingCube"), pos, Quaternion.LookRotation(pos - center) * Quaternion.Euler(0, -90, 0)) as Transform;
         }
     }
 }

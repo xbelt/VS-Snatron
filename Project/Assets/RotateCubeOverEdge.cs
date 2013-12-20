@@ -16,6 +16,7 @@ public class RotateCubeOverEdge : MonoBehaviour {
     }
 
     private IEnumerator rotate90(float time) {
+        yield return true;
         var initialRotation = transform.rotation;
         while (true) {
             Debug.Log("Start loop");
