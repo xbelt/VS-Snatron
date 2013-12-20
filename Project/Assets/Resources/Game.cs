@@ -64,9 +64,6 @@ public class Game
 		_spawner.LocalPlayerId = localPlayerId;
 		// TODO make sure local player and all other human players are contained in _players
 
-	    _humanPlayers--;
-		_aiPlayers = _aiPlayers / 2;
-
 		Debug.Log ("Players starting game: ");
 		foreach (PlayerModel player in _players) {
 			if (player == null)
@@ -79,8 +76,18 @@ public class Game
 	public void BeginRound(int round)
 	{
 		_currentRound = round;
-		_aiPlayerAlive = _aiPlayers;
-		_humanPlayersAlive = _humanPlayers;
+		_aiPlayerAlive = 0;
+		_humanPlayersAlive = 0;
+		foreach (PlayerModel player in _players) {
+			if (player == null)
+				continue;
+			if (player.isAI)
+				_aiPlayerAlive++;
+			else
+				_humanPlayersAlive++;
+		}
+		//_aiPlayerAlive = _aiPlayers;
+		//_humanPlayersAlive = _humanPlayers;
 
 		for (int i = 0; i < _level.MaxPlayers; i++) {
 			if (_players[i] != null)
@@ -151,8 +158,10 @@ public class Game
 	public void OnGlobalKill(int playerId)
 	{
 		PlayerModel player = _players [playerId];
-		if (player == null)
+		if (player == null || !player.isAlive)
 			return;
+		Debug.Log ("Game:On Global Kill");
+
 		player.rank = NofLivingPlayers;
 		player.isAlive = false;
 		if (player.isAI)
