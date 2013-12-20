@@ -181,9 +181,9 @@ AudioSource:
   m_GameObject: {fileID: 18469729}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: f4696f6c90694c045afd6e7639e6f586, type: 3}
+  m_audioClip: {fileID: 8300000, guid: ee61fd7f7ad9008458c59c4a8ecc59d0, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -359,7 +359,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019847853}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff24e072d1782e042aa98062e4c8e74d, type: 3}
+  m_Script: {fileID: 11500000, guid: d0920c53d0d9e464bb0767d09783de01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1447392286
@@ -373,8 +373,6 @@ GameObject:
   - 33: {fileID: 1447392290}
   - 65: {fileID: 1447392289}
   - 23: {fileID: 1447392288}
-  - 114: {fileID: 1447392287}
-  - 148: {fileID: 1447392292}
   m_Layer: 8
   m_Name: SplashScreen
   m_TagString: Untagged
@@ -382,17 +380,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1447392287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1447392286}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70ce6ec2a7e034c4eaf992e16c6d3fad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!23 &1447392288
 Renderer:
   m_ObjectHideFlags: 0
@@ -444,18 +431,6 @@ Transform:
   m_LocalScale: {x: 40, y: 20, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
---- !u!148 &1447392292
-NetworkView:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1447392286}
-  m_Enabled: 1
-  m_StateSynchronization: 1
-  m_Observed: {fileID: 0}
-  m_ViewID:
-    m_ID: 2
-    m_Type: 1
 --- !u!1 &1452918953
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,43 +498,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1550956980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7cc1c6f177a72c4eacc9b6723d9fcfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gui: {fileID: 1550956984}
-  _networkControl: {fileID: 1019847856}
---- !u!4 &1550956982
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1550956980}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.79714489, y: .548472226, z: 36.5996246}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
---- !u!148 &1550956983
-NetworkView:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1550956980}
-  m_Enabled: 1
-  m_StateSynchronization: 1
-  m_Observed: {fileID: 1550956982}
-  m_ViewID:
-    m_ID: 3
-    m_Type: 1
---- !u!114 &1550956984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1550956980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b3318e3ab30f714888a89d33f3dd649, type: 3}
+  m_Script: {fileID: 11500000, guid: e5d4be5944b63d642bea0e165b5a67c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _splashScreenLight: {fileID: 66100338}
@@ -568,7 +507,7 @@ MonoBehaviour:
     m_Name: 
     m_Normal:
       m_Background: {fileID: 2800000, guid: b52b2a79e1ed9d44b8d1595e3b03b363, type: 3}
-      m_TextColor: {r: .996078432, g: .996078432, b: .996078432, a: 1}
+      m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
@@ -610,11 +549,11 @@ MonoBehaviour:
       m_Right: 0
       m_Top: 0
       m_Bottom: 0
-    m_Font: {fileID: 0}
-    m_FontSize: 0
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 12
     m_FontStyle: 0
     m_Alignment: 4
-    m_WordWrap: 0
+    m_WordWrap: 1
     m_RichText: 1
     m_TextClipping: 0
     m_ImagePosition: 0
@@ -627,7 +566,7 @@ MonoBehaviour:
     m_Name: 
     m_Normal:
       m_Background: {fileID: 0}
-      m_TextColor: {r: .996078432, g: .996078432, b: .996078432, a: 1}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
@@ -669,10 +608,10 @@ MonoBehaviour:
       m_Right: 0
       m_Top: 0
       m_Bottom: 0
-    m_Font: {fileID: 0}
-    m_FontSize: 0
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 15
     m_FontStyle: 0
-    m_Alignment: 0
+    m_Alignment: 3
     m_WordWrap: 0
     m_RichText: 1
     m_TextClipping: 0
@@ -686,7 +625,7 @@ MonoBehaviour:
     m_Name: 
     m_Normal:
       m_Background: {fileID: 2800000, guid: 8c909ded3bc07084689e7191f3939b1d, type: 3}
-      m_TextColor: {r: .996078432, g: .996078432, b: .996078432, a: 1}
+      m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
@@ -745,7 +684,7 @@ MonoBehaviour:
     m_Name: 
     m_Normal:
       m_Background: {fileID: 2800000, guid: b52b2a79e1ed9d44b8d1595e3b03b363, type: 3}
-      m_TextColor: {r: .996078432, g: .996078432, b: .996078432, a: 1}
+      m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
@@ -778,19 +717,19 @@ MonoBehaviour:
       m_Top: 0
       m_Bottom: 0
     m_Padding:
-      m_Left: 5
+      m_Left: 0
       m_Right: 0
-      m_Top: 2
+      m_Top: 0
       m_Bottom: 0
     m_Overflow:
       m_Left: 0
       m_Right: 0
       m_Top: 0
       m_Bottom: 0
-    m_Font: {fileID: 0}
-    m_FontSize: 0
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 12
     m_FontStyle: 0
-    m_Alignment: 0
+    m_Alignment: 3
     m_WordWrap: 0
     m_RichText: 1
     m_TextClipping: 0
@@ -803,7 +742,7 @@ MonoBehaviour:
   horizontalScrollbarGUIStyle:
     m_Name: 
     m_Normal:
-      m_Background: {fileID: 2800000, guid: 41200862f3802c9499a1349bdde034a3, type: 3}
+      m_Background: {fileID: 0}
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
@@ -859,6 +798,42 @@ MonoBehaviour:
     m_FixedHeight: 0
     m_StretchWidth: 1
     m_StretchHeight: 0
+--- !u!4 &1550956982
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1550956980}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.79714489, y: .548472226, z: 36.5996246}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!148 &1550956983
+NetworkView:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1550956980}
+  m_Enabled: 1
+  m_StateSynchronization: 1
+  m_Observed: {fileID: 1550956982}
+  m_ViewID:
+    m_ID: 3
+    m_Type: 1
+--- !u!114 &1550956984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1550956980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08d1afc671219594fb27eba3366691ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gui: {fileID: 1550956981}
+  _networkControl: {fileID: 1019847856}
 --- !u!1 &1560860440
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,7 +858,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1560860440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8e18ccd9ae307c448f89512a43a7a38, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cc27d5f7cde4694789f46bb3a04fe53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1560860442
