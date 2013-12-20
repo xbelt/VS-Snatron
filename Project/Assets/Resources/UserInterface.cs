@@ -184,7 +184,12 @@ public class UserInterface : MonoBehaviour
 	
 	public void HandleRanking()
 	{
-		DrawEndGameButton ();
+        if (GUI.Button(new Rect(14 / 20f * WidthPixels, 20 / 40f * HeightPixels,
+                                1 / 10f * WidthPixels, 1 / 20f * HeightPixels),
+                       Network.isServer ? "End game" : "Leave game", buttonGUIStyle))
+        {
+            OnLeaveGameRequest();
+        }
 		DrawRanking ();
 	}
 
