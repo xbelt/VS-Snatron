@@ -278,7 +278,7 @@ public class Drive : MonoBehaviour {
         var center = transform.position;
         var deltaAngle = 20.0f;
         
-        for (int i = -5; i <= 5; i ++) {
+        for (int i = -8; i <= 8; i ++) {
             var ang = deltaAngle*i;
             Vector3 pos = center 
                 + transform.forward*distance*Mathf.Cos(ang*Mathf.Deg2Rad)
