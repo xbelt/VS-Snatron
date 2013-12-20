@@ -60,7 +60,13 @@ public class Spawner
 		if (OnSpawned != null)
 			OnSpawned (LocalPlayerId);
 	}
-	
+
+
+    IEnumerator FixAI(KIControler ki, CollisionPrediction k) {
+        yield return null;
+        k._drive = ki;
+    }
+
 	public void SpawnAI(int playerId, KillEvent onKilled) {
 		Debug.Log ("Spawner: Spawn AI Player " + LocalPlayerId);
 		_playerPrefab = Resources.Load<Transform>("Player" + playerId);
@@ -69,10 +75,12 @@ public class Spawner
 		_level.MapStartLocation(playerId, out location, out orientation);
 
 		var player = Network.Instantiate(_playerPrefab, location, orientation, 0) as Transform;
-		player.gameObject.AddComponent<KIControler>();
 		MonoBehaviour.Destroy(player.gameObject.GetComponent<Drive>());
+		player.gameObject.AddComponent<KIControler>();
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
-		ai.OnDeadlyCollision += (int id) => onKilled (id);
+	    var collisionPrediction = player.transform.Find("CollisionPredictor").GetComponent<CollisionPrediction>();
+	    collisionPrediction.StartCoroutine(FixAI(ai, collisionPrediction));
+	    ai.OnDeadlyCollision += (int id) => onKilled (id);
 		ai.playerId = playerId;
 		if (spawnedPlayers.ContainsKey(playerId))
 			spawnedPlayers.Remove (playerId);
