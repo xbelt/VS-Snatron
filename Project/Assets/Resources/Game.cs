@@ -188,10 +188,10 @@ public class Game
         MonoBehaviour.print("Game:SetPlayer()");
 		PlayerModel player = new PlayerModel (playerId, playerName);
 		player.isAI = isAI;
-	    if (isAI)
+	    if (isAI) {
 	        _aiPlayers++;
 	    }
-	    else
+	    else {
 	        _humanPlayers++;
 	    }
 
