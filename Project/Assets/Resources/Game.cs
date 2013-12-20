@@ -58,14 +58,14 @@ public class Game
 	/// <param name="rounds">Rounds.</param>
 	public void StartGame(int localPlayerId, int rounds)
 	{
-		Debug.Log ("Game: Start Game: " + " " + localPlayerId + " " + rounds);
+		Debug.Log ("Game: Start Game: " + " " + localPlayerId + " " + rounds + " " + _aiPlayers + " " + _humanPlayers);
 		_roundsToPlay = rounds;
 		_localPlayerId = localPlayerId;
 		_spawner.LocalPlayerId = localPlayerId;
 		// TODO make sure local player and all other human players are contained in _players
 
-		_humanPlayers = 0;
-		_aiPlayers = 0;
+	    _humanPlayers--;
+		_aiPlayers = _aiPlayers / 2;
 
 		Debug.Log ("Players starting game: ");
 		foreach (PlayerModel player in _players) {
@@ -188,12 +188,14 @@ public class Game
         MonoBehaviour.print("Game:SetPlayer()");
 		PlayerModel player = new PlayerModel (playerId, playerName);
 		player.isAI = isAI;
-		if(isAI)
-			_aiPlayers++;
-		else
-			_humanPlayers++;
-		
-		_players [playerId] = player;
+	    if (isAI)
+	        _aiPlayers++;
+	    }
+	    else
+	        _humanPlayers++;
+	    }
+
+	    _players [playerId] = player;
 	}
 
 	public void removePlayer(int playerId) {
