@@ -274,6 +274,20 @@ public class Drive : MonoBehaviour {
     }
 
     public void ConsumeCubeSpawnPowerup() {
+        var distance = 35.0f;
+        var center = transform.position;
+        var deltaAngle = 20.0f;
         
+        for (int i = -5; i <= 5; i ++) {
+            var ang = deltaAngle*i;
+            Vector3 pos = center 
+                + transform.forward*distance*Mathf.Cos(ang*Mathf.Deg2Rad)
+                + transform.right * distance * Mathf.Sin(ang * Mathf.Deg2Rad);
+
+
+            var rotation = Quaternion.FromToRotation(center, pos);
+            pos.y = 2.5f;
+            var cube = Instantiate(Resources.Load<Transform>("RotatingCube"), pos, rotation) as Transform;
+        }
     }
 }
