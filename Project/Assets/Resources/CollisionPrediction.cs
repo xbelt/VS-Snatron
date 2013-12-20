@@ -38,12 +38,20 @@ public class CollisionPrediction : MonoBehaviour {
                 _drive.ConsumeSpeedPowerup();
             }
         }
-        if (other.gameObject.tag == "powerUp1")
+        else if (other.gameObject.tag == "powerUp1")
         {
             other.gameObject.GetComponent<PowerUpDestroyer>().ConsumePowerUp();
             if (_drive != null)
             {
                 _drive.ConsumeIndestructiblePowerup();
+            }
+        }
+        else if (other.gameObject.tag == "powerUp2")
+        {
+            other.gameObject.GetComponent<PowerUpDestroyer>().ConsumePowerUp();
+            if (_drive != null)
+            {
+                _drive.ConsumeCubeSpawnPowerup();
             }
         }
 	}
