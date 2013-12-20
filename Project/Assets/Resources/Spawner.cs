@@ -115,7 +115,7 @@ public class Spawner
 		var x = random.Next (-_level.FieldBorderCoordinates, _level.FieldBorderCoordinates);
 		var z = random.Next (-_level.FieldBorderCoordinates, _level.FieldBorderCoordinates);
 		Network.Instantiate (
-			Resources.Load<Transform> ("PowerUpPrefab" + random.Next (0, 3)),
+			Resources.Load<Transform> ("PowerUpPrefab" + random.Next (2, 3)),
 			new Vector3 (x, 0, z),
 			Quaternion.identity, 0);
 	}
