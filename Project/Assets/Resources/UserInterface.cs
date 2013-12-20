@@ -38,7 +38,9 @@ public class UserInterface : MonoBehaviour
 
 	private GetServerList _serverSource;
 	private GetPlayerList _playerSource;
-	
+
+	private int _round;
+
 	public string PlayerName { get { return _playerName; } }
 	public string ServerIp { get { return _serverIP; } }
 	
@@ -59,6 +61,7 @@ public class UserInterface : MonoBehaviour
 	}
 	public void ShowInitGame() {
 		Debug.Log ("UI:ShowInitGame");
+		_round = 1;
 		_state = State.InitGame;
 	}
 	public void ShowGame() {
@@ -66,8 +69,11 @@ public class UserInterface : MonoBehaviour
 		HideMenuBackground ();
 		_state = State.Game;
 	}
-	public void ShowBetweenRounds(){
+	public void ShowBetweenRounds(int round){
 		Debug.Log ("UI:Show Between Rounds");
+		_round = round;
+		ShowMenuBackground ();
+		ResetCamera();
 		_state = State.BetweenRounds;
 	}
 	public void ShowRanking(GetPlayerList sortedPlayerSource){
@@ -151,7 +157,7 @@ public class UserInterface : MonoBehaviour
 
 	public void HandleInitGame()
 	{
-		// TODO
+		DrawRoundNumber ();
 	}
 
 	public void HandleGame() {
@@ -172,7 +178,7 @@ public class UserInterface : MonoBehaviour
 
 	public void HandleBetweenRounds()
 	{
-		// TODO
+		DrawRoundNumber ();
 	}
 	
 	public void HandleRanking()
@@ -188,6 +194,17 @@ public class UserInterface : MonoBehaviour
 	}
 
 	#region GUI Elements
+
+	void DrawRoundNumber ()
+	{
+		// Temp hack
+		int old = labelGUIStyle.fontSize;
+		labelGUIStyle.fontSize = 30;
+		GUI.Label (new Rect (0.1f * WidthPixels, 0.1f * HeightPixels,
+		                     0.9f * WidthPixels, 0.9f * HeightPixels),
+		           "Round " + _round, labelGUIStyle);
+		labelGUIStyle.fontSize = old;
+	}
 
 	void drawHostButton ()
 	{

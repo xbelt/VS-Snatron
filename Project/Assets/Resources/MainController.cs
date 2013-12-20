@@ -230,7 +230,7 @@ public class MainController : MonoBehaviour
 	private void OnRoundEnded(int round)
 	{
 		Debug.Log ("GUI:OnRoundEnded");
-		_gui.ShowBetweenRounds ();
+		_gui.ShowBetweenRounds (round+1);
 		_game.EndRound ();
 	}
 
