@@ -318,14 +318,14 @@ public class UserInterface : MonoBehaviour
 	{
 		_splashScreenLight.SetActive (false);
 		_splashScreen.SetActive (false);
-		_splashScreen.renderer.enabled = false;
+        _splashScreen.guiTexture.enabled = false;
 	}
 	
 	public void ShowMenuBackground()
 	{
 		_splashScreenLight.SetActive (true);
 		_splashScreen.SetActive (true);
-		_splashScreen.renderer.enabled = true;
+		_splashScreen.guiTexture.enabled = true;
 	}
 	
 	public void ResetCamera()
