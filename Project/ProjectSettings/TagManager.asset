@@ -11,13 +11,11 @@ TagManager:
   - SpeedUpCollider
   - cube
   - line
-  - 
   - lines
   - powerUp0
   - powerUp1
-  - 
   - powerUp
-  - 
+  - gameWall
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
   Builtin Layer 2: Ignore Raycast
