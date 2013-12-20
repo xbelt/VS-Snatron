@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Random = System.Random;
 
 public class RotateCubeOverEdge : MonoBehaviour {
     public Vector3 axisLocation;
@@ -16,9 +17,10 @@ public class RotateCubeOverEdge : MonoBehaviour {
     }
 
     private IEnumerator rotate90(float time) {
-        yield return true;
-        var initialRotation = transform.rotation;
+    	System.Random random = new Random();
+
         while (true) {
+            var initialRotation = transform.rotation;
             Debug.Log("Start loop");
             var rate = 1f / time;
             var totalStep = 0.0f;
@@ -38,13 +40,20 @@ public class RotateCubeOverEdge : MonoBehaviour {
                 allSteps += thisStep;
                 yield return null;
             }
-
+            transform.rotation = initialRotation;
+            if (random.Next(0, 100) < 50) {
+                if (random.Next(0, 2) == 0) {
+                    transform.Rotate(Vector3.up, 90);
+                }
+                else {
+                    transform.Rotate(Vector3.up, -90);
+                }
+            }
             var totalWait = 0.0f;
             while (totalWait < waitTime) {
                 totalWait += Time.deltaTime;
                 yield return null;
             }
-            transform.rotation = initialRotation;
         }
     }
 }
