@@ -208,21 +208,21 @@
 \maketitle
 
 \begin{abstract}
-We present a cross-platform game called Tronium that allows up to eight players (who can be using different platforms) to play together via local network, 
+We present a cross-platform game called Tronium that allows up to eight players to play together via local network, 
 or alternatively allows single-player matches against AI opponents. 
-
-Tronium is inspired by the "light cycle" scene from the 1982 film "Tron" and is implemented using the  Unity\textregistered   \ Engine, which is a high-level framework for game development.
-The game supports Windows on x86/x86\_64 and Android\texttrademark \ 
-with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity engine.
+Tronium is inspired by the "light cycle" scene from the 1982 film ``Tron" and is implemented using the  Unity\textsuperscript{\textregistered} 
+engine, which is a high-level framework for game development.
+The game supports Windows, Mac OS and Linux on x86/x86\_64 and Android\texttrademark \ 
+with potential for easy ports to others platforms thanks to the cross platform capabilities of the Unity  engine.
 
 
  
 \section{Introduction}
 
-We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from "Tron". 
+We were inspired to create this game after playing Armagetron Advanced, an open source game that is itself inspired by the light cycle scene from Tron. 
 In Section 2 we will look at Armagetron Advanced and other games inspired by Tron, as well as similar games available on mobile platforms.
 In Section 3, we will explain the gameplay and game mechanics that we decided to implement with Tronium, and in  Section 4 we will introduce Unity with a focus on its networking concepts. In Section 5 we will show how we use these concepts in our game. 
-In Section 6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are "long" in comparison to the high in-game speeds.
+In Section 6 we show our implementation of collision detection and prediction, ensuring reasonable behaviour in case of network delays that are 'long' in comparison to the high in-game speeds.
 In Section 7 we introduce the AI that we use in the single-player mode as well as our own extension to the game,  randomly roaming obstacles.
 In the last section, we will give our conclusions on our game and working both with Unity as well as with a larger group.
 
@@ -230,21 +230,21 @@ In the last section, we will give our conclusions on our game and working both w
 \section{Existing games}
 
 Armagetron Advanced\cite{AA} is one of two open source projects that try to recreate the light cycle scene, the other being GLTron\cite{GLT} by Andreas Umbach\cite{Umbach}.
-GLTron is a more faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film while Armagetron Advanced is further removed from the original. It is visually less faithful to the movie and offers a wide variety of gamemodes that go far beyond what is seen in the film as well as heavy customization, with parameters like base speed, arena size, number of players, etc.
+GLTron is a faithful reproduction both visually as well in terms of game mechanics of the original light cycle scene from the 1982 film.
+Armagetron Advanced is less faithful to the movie and offers a wide variety of gamemodes and heavy customization, with parameters like base speed, arena size, number of players, etc.
 We were aiming more at recreating the enjoyment of playing Armagetron Advanced rather than being faithful to the original scene.
 Since the scope of this project was somewhat limited, we do not offer the extensive options and choice of game mode that Armagetron Advanced does, 
-but rather focused on implementing the 'core' game mode with fixed parameters. Visually, we were inspired by the aesthetics of the 2010 film "Tron Legacy" rather than by the original film or the existing games
+but rather focused on implementing the 'core' game mode with fixed parameters. Visually, we were inspired by the aesthetics of the 2010 film ``Tron Legacy" rather than by the original film or the existing games.
 
 Armagetron Advanced offers local (split-screen), local network and internet multiplayer.
-Armagetron Advanced itself is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port.
- There exists an android game called Androgetron\cite{Andro} developed by a member of the Armagetron Advanced community, however this is a much simplified clone without networked multiplayer.
-  On the official Google Play\texttrademark Store there are a few more games\cite{GP1}\cite{GP2}\cite{GP3} that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
+It is available for Windows, Linux and Mac OS but does not have an Android (or other mobile platform) port.
+ There exists an Android game called Androgetron\cite{Andro} developed by a member of the Armagetron Advanced community, however this is a much simplified clone without networked multiplayer.
+  On the official Google Play\texttrademark \ Store there are a few more games\cite{GP1}\cite{GP2}\cite{GP3} that are essentially identical to Androgetron and seem to be all based on an android port of GLTron. They also do not offer any kind of non-split-screen multiplayer.
 
 Split screen is a viable option on a full size laptop or desktop monitor, however it feels very cramped even on larger tablets and is essentially unusable on smartphones.
 Our goal was therefore to implement a true (networked) multiplayer experience on mobile devices.
 Instead of trying to adapt the large and complex code base of Armagetron Advanced (or GLTron), we decided to implement a version of the game with smaller scope from scratch.
-We decided to use Unity, a high level game engine and Integrated Development Engine (IDE) (which will be discussed in Section 4) to implement the following game mechanics:
-
+We used Unity, a high level game engine (which will be discussed in Section 4) to implement the following game mechanics:
 \end{abstract}
 
 \begin{figure}
@@ -253,48 +253,48 @@ We decided to use Unity, a high level game engine and Integrated Development Eng
  	 	\caption{The main game... << weird wall >> }
  \end{figure}
  
-\section{Unity}
-Unity\textregistered, which is developed by Unity Technologies, is a high level game development framework or engine. Our project specifically uses the commercial version of Unity called Unity\textregistered Pro. Unity offers an editor (Figure 2) that allows manipulation of 3D environments, game assets and live debugging.
-Unity is based on Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
-We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE.
-Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
-The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
-
-Unity's core concept is that of a "scene" which is an abstraction of a 3D space that contains "GameObject"s.
-\\ "GameObjects" are containers that contain "Component"s (which can also be GameObjects, allowing  nesting).
-All "GameObject"s have a basic "transform" "component" which contains information about position, rotation and velocity of the "GameObject". There are many other types of "Component"s, including "Lights", "Cameras" and "Materials" as well as Scripts.
-
-Unity offers two very different methods for networking.
-A high-level "synchronization" feature as well as comparatively "low level"  Remote Procedure Calls (RPC).
-Both require a GO to have a "NetworkView" component which makes them visible to the network in Unity.
-
-Synchronization allows for high-frequency, low-cost updates  of GOs. It can however only be used to synchronize certain properties of the GO, e.g. the transform (pos,rot,vel) component.
-
-RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
-
-\begin{figure}
-\center
- 	 	    \includegraphics[height=5.7cm]{editor_cropped}
- 	  
- 	 	\caption{The Unity editor}
- \end{figure}
  
  \section{Tronium mechanics }
 We simplified the complex settings and mechanics from Armagetron Advanced to a single game mode, with fixed speed, arena size, etc.
 We did, however, also extend the game to new concepts not present in any of the other versions. Specifically, we introduced collectible "powerups" and moving obstacles that roam the arena.
 
 The game takes place in a (square) arena, in which the players drive with their "light cycles" (from now on simply bike).
-The bike moves constantly and can only be turned 90\textdegree left or right.
+The bike moves constantly and can only be turned 90\textdegree \ left or right.
 Each bike leaves a solid trail (wall), and collisions with either the sides of the arena, your own wall or another player's wall will result in your death.
 The aim is to avoid collisions and to be the last player alive.
 Being close to another wall increases your speed, allowing you to e.g. overtake and 'box in' another player.
 There are also two different types of powerups that spawn randomly throughout the arena. 
 They grant a temporary speed bonus or temporary invincibility (allowing the player to go through walls).
-There are also additional obstacles in form of large cubes that slowly 'roll' around the arena. Collisions with these obstacles also results in the player's death. 
+There are also additional obstacles in form of large cubes that slowly 'roll' around the arena. Collisions with these obstacles also result in the player's death. 
 
 For single-player games, there are AI opponents which will take the role of other players (i.e. drive bikes as well).
 The AI and the roaming obstacles will be described in more detail in Section 7.
+\begin{figure}
+\center 	 	    \includegraphics[height=5.7cm]{editor_cropped}
+ 	   	 	\caption{The Unity editor}
+ \end{figure}
+  \section{Unity}
+Unity\textregistered, which is developed by Unity Technologies\cite{UnityTech}, is a high level game development framework or engine.
+Our project specifically uses the commercial version of Unity called Unity\textregistered Pro.
+Unity offers an editor (Figure 2) that allows manipulation of 3D environments, game assets and live debugging.
+Unity uses Mono (an open source .NET-compatible framework) and allows development in \\ JavaScript, Boo or C\#. 
+We chose to use C\# because of its similarities to Java and Unity's integration with the extremely powerful Visual Studio IDE. Unity supports a large number of platforms, including x86/x86\_64 (Windows, Mac OS and Linux), Android, iOS and Windows Phone 8, with a generally very small required effort for porting between platforms.
+The support for native x86 versions greatly reduced the time needed for testing and debugging during development.
 
+Unity's core concept is that of a \cs{scene} which is an abstraction of a 3D space that contains
+\cs{GameObject}s.
+\cs{GameObject}s are containers that contain \cs{Component}s (which can also be \cs{GameObject}s, allowing nesting).
+All \cs{GameObject}s have a basic \cs{transform} \cs{Component} which contains information about position, rotation and velocity of the \cs{GameObject}. There are many other types of \cs{Component}s, including \cs{Light}s, \cs{Camera}s and \cs{Material}s as well as scripts.
+
+Unity offers two very different methods for networking.
+A high-level ``synchronization" feature as well as comparatively 'low level'  Remote Procedure Calls (RPC).
+Both require a \cs{GameObject} to have a \cs{NetworkView} component which makes them visible to the network in Unity.
+Synchronization allows for high-frequency, low-cost updates  of \cs{GameObject}s. It can however only be used to synchronize certain properties of the \cs{GameObject}, e.g. the \cs{transform} (i.e. position,rotation,velocity) \cs{component}.
+RPC on the other hand, is intended to be used for less frequent and less time-sensitive communication and is very similar to RPC implementations in other frameworks.
+\pagebreak
+
+
+ 
 
 \begin{figure}[bp]
 \centering
@@ -412,35 +412,37 @@ The AI and the roaming obstacles will be described in more detail in Section 7.
 \end{figure}
 
 \section{Tronium networking}
-Tronium combines (as do most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall "transforms"), as well as RPC for communicating gamestate changes.
+Tronium combines (as do most Unity applications) both methods, using Synchronization for player and wall positions (or more correctly player and wall \cs{transforms}), as well as RPC for communicating gamestate changes.
 
 In terms of networked multiplayer, most games can be classified into either an authoritative or non-authoritative server style.
 
-With a non-authoritative server, clients will do their own calculations locally and based on those will report e.g. their player's new position and events like the player's death to the server (and potentially other players). This is in contrast to an authoritative server, where the client is mostly reduced to relaying the users input to the server which in turn does the necessary calculations and sends back information about   e.g. the player's position and liveness back to the clients.
+With a non-authoritative server, clients will do their own calculations locally and based on those will report e.g. their player's new position and events like the player's death to the server (and potentially other players). This is in contrast to an authoritative server, where the client is mostly reduced to relaying the user's input to the server which in turn does the necessary calculations and sends back information about   e.g. the player's position and liveness back to the clients.
 
 Authoritative servers have the advantage of preventing many common forms of cheating that involve running modified client code, however they also require a more powerful machine as server and result in additional latency.
 
 Since our game is quite fast paced and supposed to run on relatively low-power mobile devices and will most likely not be subject to complicated cheating attempts, we feel that non-authoritative server was the best fit for our application.
 
 
-Updates regarding the movement of the player and the creation of new walls in a player's trail are handled by the player instance and are communicated using Unity's "state synchronization" system. 
+Updates regarding the movement of the player and the creation of new walls in a player's trail are handled by the player instance and are communicated using Unity's state synchronization system. 
 The system offers two options for data transfer. One is a unity-specific reliable data protocol that uses delta compression (i.e. sending only the information that has changed) and ensures in-order delivery. The other is unreliable transmission via UDP.
 Since in a racing game low latency is more important than in order-delivery, we use the UDP transmission mode. All clients will locally extrapolate (based on last known speed) the position of other players' bikes. In Section 6 we will explain how we deal with network delay when calculating collisions and player deaths to ensure that players will never be 'retroactively' killed because of information that arrives late.
 
-Spawning of new GameObjects (e.g. walls) is done via Unity's Network.Instantiate method, which automatically creates the same object on all clients.
+Spawning of new \cs{GameObject}s (e.g. walls) is done via Unity's \cs{Network.Instantiate} method, which automatically creates the same object on all clients.
 
 Less frequent updates like e.g. player deaths and game start/end are sent via RPC.
 
-Since unity does not have a high-level concept representing the current application instance in its entirety, every script has to be attached to a GameObject and each instance (client?) will execute the same code for a given GameObject. 
+Since Unity does not have a high-level concept representing the current application instance in its entirety, every script has to be attached to a \cs{GameObject} and each instance of the game will execute the same code for a given \cs{GameObject}. 
 Since our server instance will also be acting as a player/client instance, this model works well with our application design.
 
-Checks like "Network.isMine()" or "Network.isServer()" allow to test wether the current GameObject (or more specifically its NetworkView) is owned by the current instance and whether we are acting as the server, respectively. 
-
-There is an "empty" (i.e. code-only) GameObject that contains the "MainController" which is responsible for updating the GUI and communicating (locally) state changes between the Game and the NetworkController.
-
-The NetworkController causes events (via delegates) to be triggered in the MainController, which will then in turn call methods of the NetworkController or GameController.
-The NetworkController handles all RPC. A received RPC will result in an event being triggered in MainController.
-The MainController calls (non-RPC) functions of the NetworkController which will then in turn send out RPC Calls  to the network.
+Checks like \cs{GetComponent<NetworkView>().isMine()} or \cs{Network.isServer()} allow to test whether the current \\
+\cs{GameObject} (or more specifically its \cs{NetworkView}) is owned by the current instance and whether we are acting as the server, respectively.
+ 
+The state transitions work as follows:
+There is an \cs{empty} (i.e. code-only) \cs{GameObject} that contains the \cs{MainController} which is responsible for updating the GUI and (locally) communicating state changes between the \cs{Game} and the \cs{NetworkController}.
+The \cs{NetworkController} handles all RPCs and causes events to be triggered (via C\# delegates) in the \cs{MainController}, which will then in turn call methods of the \cs{NetworkController} or \cs{GameController}.
+A received RPC will result in an event being triggered in \cs{MainController}.
+The \cs{MainController} calls (non-RPC) functions of the  \\
+\cs{NetworkController} which will then in turn send out RPC Calls  to the network.
 In our implementation RPC's will also be sent to the sender, ensuring that all clients make the same state transitions.
 See Figure 3 for examples of (simplified) state transitions involved with starting a new game via network.
 
@@ -452,20 +454,22 @@ See Figure 3 for examples of (simplified) state transitions involved with starti
 
 
 \section{Collision detection}
-Collisions in Unity can be implemented either with 'true' collisions or with "Triggers". With triggers, the objects do not actually collide, i.e. no physics simulation takes place but instead the two methods "OnTriggerEntry" and "OnTriggerExit" are called when an object moves into or exits a trigger. 
-In Tronium, collision detection is handled by the owner of the bike, i.e. the game instance of the player controlling the bike.
-The bike has three different types of colliders (triggers), shown in <<FIGURE>>. 
-The "BodyCollider" is the main collision mesh for the bike.
-Using a simple shape like a box greatly increases the performance of the collision detections.
-The "SpeedUpCollider"s are used to detect when a player is close to a wall (which will increase his speed). 
-Finally, the "CollisionPredictor" is used to detect if the player will move into (or 'through') a wall in the next frame update. If that is the case, the player will be killed and the movement cancelled. 
-Placing the "CollisionPredictor" in front of the bike is necessary to avoid players 'warping' through walls  - this could happen since collisions (and position updates) are calculated at discrete time points. With sufficient speed, a player might be before an obstacle at one point but already beyond the obstacle in the next.
-The "CollisionPredictor" is therefore dynamically resized to match the size of the next 'step', i.e. it covers the ground that the bike would move through during the current time step if time was truly continuous. 
+Collisions in Unity can be implemented either with 'true' collisions or with \cs{Trigger}s. With \cs{Trigger}s, the objects do not actually collide, i.e. no forces are applied but instead the two methods \cs{OnTriggerEntry()} and \cs{OnTriggerExit()} are called when an object moves into or exits a \cs{Trigger}. 
+Collisions will be triggered during the physics update phase of each frame calculation and the effects of these method calls can be used in the \cs{Update()} method that is triggered later (but still before the actual frame is drawn).
 
+In Tronium, collision detection is handled by the owner of the bike, i.e. the game instance of the player controlling the bike. 
+This means that players will only die to obstacles that are visible to them in their current local state and packets arriving late will not retroactively kill the player.
+The bike has three different types of \cs{Collider}s (\cs{Triggers}), shown in Figure 4. 
+Each \cs{Collider} is a child \cs{GameObject} of the bike and has a script attached to it that listens (via \cs{OnTriggerEntry/Exit}) for collisions. If a collision is detected, an appropriate event in the parent \cs{GameObject} is triggered (via delegates). 
 
-Each Collider is a child GameObject of the bike and has a script attached to it that listens (via OnTriggerEntry/Exit) for collisions. If a collision is detected, an appropriate event in the parent object is triggered. 
-Collisions will be triggered during the physics update phase of each frame calculation and the effects of these method calls can be used in the "Update()" method that is triggered later (but still before the actual frame is drawn). If a collision has been detected by the collision predictor, the main bike script will kill the player.
-If 'collisions' has been detected by the "SpeedUpCollider" the bike's speed will be increased (the more collisions, i.e. obstacles near the bike, the more the speed will increase).
+The \cs{BodyCollider} is the main collision mesh for the bike, and ensures that players cannot drive through each other's bikes.
+Using a simple shape like a box greatly increases the performance of the collision detections.\\
+The \cs{SpeedUpCollider}s are used to detect when a player is close to a wall (which will increase his speed). \\
+Finally, the \cs{CollisionPredictor} is used to detect if the player will move into (or 'through') a wall in the next frame update. If that is the case, the player will be killed and the movement cancelled, unless the player has an active 'invulnerability' powerup in which case only the arena walls will have any effect on the player.
+
+Placing the \cs{CollisionPredictor} in front of the bike is necessary to avoid players 'warping' through walls  - this could happen since collisions (and position updates) are calculated at discrete time points. With sufficient speed, a player might be before an obstacle at one point but already beyond the obstacle in the next.
+The \cs{CollisionPredictor} is therefore dynamically resized to match the size of the next 'step', i.e. it covers the ground that the bike would move through during the current time step if time was truly continuous. 
+
 \lstset{language=[Sharp]C,caption={Updating the CollisionPredictor},label=code}
 \begin{CS}
 protected void AdjustSpeed () {
@@ -489,32 +493,37 @@ protected void AdjustSpeed () {
  
 \section{Computer controlled opponents}
 In local single-player, there are computer controlled bikes that follow a simple pattern. 
-Whenever a computer controlled bike predicts a wall collision (using the same code as above), it will (with high probability) do a "saving" turn (with equal probability for left and right turns). To ensure that they cannot survive forever, they are only allowed to do these "saving" turns every second frame.
-
+Whenever a computer controlled bike predicts a wall collision (using the same code as above), it will do a "saving" turn (with equal probability for left and right turns). To ensure that they cannot survive forever, they are only allowed to do these "saving" turns every second frame.
 To avoid making the AI too predictable, there is also a chance that they will randomly (again, left right being equally likely) turn even if they do not detect any walls.
-
 This results in a very simple AI, however since the game is mostly about reflexes this unpredictable AI works well enough to make the single-player mode enjoyable.
 
-Randomly moving cubes pose as more relentless opponents, they roam the grid without trying to evade players or walls. Such a cube moves by rotating over one of its edges touching the ground as depicted by << << image >> >>.
- Afterwards, the cube pauses for a set amount of time, randomly changes direction, and merrily continues on its way.
-  (note to editor: may want to remove merrily) To achieve the movement as illustrated in the aforementioned image---assuming the pivot were in the center---the cube must be translated along two axes and rotated simultaneously over time. 
-  However, if we choose to rotate around the blue axis (which also represents time in the image), none of this is necessary. Fortunately, Unity provides a \cs{RotateAround()} method to do just that.
-Our implementation can rotate only over one of the cubes edges. To allow movement in any diretion, we simply rotate the cube around it's center before initiating the movement. This works because the cube's sides are uniform: a 90° rotation is, as far as the viewer is concerned, invisible. This axis is specified by two vectors, an origin relative to the cube's center: \{x: -.5, y: -.5, z: -.5 \} and another vector to indicate the direction: \{x: 0, y: 0, z: 1\}. Unity cube primitives have an edge length of 1, which produces $-0.5$ used in the coordinates. However, \cs{RotateAround()} expects the axis to be in world coordinates, for this we transform both the origin and the direction out of our local coordinate system again leveraging Unity's built-in methods. Another benefit of this method is, that the scaling factor imposed on the cube is irrelevant to the movement and rotation, because of local-to-world transformations that are used.
-Now that all pieces are in place, for the animation.
-The code for the rotation is unique in that it makes use of a feature nowhere else in our codebase: It's a coroutine, or Iterator in C\#-speak \cite{csharpthing}.
+Randomly moving cubes pose a more serious challenge.
+They move by rotating (relatively slowly) over one of their edges as depicted by Figure 5.
+ After each rotation the cube will remain stationary for a set time, then choose a new direction at random and continue to move in that direction.
+To achieve the movement as illustrated in the aforementioned image---assuming the pivot were in the center---the cube must be translated along two axes and rotated simultaneously over time. 
+  However, if we choose to rotate around the blue axis (which also represents time in the image), none of this is necessary.
+ Fortunately, Unity provides a \cs{RotateAround()} method to do just that.
+Our implementation can rotate only over one of the cubes edges.
+To allow movement in any direction, we simply rotate the cube around it's center before initiating the movement.
+This works because the cube's sides are uniform: a 90° rotation is, as far as the viewer is concerned, invisible (These rotations happen instantaneously between frames).
+This axis is specified by two vectors, an origin relative to the cube's center: \{x: -.5, y: -.5, z: -.5 \} and another vector to indicate the direction: \{x: 0, y: 0, z: 1\}.
+Unity cube primitives have an edge length of 1, which produces $-0.5$ used in the coordinates. 
+However, \cs{RotateAround()} expects the axis to be in world coordinates, for this we transform both the origin and the direction out of our local coordinate system again leveraging Unity's built-in methods. Another benefit of this method is, that the scaling factor imposed on the cube is irrelevant to the movement and rotation, because of local-to-world transformations that are used.
+The code for the rotation is unique in that it makes use of a feature not present in the rest of the code: It uses a coroutine, or \cs{Iterator}\cite{yield}.
 %"http://msdn.microsoft.com/en-us/library/dscyy5s0.aspx"
  It allows us to program the animation inside a loop by passing control back to Unity using \cs{yield return null} after we've made the calculations for the next frame.
 
-  On the next frame, Unity resumes our iterator, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. Using iterators, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
+  On the next frame, Unity resumes our \cs{Iterator}, thereby restoring all the local variables to the state in which we left them. Otherwise, we would need to keep the state within fields of the script, also keeping track in what stage we currently are. 
+ Using \cs{Iterators}, however, the compiler does the heavy lifting while the code remains legible. This is also exemplified by the code used to wait for as many frames as needed until the movement is to be continued.
 Due to time constraints, cubes are allowed to move through any geometry. As an improvement, one might consider to have cubes tear down pieces of walls they come in contact with.
 
 
  \balancecolumns
  
 \section{Conclusion}
- Working in a larger group was an interesting change and while our intra team communication was very good there were considerable efficiency losses when e.g. bug fixes for one component affected code that was concurrently being refactored.
+ Working in a larger group was an interesting change and while our intra-team communication was very good, there were considerable efficiency losses when e.g. bug fixes for one component affected code that was concurrently being refactored. 
 
- We feel that we accomplished our goal of creating an enjoyable  networked multiplayer version of a "Tron-like game" for mobile devices. Unity allowed us to very quickly create the visual aspects of the game and allowed us to focus on the distributed networking component of the game.
+ We feel that we accomplished our goal of creating an enjoyable  networked multiplayer version of a 'Tron-like game' for mobile devices. Unity allowed us to very quickly create the visual aspects of the game and allowed us to focus on the distributed networking component of the game.
 
 An obvious and straight forward next step would be allowing the  player to customize the parameters of the game. Another interesting extension would be internet multiplayer, however additional work for NAT and higher latencies might be necessary.
 

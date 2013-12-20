@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.17)  20 DEC 2013 00:28
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.17)  20 DEC 2013 01:50
 entering extended mode
 **report.tex
 (C:\Users\Alexander\Desktop\VS-Snatron\Report\report.tex
@@ -1014,13 +1014,13 @@ Overfull \hbox (3.46208pt too wide) in paragraph at lines 208--208
  []\eaddfnt cvonruet@student.ethz.ch| 
  []
 
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 214.
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 213.
 
-LaTeX Font Info:    No file TS1aer.fd. on input line 214.
+LaTeX Font Info:    No file TS1aer.fd. on input line 213.
 
 LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 (Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textregistered' on input line 214.
+(Font)              for symbol `textregistered' on input line 213.
 
 
 LaTeX Warning: Citation `AA' on page \thepage  undefined on input line 232.
@@ -1033,22 +1033,22 @@ LaTeX Warning: Citation `Umbach' on page \thepage  undefined on input line 232.
 
 
 
-Overfull \hbox (3.86835pt too wide) in paragraph at lines 232--237
+Overfull \hbox (3.86835pt too wide) in paragraph at lines 232--238
 []\T1/aer/m/n/9 Armagetron Ad-vanced[\T1/aer/bx/n/9 ?\T1/aer/m/n/9 ] is one of 
 two open source projects
  []
 
 
-LaTeX Warning: Citation `Andro' on page \thepage  undefined on input line 240.
+LaTeX Warning: Citation `Andro' on page \thepage  undefined on input line 241.
 
 
-LaTeX Warning: Citation `GP1' on page \thepage  undefined on input line 241.
+LaTeX Warning: Citation `GP1' on page \thepage  undefined on input line 242.
 
 
-LaTeX Warning: Citation `GP2' on page \thepage  undefined on input line 241.
+LaTeX Warning: Citation `GP2' on page \thepage  undefined on input line 242.
 
 
-LaTeX Warning: Citation `GP3' on page \thepage  undefined on input line 241.
+LaTeX Warning: Citation `GP3' on page \thepage  undefined on input line 242.
 
 <tron_four.png, id=4, 407.121pt x 304.7385pt>
 File: tron_four.png Graphic file (type png)
@@ -1059,22 +1059,29 @@ Package pdftex.def Info: tron_four.png used on input line 251.
 
 
  <C:/Users/Alexander/Desktop/VS-Snatron/Report/tron_four.png>] <editor_cropped.
-png, id=15, 751.608pt x 492.03825pt>
+png, id=16, 751.608pt x 492.03825pt>
 File: editor_cropped.png Graphic file (type png)
 
 <use editor_cropped.png>
-Package pdftex.def Info: editor_cropped.png used on input line 277.
+Package pdftex.def Info: editor_cropped.png used on input line 273.
 (pdftex.def)             Requested size: 247.73322pt x 162.18062pt.
 
-Overfull \hbox (7.73322pt too wide) in paragraph at lines 277--278
+Overfull \hbox (7.73322pt too wide) in paragraph at lines 273--274
  [] 
  []
 
-LaTeX Font Info:    Try loading font information for T1+aett on input line 352.
+
+LaTeX Warning: Citation `UnityTech' on page \thepage  undefined on input line 2
+77.
+
+LaTeX Font Info:    Try loading font information for T1+aett on input line 284.
 
 ("F:\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 Overfull \hbox (5.10953pt too wide) in paragraph at lines 352--352
  [][][][][] 
  []
@@ -1120,17 +1127,28 @@ Overfull \hbox (19.20987pt too wide) in paragraph at lines 354--411
  []
 
 
-Underfull \vbox (badness 1210) has occurred while \output is active []
+Underfull \vbox (badness 3907) has occurred while \output is active []
 
  [2 <C:/Users/Alexander/Desktop/VS-Snatron/Report/editor_cropped.png>]
-<collision_meshes_text.png, id=23, 742.775pt x 468.75125pt>
+Overfull \hbox (7.5852pt too wide) in paragraph at lines 440--448
+\T1/aer/m/n/9 (i.e. code-only) \T1/aett/m/n/9 GameObject \T1/aer/m/n/9 that con
+-tains the \T1/aett/m/n/9 MainController
+ []
+
+
+Overfull \hbox (8.10648pt too wide) in paragraph at lines 440--448
+\T1/aer/m/n/9 RPC will re-sult in an event be-ing trig-gered in \T1/aett/m/n/9 
+MainController\T1/aer/m/n/9 .
+ []
+
+<collision_meshes_text.png, id=25, 742.775pt x 468.75125pt>
 File: collision_meshes_text.png Graphic file (type png)
 
 <use collision_meshes_text.png>
-Package pdftex.def Info: collision_meshes_text.png used on input line 448.
+Package pdftex.def Info: collision_meshes_text.png used on input line 450.
 (pdftex.def)             Requested size: 247.96129pt x 156.49014pt.
 
-Overfull \hbox (7.96129pt too wide) in paragraph at lines 448--449
+Overfull \hbox (7.96129pt too wide) in paragraph at lines 450--451
 [][] 
  []
 
@@ -1142,28 +1160,27 @@ File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 )
 
 LaTeX Font Warning: Font shape `T1/aett/bx/n' undefined
-(Font)              using `T1/aett/m/n' instead on input line 471.
+(Font)              using `T1/aett/m/n' instead on input line 475.
 
-<cube_rotation_illustration.png, id=25, 825.83531pt x 496.85625pt>
+<cube_rotation_illustration.png, id=27, 825.83531pt x 496.85625pt>
 File: cube_rotation_illustration.png Graphic file (type png)
 
 <use cube_rotation_illustration.png>
-Package pdftex.def Info: cube_rotation_illustration.png used on input line 484.
+Package pdftex.def Info: cube_rotation_illustration.png used on input line 488.
 
 (pdftex.def)             Requested size: 260.1017pt x 156.49014pt.
 
-Overfull \hbox (20.1017pt too wide) in paragraph at lines 484--485
+Overfull \hbox (20.1017pt too wide) in paragraph at lines 488--489
 [][] 
  []
 
 
-Overfull \hbox (13.88074pt too wide) in paragraph at lines 490--490
+Overfull \hbox (13.88074pt too wide) in paragraph at lines 494--494
 []\secfnt COMPUTER CON-TROLLED OP-PO-NENTS 
  []
 
 
-LaTeX Warning: Citation `csharpthing' on page \thepage  undefined on input line
- 504.
+LaTeX Warning: Citation `yield' on page \thepage  undefined on input line 512.
 
 [3 <C:/Users/Alexander/Desktop/VS-Snatron/Report/collision_meshes_text.png> <C:
 /Users/Alexander/Desktop/VS-Snatron/Report/cube_rotation_illustration.png>]
@@ -1174,13 +1191,13 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 15065 strings out of 493921
- 265345 string characters out of 3147269
- 360170 words of memory out of 3000000
- 17999 multiletter control sequences out of 15000+200000
- 59982 words of font info for 90 fonts, out of 3000000 for 9000
+ 15070 strings out of 493921
+ 265387 string characters out of 3147269
+ 358969 words of memory out of 3000000
+ 18002 multiletter control sequences out of 15000+200000
+ 61825 words of font info for 92 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 49i,17n,64p,976b,1247s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 49i,17n,64p,507b,1247s stack positions out of 5000i,500n,10000p,200000b,50000s
 {F:/MiKTeX 2.9/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{F:/MiKTeX 2.9/fonts
 /enc/dvips/fontname/8r.enc}<F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.
 pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx9.pfb><F:/MiKTeX 2.9/font
@@ -1190,12 +1207,13 @@ s/type1/public/amsfonts/cm/cmmi9.pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts
 msfonts/cm/cmr9.pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><F:
 /MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb><F:/MiKTeX 2.9/fonts/type1
 /public/amsfonts/cm/cmtt8.pfb><F:/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmt
-t9.pfb><F:/MiKTeX 2.9/fonts/type1/public/cm-super/sfrm0900.pfb><F:/MiKTeX 2.9/f
-onts/type1/urw/helvetic/uhvb8a.pfb><F:/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr
-8a.pfb><F:/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb>
-Output written on report.pdf (4 pages, 1374172 bytes).
+t9.pfb><F:/MiKTeX 2.9/fonts/type1/public/cm-super/sfrm0600.pfb><F:/MiKTeX 2.9/f
+onts/type1/public/cm-super/sfrm0900.pfb><F:/MiKTeX 2.9/fonts/type1/urw/helvetic
+/uhvb8a.pfb><F:/MiKTeX 2.9/fonts/type1/urw/helvetic/uhvr8a.pfb><F:/MiKTeX 2.9/f
+onts/type1/urw/times/utmb8a.pfb>
+Output written on report.pdf (4 pages, 1394303 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
+ 90 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
