@@ -104,7 +104,6 @@ public class Spawner
 	public void InstantiateLevelObjects()
 	{
 		InstantiateGameBorders ();
-		InstantiateCubes ();
 	}
 	
 	private System.Random random = new System.Random();
@@ -162,21 +161,6 @@ public class Spawner
 			backWall.GetComponent<WallBehaviour>().start = new Vector3(-dist, 1.5f, dist);
 			backWall.GetComponent<WallBehaviour>().updateWall(new Vector3(-dist, 1.5f, -dist));
 			backWall.renderer.material.shader = shader;
-		}
-	}
-	
-	private void InstantiateCubes() {
-		var cubes = new List<Transform>();
-		var random = new System.Random();
-		var shader = Shader.Find("Diffuse");
-
-		int dist = _level.FieldBorderCoordinates;
-		int n = _level.NumberOfCubes;
-		for(var i = 0; i < n; ++i) {
-			var x = random.Next(-dist, dist);
-			var z = random.Next(-dist, dist);
-			cubes.Add(Network.Instantiate(Resources.Load<Transform>("Cube"), new Vector3(x, 1.5f, z), Quaternion.identity, 0) as Transform);
-			cubes[i].renderer.material.shader = shader;
 		}
 	}
 
