@@ -16,7 +16,7 @@ public class CollisionPrediction : MonoBehaviour {
 		}
 
 		_collider = GetComponent<BoxCollider> ();
-		//_drive = transform.parent.gameObject.GetComponent<Drive>();
+		_drive = transform.parent.gameObject.GetComponent<Drive>();
 		_drive.CollisionPrediction = this;
 	}
 	void OnTriggerEnter(Collider other) {
