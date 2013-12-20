@@ -272,4 +272,8 @@ public class Drive : MonoBehaviour {
     public void OnPredictedGameWallCollisionExit() {
         _predictedWallCollisions--;
     }
+
+    public void ConsumeCubeSpawnPowerup() {
+        
+    }
 }
