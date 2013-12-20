@@ -143,6 +143,17 @@ public class Drive : MonoBehaviour {
 			TurnLeft ();
 			return true;
 		}
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Input.mousePosition.x > WidthPixels/2)
+            {
+                TurnRight();
+                return true;
+            }
+            TurnLeft();
+            return true;
+        }
 		// Input for preview
 		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			TurnLeft ();
