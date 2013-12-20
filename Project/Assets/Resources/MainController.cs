@@ -163,6 +163,7 @@ public class MainController : MonoBehaviour
 	
 	void OnLastRoundEnded ()
 	{
+		Debug.Log ("MC:On Last Round Ended");
 		if (Network.isServer) {
 			_networkControl.broadCastEndGame();
 		}
