@@ -51,6 +51,7 @@ public class MainController : MonoBehaviour
 		_game.OnOnePlayerLeft += OnOnePlayerLeft;
 		_game.OnLastHumanDied += OnLastHumanDied;
 		_game.OnLastRoundEnded += OnLastRoundEnded;
+		_game.OnNextRound += OnNextRound;
 	}
 
 	private void initNetworkControl()
@@ -200,7 +201,7 @@ public class MainController : MonoBehaviour
 		// TODO show some error message?
 	}
 
-	private const int TimeToShowInitGameScreen = 3;
+	private const int TimeToShowInitGameScreen = 2;
 
 	// This is indirectly called through RPC StartGame event
 	private void OnGameStarted(int rounds)
@@ -231,6 +232,11 @@ public class MainController : MonoBehaviour
 		Debug.Log ("GUI:OnRoundEnded");
 		_gui.ShowBetweenRounds ();
 		_game.EndRound ();
+	}
+
+	private void OnNextRound ()
+	{
+		Invoke("DelayedStartRoundHelper", TimeToShowInitGameScreen) ;
 	}
 	
 	private void OnGameEnded()

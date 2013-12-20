@@ -36,6 +36,7 @@ public class Game
 	public GameEvent OnLastRoundEnded;
 	public GameEvent OnOnePlayerLeft;
 	public GameEvent OnLastHumanDied;
+	public GameEvent OnNextRound;
 	
 	public delegate void PlayerEvent(int playerId);
 	public PlayerEvent OnLocalDeath;
@@ -112,8 +113,12 @@ public class Game
 				_players[i].score += NofPlayers - _players[i].rank;
 		}
 		
-		if (Network.isServer && isGameOver) {
-			OnLastRoundEnded();
+		if (Network.isServer) {
+			// Are we finished, or will we continue playing?
+			if (isGameOver)
+				OnLastRoundEnded();
+			else
+				OnNextRound();
 		}
 	}
 	
