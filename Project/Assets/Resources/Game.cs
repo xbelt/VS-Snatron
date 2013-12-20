@@ -179,7 +179,7 @@ public class Game
 		if (Network.isServer) {
 			if (_humanPlayersAlive == 0 && player.isAI == false)
 				OnLastHumanDied();
-			else if (NofLivingPlayers <= 1)
+			else if (NofLivingPlayers == 1)
 				OnOnePlayerLeft();
 		}
 	}
