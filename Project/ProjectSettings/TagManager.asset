@@ -11,9 +11,11 @@ TagManager:
   - SpeedUpCollider
   - cube
   - line
+  - 
   - lines
   - powerUp0
   - powerUp1
+  - powerUp2
   - powerUp
   - gameWall
   Builtin Layer 0: Default
