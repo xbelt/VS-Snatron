@@ -53,6 +53,8 @@ public class Spawner
 		_localPlayerDrive.playerId = LocalPlayerId;
 		_localPlayerDrive.OnDeadlyCollision += (int id) => OnKilled (id); // TODO ?
 		
+		if (spawnedPlayers.ContainsKey (LocalPlayerId))
+			spawnedPlayers.Remove (LocalPlayerId);
 		spawnedPlayers.Add(LocalPlayerId, player.gameObject);
 
 		if (OnSpawned != null)
@@ -72,6 +74,9 @@ public class Spawner
 		KIControler ai = player.gameObject.GetComponent<KIControler>();
 		ai.OnDeadlyCollision += (int id) => onKilled (id);
 		ai.playerId = playerId;
+		if (spawnedPlayers.ContainsKey(playerId))
+			spawnedPlayers.Remove (playerId);
+
 		spawnedPlayers.Add(playerId, player.gameObject);
 
 		if (OnSpawned != null)
@@ -80,6 +85,9 @@ public class Spawner
 	
 	public void Kill(int playerId)
 	{
+		if (!spawnedPlayers.ContainsKey (playerId))
+			return;
+
 		GameObject target = spawnedPlayers [playerId];
 		if (target == null)
 			return; // Warning : not cool behavior!
@@ -204,6 +212,8 @@ public class Spawner
 			if (player.networkView.isMine)
 				Network.Destroy(player);
 		}
+		spawnedPlayers.Clear ();
+
 		var powerUp0s = GameObject.FindGameObjectsWithTag("powerUp0");
 		foreach (var powerUp0 in powerUp0s) {
 			if (powerUp0.networkView.isMine)
@@ -247,6 +257,8 @@ public class Spawner
 		{
 			MonoBehaviour.Destroy(player);
 		}
+		spawnedPlayers.Clear ();
+
 		var powerUp0s = GameObject.FindGameObjectsWithTag("powerUp0");
 		foreach (var powerUp0 in powerUp0s) {
 			MonoBehaviour.Destroy(powerUp0);
