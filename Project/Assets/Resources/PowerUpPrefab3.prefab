@@ -29,7 +29,7 @@ GameObject:
   - 148: {fileID: 14800000}
   - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: PowerUpPrefab4
+  m_Name: PowerUpPrefab3
   m_TagString: powerUp2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
