@@ -263,7 +263,7 @@ public class UserInterface : MonoBehaviour
 			i++;
 			if (player == null)
 				continue;
-			// TODO fix ArgumentException
+
 			GUILayout.Label (i +  ". " + player.name + ": " + player.score, labelGUIStyle, GUILayout.ExpandWidth (true), GUILayout.Height (1 / 15f * HeightPixels));
 		}
 		GUILayout.EndVertical ();
