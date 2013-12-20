@@ -177,7 +177,8 @@ public class UserInterface : MonoBehaviour
 	
 	public void HandleRanking()
 	{
-		// TODO
+		DrawEndGameButton ();
+		DrawRanking ();
 	}
 
 	public void HandleGamePaused()
@@ -245,6 +246,25 @@ public class UserInterface : MonoBehaviour
 				continue;
 			// TODO fix ArgumentException
 			GUILayout.Label (player.id + ": " + player.name, labelGUIStyle, GUILayout.ExpandWidth (true), GUILayout.Height (1 / 15f * HeightPixels));
+		}
+		GUILayout.EndVertical ();
+		GUILayout.EndScrollView ();
+		GUILayout.EndArea ();
+	}
+
+	void DrawRanking ()
+	{
+		GUILayout.BeginArea (new Rect (10 / 30f * WidthPixels, 1 / 20f * HeightPixels, 11 / 30f * WidthPixels, 18 / 20f * HeightPixels), layoutGUIStyle);
+		_scrollPosition = GUILayout.BeginScrollView (_scrollPosition, false, true);
+		GUILayout.BeginVertical (layoutGUIStyle);
+		PlayerModel[] players = _playerSource ();
+		int i = 0;
+		foreach (PlayerModel player in players) {
+			i++;
+			if (player == null)
+				continue;
+			// TODO fix ArgumentException
+			GUILayout.Label (i +  ". " + player.name + ": " + player.score, labelGUIStyle, GUILayout.ExpandWidth (true), GUILayout.Height (1 / 15f * HeightPixels));
 		}
 		GUILayout.EndVertical ();
 		GUILayout.EndScrollView ();

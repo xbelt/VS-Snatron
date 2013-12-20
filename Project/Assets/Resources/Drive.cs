@@ -53,9 +53,6 @@ public class Drive : MonoBehaviour {
 // ReSharper disable once UnusedMember.Local
 	void Start () {
 
-		if (!GetComponent<NetworkView> ().isMine)
-			Destroy (this);
-
         transform.FindChild("CollisionPredictor").GetComponent<CollisionPrediction>()._drive = this;
 
 		if (GetComponent<NetworkView>().isMine) {

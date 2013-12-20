@@ -77,18 +77,21 @@ public class Game
 	public void BeginRound(int round)
 	{
 		_currentRound = round;
+		_aiPlayers = 0;
 		_aiPlayerAlive = 0;
+		_humanPlayers = 0;
 		_humanPlayersAlive = 0;
 		foreach (PlayerModel player in _players) {
 			if (player == null)
 				continue;
-			if (player.isAI)
+			if (player.isAI) {
 				_aiPlayerAlive++;
-			else
+				_aiPlayers++;
+			} else {
 				_humanPlayersAlive++;
+				_humanPlayers++;
+			}
 		}
-		//_aiPlayerAlive = _aiPlayers;
-		//_humanPlayersAlive = _humanPlayers;
 
 		for (int i = 0; i < _level.MaxPlayers; i++) {
 			if (_players[i] != null)
@@ -202,29 +205,12 @@ public class Game
         MonoBehaviour.print("Game:SetPlayer()");
 		PlayerModel player = new PlayerModel (playerId, playerName);
 		player.isAI = isAI;
-	    if (isAI) {
-	        _aiPlayers++;
-	    }
-	    else {
-	        _humanPlayers++;
-	    }
-
 	    _players [playerId] = player;
 	}
 
 	public void removePlayer(int playerId) {
         Debug.Log("Game:removePlayer()");
 		PlayerModel player = _players [playerId];
-		if (player.isAI) {
-			_aiPlayers--;
-			if (player.isAlive)
-				_aiPlayerAlive--;
-		} else {
-			_humanPlayers--;
-			if (player.isAlive)
-				_humanPlayersAlive--;
-		}
-
 		_players [playerId] = null;
 	}
 
@@ -313,10 +299,10 @@ public class Game
 			if (a == null && b == null)
 				return 0;
 			if (a == null)
-				return 1;
-			if (b == null)
 				return -1;
-			return a.score.CompareTo(b.score);
+			if (b == null)
+				return 1;
+			return b.score.CompareTo(a.score);
 		}
 	}
 
